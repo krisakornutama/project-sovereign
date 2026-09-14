@@ -19,15 +19,12 @@ jobs:
           node-version: 22
 
       - name: Install audit tooling
-        working-directory: portfolio
         run: npm install --no-fund --no-audit
 
       - name: Install Playwright browser
-        working-directory: portfolio
         run: npx playwright install chromium --with-deps
 
       - name: Audit (links, anchors, console, overflow, widgets)
-        working-directory: portfolio
         run: node scripts/audit.js
 
   deploy:
@@ -45,7 +42,7 @@ jobs:
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: portfolio
+          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
