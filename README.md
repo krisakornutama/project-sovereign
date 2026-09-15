@@ -1,6 +1,6 @@
 # Portfolio — Project Sovereign
 
-เว็บโชว์ผลงานแบบ static หลายหน้า (`index.html` = ทัวร์ทั้งระบบ + `projects.html` = ผลงานทีละชิ้น + ฟอร์มติดต่อ + `livestock.html` = ปศุสัตว์ + `fishery.html` = แบบแปลนการประมง + `farm.html` = เกษตร&สมุนไพร + `iot.html` = บ้าน IoT + `education.html` = โมดูล AI สอนลูก + `water.html` = ชัยภูมิน้ำ (แนวคิดรางน้ำ-บ่อ-พื้นที่เพาะปลูกแบบค่ายกล 8 ทิศ) + `books.html` = คลังหนังสือของนักเขียน: ผลงานที่ลงพิมพ์+ลิงก์แหล่งเดิม และชั้นหนังสือที่อ่าน + `search.html` = ค้นหาทั้งเว็บจากช่องเดียว + `en.html` = หน้าแรกภาษาอังกฤษ + `me.html` = หน้ารวมช่องทางผู้เขียน (Person schema + link-in-bio สำหรับ SEO ชื่อ "กฤษกรณ์ อุตมะ / Krisakorn Utama") + `sitemap.xml`/`robots.txt` = ให้ bot ทุกตัวคrawl ครบทุกหน้า) — ไม่มี build step ไม่มี dependency โฮสต์ฟรีด้วย GitHub Pages
+เว็บโชว์ผลงานแบบ static หลายหน้า (`index.html` = ทัวร์ทั้งระบบ + `projects.html` = ผลงานทีละชิ้น + ฟอร์มติดต่อ + `livestock.html` = ปศุสัตว์ + `fishery.html` = แบบแปลนการประมง + `farm.html` = เกษตร&สมุนไพร + `iot.html` = บ้าน IoT + `education.html` = โมดูล AI สอนลูก + `water.html` = ชัยภูมิน้ำ (แนวคิดรางน้ำ-บ่อ-พื้นที่เพาะปลูกแบบค่ายกล 8 ทิศ) + `books.html` = คลังหนังสือของนักเขียน: ผลงานที่ลงพิมพ์+ลิงก์แหล่งเดิม และชั้นหนังสือที่อ่าน + `search.html` = ค้นหาทั้งเว็บจากช่องเดียว + `en.html` = หน้าแรกภาษาอังกฤษ + `me.html` = หน้ารวมช่องทางผู้เขียน (Person schema + link-in-bio สำหรับ SEO ชื่อ "กฤษกรณ์ อุตมะ / Krisakorn Utama") + `sitemap.xml`/`robots.txt` = ให้ bot ทุกตัว crawl ครบทุกหน้า) — ไม่มี build step ไม่มี dependency โฮสต์ฟรีด้วย GitHub Pages
 
 ## วิธีขึ้น GitHub Pages (เลือกทางใดทางหนึ่ง)
 
@@ -14,7 +14,7 @@
 5. ไปที่ **Settings → Pages** → Source: **Deploy from a branch** → Branch: `main` + `/ (root)` → Save
 6. รอ 1–2 นาที แล้วเปิดลิงก์ที่หน้า Settings→Pages บอก (รูปแบบ `https://<ชื่อผู้ใช้>.github.io/<ชื่อ repo>/`)
 
-### ทางที่ 2 — git (คุ้มเคยใช้ command line)
+### ทางที่ 2 — git (ถ้าคุ้นเคยใช้ command line)
 
 ```bash
 # ในโฟลเดอร์ portfolio/
