@@ -33,6 +33,18 @@ git push -u origin main
 
 แก้ไฟล์ `index.html` แล้ว commit+push ใหม่ (หรืออัปโหลดทับ) — Pages จะ deploy เองใน 1–2 นาที
 
+หรือใช้สคริปต์ publish คำสั่งเดียวจากโฟลเดอร์โปรเจกต์ (sync → commit → push → ยิง IndexNow แจ้งเครื่องมือค้นหาให้บอทมาเก็บหน้าใหม่ทันที):
+
+```bash
+node tools/publish-portfolio.mjs --watch        # --watch = รอ CI จนจบ · --no-indexnow = ข้ามการยิง IndexNow
+```
+
+> ถ้า publish ด้วยมือ (push เอง) ให้ยิง IndexNow เองด้วย `node tools/indexnow-notify.mjs` — เครื่องมือค้นหา (Bing/Yandex/Seznam/Naver) จะได้คิวมา crawl หน้าใหม่ทันทีแทนที่จะรอเป็นเดือน
+
+## ให้ Google จัดทำดัชนีเว็บ (ทำครั้งเดียว ~10 นาที)
+
+ทำใน Google Search Console ด้วยบัญชี Google ของเจ้าของ — แท็กยืนยันวางรอบนหน้าแรกแล้ว ทำตามคู่มือทีละคลิก: [`docs/google-search-console-guide.md`](../docs/google-search-console-guide.md)
+
 ## ตั้งค่าฟอร์มติดต่อให้ส่งเข้าอีเมลจริง (สมัครฟรี 1 ครั้ง ~3 นาที)
 
 ฟอร์มใน `projects.html` ทำงานได้ทันทีแม้ไม่ตั้งค่า (กดส่ง = เปิดแอปอีเมลของผู้ใช้) แต่ถ้าอยากให้ส่งเข้าอีเมลคุณตรง ๆ:
