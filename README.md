@@ -58,7 +58,7 @@ node tools/publish-portfolio.mjs --watch        # --watch = รอ CI จนจ�
 
 ## หมายเหตุ
 
-- ทุกอย่างในไฟล์เดียว: CSS/JS ฝังใน `index.html`, ฟอนต์โหลดจาก Google Fonts CDN (ถ้าออฟไลน์จะ fallback เป็น system font — หน้ายังใช้ได้)
+- ทุกหน้าเป็น static HTML ไฟล์เดียวจบในตัวเอง: CSS/JS ฝังในไฟล์นั้น ๆ อยู่แล้ว (ไม่มี build step ไม่มี dependency), ฟอนต์โหลดจาก Google Fonts CDN (ถ้าออฟไลน์จะ fallback เป็น system font — หน้ายังใช้ได้)
 - ไม่มีข้อมูลจริงในหน้า — ตัวเลขบนหน้าเป็นข้อมูลสาธิต
 - `.nojekyll` ทำให้ GitHub Pages เสิร์ฟไฟล์ตรง ๆ ไม่ผ่าน Jekyll (จำเป็นเฉพาะเมื่ออัปโหลดเป็น repo แยก)
 - ถ้า push repo นี้เป็นโฟลเดอร์ย่อยของ repo ใหญ่ ให้ตั้ง Pages source เป็น branch `main` + โฟลเดอร์ `/portfolio`
