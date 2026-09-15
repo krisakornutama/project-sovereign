@@ -9,12 +9,12 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Crect x='5' y='5' width='6' height='6' rx='1' fill='%2334d399'/%3E%3Cpath d='M8 2v3M8 11v3M2 8h3M11 8h3' stroke='%2322d3ee' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
   --green:#34d399; --cyan:#22d3ee; --txt:#e5e7eb; --dim:#9ca3af; --faint:#6b7280;
-  --thai:'Prompt','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
   --mono:'JetBrains Mono','Cascadia Code','Courier New',monospace;
 }
 *{box-sizing:border-box}
@@ -135,7 +135,7 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
     <a href="water.html">ชัยภูมิน้ำ</a>
     <a href="books.html">คลังหนังสือ</a>
     <a href="livestock.html">ปศุสัตว์</a>
-    <a href="farm.html">เกษตร&สมุนไพร</a>
+    <a href="farm.html">เกษตร &amp; สมุนไพร</a>
     <a href="education.html">AI สอนลูก</a>
     <a href="search.html">ค้นหา</a>
     <a href="me.html">ผู้เขียน</a>
@@ -161,7 +161,7 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
   <section id="modules">
     <p class="k-ch">// โมดูลจริง · <b>6 subsystems</b></p>
     <h2>สมองของบ้าน ครบทั้งหกส่วน</h2>
-    <p class="sub">ทุกส่วนอยู่หลังระบบล็อกอิน/audit/backup ชุดเดียวกับทั้งโปรเจ็ก — และทุกอย่างวิ่งในเครื่องของบ้าน ไม่พึ่งคลาวด์</p>
+    <p class="sub">ทุกส่วนอยู่หลังระบบล็อกอิน/audit/backup ชุดเดียวกับทั้งโปรเจ็กต์ — และทุกอย่างวิ่งในเครื่องของบ้าน ไม่พึ่งคลาวด์</p>
     <div class="mods">
       <div class="mod"><div class="t">📟 อุปกรณ์+เซ็นเซอร์</div><div class="d">/api/devices · Device + SensorTelemetry</div></div>
       <div class="mod"><div class="t">🔌 รีเลย์+ตาราง</div><div class="d">/api/actuation · RelaySchedule</div></div>
@@ -223,7 +223,7 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
       <div class="loop"><div class="ic">📜</div><h3>กฎถ้า-แล้ว</h3><p>เขียนกฎครั้งเดียว ระบบเฝ้าทุกค่าและลงมือเองเมื่อเงื่อนไขจริง — พร้อม debounce กันอุปกรณ์สั่น</p><span class="ep">AutomationRule</span></div>
       <div class="loop"><div class="ic">🔔</div><h3>เตือนที่มีบริบท</h3><p>อะไรผิดปกติ ผิดที่ไหน ค่าเท่าไร — แจ้งเข้า Telegram ของบ้าน ไม่ใช่แค่กะพริบหน้าจอ</p><span class="ep">AutomationAlert</span></div>
       <div class="loop"><div class="ic">⚡</div><h3>พลังงานเป็นบาท</h3><p>ตามการใช้ไฟรายวันและต้นทุนจริง — รู้ว่าอุปกรณ์ไหนกินค่าไฟ</p><span class="ep">/api/energy</span></div>
-      <div class="loop"><div class="ic">⬆️</div><h3>อัปเดตจากที่เดียว</h3><p>อัปเดตเฟิร์มแวร์ ESP32 ทั้งบ้านจากหน้าเดียว มีประวัติ OtaEvent ทุกครั้ง กันแบรนด์อุปกรณ์ครึ่งทาง</p><span class="ep">/api/ota</span></div>
+      <div class="loop"><div class="ic">⬆️</div><h3>อัปเดตจากที่เดียว</h3><p>อัปเดตเฟิร์มแวร์ ESP32 ทั้งบ้านจากหน้าเดียว มีประวัติ OtaEvent ทุกครั้ง กันเครื่องพังกลางทาง</p><span class="ep">/api/ota</span></div>
     </div>
   </section>
 
