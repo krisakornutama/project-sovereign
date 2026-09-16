@@ -7,7 +7,7 @@
 ### ทางที่ 1 — อัปโหลดผ่านหน้าเว็บ GitHub (ง่ายสุด ไม่ต้องใช้ git)
 
 1. สมัคร/ล็อกอิน GitHub แล้วสร้าง repository ใหม่ ตั้งชื่อเช่น `project-sovereign` → **Public**
-2. กด **uploading an existing file** แล้วลากไฟล์จากโฟลเดอร์ `portfolio/` ขึ้นไปให้ครบทุกไฟล์ที่เว็บใช้ — หน้าเว็บ 12 ไฟล์ (`index.html`, `projects.html`, `livestock.html`, `fishery.html`, `farm.html`, `iot.html`, `education.html`, `water.html`, `books.html`, `search.html`, `en.html`, `me.html`) + `sitemap.xml` + `robots.txt` + **`og.png` (การ์ดแชร์เวลาแปะลิงก์ — ทุกหน้ามี meta ชี้ไฟล์นี้)** + **ไฟล์คีย์ IndexNow (`.txt` ชื่อ 32 ตัวอักษรอังกฤษ-ตัวเลข เนื้อหาในไฟล์ = ชื่อไฟล์เอง — ต้องอยู่ root เว็บ ไม่งั้นการยิง IndexNow จะถูกปฏิเสธ)** + `.nojekyll` + `README.md`
+2. กด **uploading an existing file** แล้วลากไฟล์จากโฟลเดอร์ `portfolio/` ขึ้นไปให้ครบทุกไฟล์ที่เว็บใช้ — หน้าเว็บ 12 ไฟล์ (`index.html`, `projects.html`, `livestock.html`, `fishery.html`, `farm.html`, `iot.html`, `education.html`, `water.html`, `books.html`, `search.html`, `en.html`, `me.html`) + `nav.css` + `nav.js` (เมนูหมวดฝั่งซ้าย + drawer มือถือ — ทุกหน้าโหลดสองไฟล์นี้) + `sitemap.xml` + `robots.txt` + **`og.png` (การ์ดแชร์เวลาแปะลิงก์ — ทุกหน้ามี meta ชี้ไฟล์นี้)** + **ไฟล์คีย์ IndexNow (`.txt` ชื่อ 32 ตัวอักษรอังกฤษ-ตัวเลข เนื้อหาในไฟล์ = ชื่อไฟล์เอง — ต้องอยู่ root เว็บ ไม่งั้นการยิง IndexNow จะถูกปฏิเสธ)** + `.nojekyll` + `README.md`
    - ถ้าหาไฟล์ `.nojekyll` ไม่เจอใน Explorer (เป็นไฟล์ที่ขึ้นต้นจุด) ให้ข้ามก่อน — ดูขั้น 4
 3. กด **Commit changes**
 4. ถ้ายังไม่ได้ใส่ `.nojekyll`: ใน repo กด **Add file → Create new file** ตั้งชื่อว่า `.nojekyll` (เนื้อหาว่าง) → Commit
@@ -20,7 +20,7 @@
 # ในโฟลเดอร์ portfolio/
 git init
 # og.png + ไฟล์คีย์ IndexNow (.txt 32 ตัวอักษร) ต้องขึ้นไปด้วย ไม่งั้นการ์ดแชร์กับการยิง IndexNow ใช้ไม่ได้
-git add *.html sitemap.xml robots.txt og.png .nojekyll README.md
+git add *.html nav.css nav.js sitemap.xml robots.txt og.png .nojekyll README.md
 git commit -m "portfolio: Project Sovereign showcase — self-hosted commerce OS with Thai tax engine + AI kids education"
 git branch -M main
 # สร้าง repo เปล่าบน GitHub ก่อน (ชื่อ project-sovereign) แล้วแก้ชื่อผู้ใช้ด้านล่าง:
