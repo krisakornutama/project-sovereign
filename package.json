@@ -7,7 +7,8 @@
     "serve": "node scripts/serve.mjs",
     "audit": "node scripts/audit.js",
     "check:copy": "node scripts/check-copy.mjs",
-    "check:copy:selftest": "node scripts/check-copy.mjs --self-test"
+    "check:copy:selftest": "node scripts/check-copy.mjs --self-test",
+    "test:templates": "node --test \"templates/thai-shop-kit/test/*.test.mjs\""
   },
   "devDependencies": {
     "playwright": "^1.62.1"

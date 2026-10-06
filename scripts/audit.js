@@ -425,6 +425,36 @@ async function main() {
   report(downFails.length === 0, `resilience: all ${pages.length} pages usable with Google Fonts unreachable (no errors, no overflow, text + layout intact)`, downFails.slice(0, 4).join(' ; '));
   await downCtx.close();
 
+  // shop: pack picker fills the select, and the inquiry form rejects bad input
+  // without navigating or sending anything. The happy path is deliberately NOT
+  // exercised — a successful submit POSTs a real message to the owner's inbox.
+  await goto('shop.html');
+  if (await p.locator('#buyForm').count()) {
+    await p.locator('[data-pack="templates"]').first().click();
+    await p.waitForTimeout(150);
+    const picked = await p.locator('#bPack').inputValue();
+    report(picked.includes('1,500'), 'widget shop: pack card fills the pack select', JSON.stringify(picked));
+
+    await p.locator('#buyForm button[type=submit]').click();
+    await p.waitForTimeout(250);
+    const emptyMsg = await p.locator('#buyMsg').innerText().catch(() => '');
+    report(emptyMsg.trim().length > 0 && p.url().includes('shop.html'), 'widget shop: empty inquiry blocked with a message', JSON.stringify(emptyMsg.slice(0, 40)));
+
+    await p.fill('#bName', 'ทดสอบ');
+    await p.fill('#bEmail', 'ไม่ใช่อีเมล');
+    await p.locator('#buyForm button[type=submit]').click();
+    await p.waitForTimeout(250);
+    const badMail = await p.locator('#buyMsg').innerText().catch(() => '');
+    report(badMail.includes('อีเมล'), 'widget shop: malformed email rejected', JSON.stringify(badMail.slice(0, 40)));
+
+    await p.fill('#bName', '');
+    await p.fill('#bEmail', 'a@b.co');
+    await p.locator('#buyForm button[type=submit]').click();
+    await p.waitForTimeout(250);
+    const noName = await p.locator('#buyMsg').innerText().catch(() => '');
+    report(noName.includes('ชื่อ'), 'widget shop: missing name rejected', JSON.stringify(noName.slice(0, 40)));
+  } else report(false, 'widget shop: #buyForm missing');
+
   // projects: contact form validation without navigation
   await goto('projects.html');
   if (await p.locator('#contactForm button[type=submit]').count()) {
