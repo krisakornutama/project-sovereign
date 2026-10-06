@@ -94,22 +94,16 @@ async function main() {
 
   /* เก็บผลด่านที่ต้อง "วัด" ไม่ใช่แค่ "หน้าพังไหม" — ฟอนต์ต้องถูกใช้จริง, ข้อความห้ามถูกตัดเงียบ,
      ปุ่มห้ามมีแค่สัญลักษณ์เป็นชื่อ (ถ้าฟอนต์ emoji หายผู้ใช้ต้องยังใช้เว็บได้) */
-  const gate = { fontFails: [], clipFails: [], emojiFails: [], iconFails: [], textLen: {} };
-  /* หน้าบางหน้ามีข้อความที่ "พิมพ์ทีละตัว" (บูต/จำลอง) — วัดตอนกำลังพิมพ์จะเทียบกันไม่ได้
-     จึงรอให้จำนวนตัวอักษรนิ่งก่อน (2 ตัวอย่างติดกันเท่ากัน) แล้วค่อยใช้เทียบ */
-  async function settledTextLen(page) {
-    /* คืน { len, settled } — หน้าที่มีข้อความ "พิมพ์/เติมท้ายต่อเนื่อง" (บูต log, จำลองเซนเซอร์)
-       ไม่มีจุดนิ่งให้รอเลย จึงต้องรายงานสถานะ unsettled แทนที่จะปลอมตัวเป็นตัวเลขนิ่ง
-       (ผู้เรียกใช้เทียบความยาวได้เฉพาะเมื่อทั้งสองข้าง settled) */
-    let prev = -1;
-    for (let i = 0; i < 14; i++) {
-      const n = await page.evaluate(() => document.body.innerText.length);
-      if (n === prev) return { len: n, settled: true };
-      prev = n;
-      await page.waitForTimeout(250);
-    }
-    return { len: prev, settled: false };
-  }
+  const gate = { fontFails: [], clipFails: [], emojiFails: [], iconFails: [], marks: {} };
+  /* ด่าน resilience เทียบ "สิ่งที่ผู้ใช้ต้องยังเห็น" (หัวข้อ + ปุ่ม/ลิงก์ที่มีชื่อ) ไม่ใช่จำนวนตัวอักษร:
+     หน้าบูตมี log พิมพ์ทีละบรรทัด ความยาวขยับเองโดยไม่เกี่ยวกับฟอนต์
+     (index.html วัดได้ 12705 → 12918 ทั้งที่ฟอนต์สภาพปกติทั้งสองรอบ) */
+  const marksOf = (p) => p.evaluate(() => ({
+    headings: [...document.querySelectorAll('h1,h2')].map((e) => (e.textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean),
+    controls: [...document.querySelectorAll('a,button,[role="button"],summary')]
+      .map((e) => ((e.innerText || '') + ' ' + (e.getAttribute('aria-label') || '') + ' ' + (e.getAttribute('title') || '')).replace(/\s+/g, ' ').trim())
+      .filter(Boolean),
+  }));
   const probe = (p) => p.evaluate(() => {
     /* `document.fonts.check()` ตอบ true ให้ตระกูลที่ไม่รู้จัก (ถือเป็น system font) —
        ตัวที่พิสูจน์ "โหลดมาจริง" คือจำนวน @font-face ของตระกูลนั้นที่ status=loaded */
@@ -160,8 +154,7 @@ async function main() {
     return {
       faces: { ibm: loadedFaces('IBM Plex Sans Thai Looped'), noto: loadedFaces('Noto Sans Thai Looped'), mono: loadedFaces('JetBrains Mono') },
       needs: { mono: uses('JetBrains Mono'), thaiInMono: thaiIn('JetBrains Mono') },
-      widths: { ibm: wIbm, noto: wNoto, serif: wSerif }, clipped, clipSample, emojiOnly, iconsLonely, iconSample,
-      textLen: document.body.innerText.length };
+      widths: { ibm: wIbm, noto: wNoto, serif: wSerif },      clipped, clipSample, emojiOnly, iconsLonely, iconSample };
   });
   /* ด่านฟอนต์: ตระกูลที่ "หน้านี้ใช้จริง" ต้องโหลดมาจริง (หน้าที่ไม่ได้ใช้ ไม่ต้องมี) */
   const fontGate = (m) => {
@@ -192,7 +185,7 @@ async function main() {
       if (m.clipped) gate.clipFails.push(`${at} ${m.clipped} clipped :: ${m.clipSample.join(' | ')}`);
       if (m.emojiOnly.length) gate.emojiFails.push(`${at} :: ${m.emojiOnly.join(' | ')}`);
       if (m.iconsLonely) gate.iconFails.push(`${at} ${m.iconsLonely} :: ${m.iconSample.join(' | ')}`);
-      if (label === 'desktop') gate.textLen[page] = await settledTextLen(p);
+      if (label === 'desktop') gate.marks[page] = await marksOf(p);
       await ctx.close();
     }
   }
@@ -412,17 +405,21 @@ async function main() {
         headingWidth: h ? h.getBoundingClientRect().width : document.body.scrollHeight,
       };
     });
-    const downTextLen = await settledTextLen(dp); // { len, settled }
+    const downMarks = await marksOf(dp);
     dp.off('console', onConsole);
     dp.off('pageerror', onPageError);
     if (m.faces !== 0) downFails.push(`${page}: ${m.faces} webfont face(s) still declared — blocking did not take effect, test is meaningless`);
     if (errs.length) downFails.push(`${page}: errors=${errs.length} :: ${errs[0]}`);
     if (m.overflow !== 0) downFails.push(`${page}: overflow=${m.overflow}`);
-    const base = gate.textLen[page];
-    if (base && base.settled && downTextLen.settled && downTextLen.len !== base.len) downFails.push(`${page}: rendered text changed ${base.len}→${downTextLen.len}`);
+    const base = gate.marks[page];
+    if (base) {
+      const present = new Set([...downMarks.headings, ...downMarks.controls]);
+      const lost = [...base.headings, ...base.controls].filter((t) => !present.has(t));
+      if (lost.length) downFails.push(`${page}: ${lost.length} heading/control lost with fonts down :: ${lost.slice(0, 3).join(' | ')}`);
+    }
     if (m.headingWidth < 20) downFails.push(`${page}: heading collapsed (${Math.round(m.headingWidth)}px)`);
   }
-  report(downFails.length === 0, `resilience: all ${pages.length} pages usable with Google Fonts unreachable (no errors, no overflow, text + layout intact)`, downFails.slice(0, 4).join(' ; '));
+  report(downFails.length === 0, `resilience: all ${pages.length} pages usable with Google Fonts unreachable (no errors, no overflow, headings + controls intact)`, downFails.slice(0, 4).join(' ; '));
   await downCtx.close();
 
   // shop: pack picker fills the select, and the inquiry form rejects bad input
