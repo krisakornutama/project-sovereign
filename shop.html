@@ -67,7 +67,6 @@ h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
 /* ── pack cards ── */
 .packgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .pack{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:26px 28px}
-.pack.hi{border-color:rgba(52,211,153,.42);box-shadow:0 0 34px rgba(52,211,153,.08)}
 .pack-kick{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--cyan);margin:0 0 8px}
 .pack h3{font-size:1.18rem;font-weight:600;color:#ecfdf5;margin:0 0 6px}
 .price{font-family:var(--mono);font-size:1.9rem;font-weight:700;color:var(--green);margin:0 0 4px}
@@ -195,19 +194,12 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
     <p class="sub">ราคาที่เห็นคือราคาที่จ่าย ทุกอย่างส่งเป็นไฟล์และคู่มือ ไม่มีการผูกเช่ารายเดือน และไม่มีบริการแอบแฝงที่ต้องมาคิดเงินเพิ่มทีหลัง</p>
 
     <div class="packgrid">
-      <article class="pack hi" id="pack-starter">
+      <article class="pack" id="pack-starter">
         <p class="pack-kick">ชิ้นที่ ๑ · ยังไม่เปิดขาย · กำลังทำอยู่</p>
         <h3>Sovereign Starter Pack</h3>
         <p class="price">4,500 ฿<small>ราคาวางแผน — ยังไม่เปิดรับจอง และยังไม่มีของให้ส่ง</small></p>
-        <p class="for">เหมาะกับ<b>ร้านค้า ร้านอาหาร และฟาร์ม</b> ที่อยากได้ระบบหลังบ้านทำงานเองในเครื่องของตัวเอง ไม่ต้องพึ่งคลาวด์รายเดือน</p>
-        <ul>
-          <li><b>ติดตั้งคลิกเดียว</b> — สคริปต์ตรวจ Docker สร้างไฟล์ตั้งค่าพร้อมรหัสลับสุ่มให้เอง แล้วยกสแตกขึ้นทั้งชุด</li>
-          <li><b>ตั้งค่าภาษีไทยให้เสร็จ</b> — อัตรา VAT ใบกำกับภาษี การแยกยอด และการจัดรูปแบบข้อมูลให้พร้อมส่งนักบัญชี</li>
-          <li><b>คู่มือปฏิบัติการ</b> — วิธีใช้งานรายส่วน การสำรองข้อมูล และวิธีกู้คืนเมื่อเครื่องมีปัญหา</li>
-          <li><b>ส่งมอบตัวต่อตัว 1 ครั้ง</b> — นัดคุยเพื่อส่งงานและตอบข้อสงสัยจนใช้งานได้จริง</li>
-        </ul>
         <div class="cta">
-          <p class="soon">ยังไม่เปิดรับจอง — ของชิ้นนี้ยังไม่เสร็จ จึงไม่รับคำสั่งซื้อไว้ก่อน เพื่อไม่ให้สัญญากับของที่ยังส่งไม่ได้</p>
+          <p class="soon">ยังไม่เปิดรับจอง — ของชิ้นนี้ยังไม่เสร็จ จึงยังไม่รับคำสั่งซื้อไว้ก่อน</p>
         </div>
       </article>
 
@@ -224,6 +216,7 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
         </ul>
         <div class="cta">
           <a class="btn btn-ghost" href="#inquiry" data-pack="templates">จองชุดนี้ →</a>
+          <a class="btn btn-ghost" href="templates/thai-shop-kit/README.md">เปิดไฟล์จริงก่อนซื้อ</a>
         </div>
       </article>
     </div>
