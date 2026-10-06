@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ทดลองใช้จริง — Harvest Ledger แดชบอร์ดดึงคอนเทนต์</title>
+<meta name="description" content="ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) ได้โดยตรงจากหน้านี้ — ลองฟรี 3 ครั้งแรก ไม่ต้องสมัครสมาชิก">
+<meta name="theme-color" content="#030712">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Ccircle cx='7' cy='7' r='3.6' fill='none' stroke='%2322d3ee' stroke-width='1.4'/%3E%3Cpath d='M10 10l3.4 3.4' stroke='%2334d399' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://krisakornutama.github.io/project-sovereign/demo.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Sovereign">
+<meta property="og:locale" content="th_TH">
+<meta property="og:title" content="ทดลองใช้จริง — Harvest Ledger แดชบอร์ดดึงคอนเทนต์">
+<meta property="og:description" content="แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) — ลองฟรี 3 ครั้งแรก ไม่ต้องสมัครสมาชิก">
+<meta property="og:url" content="https://krisakornutama.github.io/project-sovereign/demo.html">
+<meta property="og:image" content="https://krisakornutama.github.io/project-sovereign/og.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
+  --green:#34d399; --cyan:#22d3ee; --txt:#e5e7eb; --dim:#9ca3af; --faint:#6b7280;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Noto Sans Thai Looped','Cascadia Code','Courier New',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(52,211,153,.35);color:#ecfdf5}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+a{color:var(--green)}
+.topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:13px 24px;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px)}
+.topnav{display:flex;gap:15px;font-family:var(--mono);font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.topnav::-webkit-scrollbar{display:none}
+.topnav a{color:var(--dim);text-decoration:none}
+.topnav a:hover{color:var(--green)}
+.topnav a[aria-current="page"]{color:var(--cyan);border-bottom:1px solid var(--cyan)}
+.hero{max-width:960px;margin:0 auto;padding:64px 24px 24px}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;color:var(--cyan);margin:0 0 14px}
+h1{font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.25;margin:0 0 16px}
+h1 em{font-style:normal;color:var(--cyan)}
+.lede{color:var(--dim);font-size:1rem;margin:0 0 12px;max-width:62ch}
+.steps{display:grid;gap:10px;margin:22px 0 8px;padding:0;list-style:none;counter-reset:step}
+.steps li{counter-increment:step;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:12px 16px 12px 52px;position:relative;font-size:.95rem}
+.steps li::before{content:counter(step);position:absolute;left:16px;top:12px;width:24px;height:24px;border-radius:50%;
+  background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.4);color:var(--green);
+  font-family:var(--mono);font-size:.75rem;display:flex;align-items:center;justify-content:center}
+.frame-wrap{max-width:960px;margin:8px auto 0;padding:0 24px 24px}
+.frame{border:1px solid rgba(52,211,153,.35);border-radius:12px;overflow:hidden;background:#0b1220}
+.frame iframe{display:block;width:100%;height:min(78vh,720px);border:0;background:#0b1220}
+.fallback{max-width:960px;margin:0 auto;padding:0 24px 70px;color:var(--dim);font-size:.92rem}
+.fallback code{font-family:var(--mono);font-size:.82rem;background:rgba(52,211,153,.1);
+  padding:2px 8px;border-radius:6px;overflow-wrap:anywhere}
+@media (max-width:600px){
+  .hero{padding:48px 18px 18px}
+  .frame-wrap{padding:0 12px 18px}
+  .frame iframe{height:72vh}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "ทดลองใช้จริง — Harvest Ledger",
+  "description": "ทดลองใช้แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท ฟรี 3 ครั้งแรก",
+  "url": "https://krisakornutama.github.io/project-sovereign/demo.html",
+  "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }
+}
+</script>
+</head>
+<body>
+<header class="topbar">
+  <nav class="topnav" aria-label="เมนูหลัก">
+    <a href="index.html">ภาพรวม</a>
+    <a href="projects.html">ผลงาน</a>
+    <a href="demo.html" aria-current="page">ทดลองใช้</a>
+    <a href="books.html">คลังหนังสือ</a>
+    <a href="search.html">ค้นหา</a>
+    <a href="me.html">ผู้เขียน</a>
+  </nav>
+</header>
+<main>
+  <section class="hero">
+    <p class="eyebrow">LIVE DEMO · HARVEST LEDGER</p>
+    <h1>ทดลองใช้จริง <em>ไม่ต้องสมัคร</em></h1>
+    <p class="lede">แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) — วางลิงก์บทความแล้วกดดึงข้อมูลได้ทันที ฟรี 3 ครั้งแรก เกินจากนั้นเติมเครดิต Starter ฿99 หรือ Pro ฿299</p>
+    <ol class="steps">
+      <li>วางลิงก์บทความในช่องแล้วกดดึงข้อมูล — ระบบจะอ่านหัวข้อ คำอธิบาย และสถิติคำให้ทันที</li>
+      <li>เครดิตฟรีหมดแล้วกดปุ่มซื้อแพ็ก — จ่ายผ่าน Stripe เป็นเงินบาท ระบบเติมเครดิตให้อัตโนมัติ</li>
+      <li>อยากใช้แบบเต็มจอ เปิดที่ <a href="https://harvest-ledger.pages.dev/">harvest-ledger.pages.dev</a></li>
+    </ol>
+  </section>
+  <div class="frame-wrap">
+    <div class="frame">
+      <iframe src="https://harvest-ledger.pages.dev/" title="ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์" loading="lazy" referrerpolicy="no-referrer"></iframe>
+    </div>
+  </div>
+  <p class="fallback">ถ้ากรอบด้านบนไม่แสดงผล เปิดโดยตรงที่ <code>https://harvest-ledger.pages.dev/</code> แล้วกลับมาอ่านต่อที่ <a href="projects.html">หน้าผลงาน</a> หรือ <a href="me.html">หน้าผู้เขียน</a></p>
+</main>
+<script src="nav.js" defer></script>
+</body>
+</html>
