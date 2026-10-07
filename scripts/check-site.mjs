@@ -12,6 +12,8 @@
                                and og:url agreeing with the page's own URL
      3. IndexNow key           exactly one 32-hex key file at the site root,
                                whose content is the filename minus .txt
+     4. book covers            every published book declares cover + size, and
+                               the file it names is a real image on disk
 
    Run both gates for full coverage:
      node scripts/audit.js           (dead links + anchors + copy gate)
@@ -145,6 +147,39 @@ if (keyFiles.length === 1) {
   report(content === key, 'IndexNow key file content equals its filename',
     content === key ? key : `content "${content}" ≠ filename "${key}"`);
 }
+
+
+/* ───────── 4. Book covers — every listed book ships a real image ───────── */
+/* books.html renders whatever BOOKS_PUBLISHED declares, so the page can claim
+   a cover that does not exist. This ties the shelf to files that are actually
+   deployed: declared, sized, and an image rather than a saved error page. */
+const MAGIC = [[0xff, 0xd8, 0xff], [0x89, 0x50, 0x4e, 0x47], [0x47, 0x49, 0x46, 0x38]]; // JPEG · PNG · GIF8
+const isImage = (buf) => MAGIC.some((m) => m.every((b, i) => buf[i] === b)) ||
+  (buf.slice(0, 4).toString('ascii') === 'RIFF' && buf.slice(8, 12).toString('ascii') === 'WEBP');
+
+const shelf = fs.existsSync(path.join(ROOT, 'books.html'))
+  ? (read('books.html').match(/var BOOKS_PUBLISHED = \[([\s\S]*?)\];/) || [])[1] || ''
+  : '';
+const books = shelf.split(/\r?\n/).filter((l) => /\btitle\s*:/.test(l));
+const bookName = (l) => (l.match(/title:'([^']*)'/) || [])[1] || '(no title)';
+
+const sized = books.filter((l) => /\bcover\s*:/.test(l) && /\bcoverW\s*:/.test(l) && /\bcoverH\s*:/.test(l));
+report(books.length > 0 && sized.length === books.length,
+  `every published book declares cover + coverW + coverH (${books.length} books)`,
+  books.length === 0 ? 'BOOKS_PUBLISHED block empty or unparsable'
+    : sized.length === books.length ? `${books.length}/${books.length}`
+    : `incomplete: ${books.filter((l) => sized.indexOf(l) < 0).map(bookName).join(' · ')}`);
+
+const missing = [];
+for (const line of sized) {
+  const cover = (line.match(/\bcover\s*:\s*'([^']+)'/) || [])[1];
+  const file = path.join(ROOT, cover);
+  if (!fs.existsSync(file)) { missing.push(`${cover} — no file`); continue; }
+  const buf = fs.readFileSync(file);
+  if (!buf.length || !isImage(buf)) missing.push(`${cover} — not an image`);
+}
+report(missing.length === 0, 'every declared cover file exists and is a real image',
+  missing.length ? missing.join(' · ') : `${sized.length} files`);
 
 console.log(failures === 0 ? 'SITE CONTRACT CLEAN' : `SITE CONTRACT FAILED: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
