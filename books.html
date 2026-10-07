@@ -85,6 +85,7 @@ h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
   position:relative;display:flex;align-items:flex-end;padding:14px;overflow:hidden}
 .cover::before{content:'';position:absolute;top:0;bottom:0;left:10px;width:3px;border-radius:2px;
   background:linear-gradient(180deg,rgba(52,211,153,.65),rgba(34,211,238,.35))}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cover .cv-t{font-family:'Noto Sans Thai Looped',var(--thai);font-weight:600;font-size:.95rem;color:#ecfdf5;line-height:1.45;margin:0}
 .cover .cv-a{font-family:var(--mono);font-size:.62rem;color:var(--dim);margin:4px 0 0}
 .bk-title{font-family:'Noto Sans Thai Looped',var(--thai);font-weight:600;font-size:.95rem;color:#ecfdf5;line-height:1.5;margin:0}
@@ -259,14 +260,14 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
   "@context": "https://schema.org",
   "@graph": [
     { "@type": "CollectionPage", "@id": "https://krisakornutama.github.io/project-sovereign/books.html", "name": "คลังหนังสือ — ผลงานที่ลงพิมพ์ของ กฤษกรณ์ อุตมะ", "about": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" } },
-    { "@type": "Book", "name": "36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=374776", "inLanguage": "th" },
-    { "@type": "Book", "name": "36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก เล่ม2", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=375078", "inLanguage": "th" },
-    { "@type": "Book", "name": "เราโตมาเพื่อเชื่อหรือเพื่อคิด", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=365428", "inLanguage": "th" },
-    { "@type": "Book", "name": "เราโตมาเพื่อเชื่อหรือเพื่อคิด 2", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=370262", "inLanguage": "th" },
-    { "@type": "Book", "name": "มุ่งสู่จักรวรรดิ์ เล่ม 2", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=222303", "inLanguage": "th" },
-    { "@type": "Book", "name": "เมื่ออำนาจ ศีลธรรม และความโกรธพบกัน", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=401289", "inLanguage": "th" },
-    { "@type": "Book", "name": "The Nighttime Forest Orchestra", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=236380", "inLanguage": "en" },
-    { "@type": "Book", "name": "The world of bed Dream", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=236334", "inLanguage": "en" }
+    { "@type": "Book", "name": "36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=374776", "image": "https://krisakornutama.github.io/project-sovereign/assets/books/374776.jpg", "inLanguage": "th" },
+    { "@type": "Book", "name": "36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก เล่ม2", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=375078", "image": "https://krisakornutama.github.io/project-sovereign/assets/books/375078.jpg", "inLanguage": "th" },
+    { "@type": "Book", "name": "เราโตมาเพื่อเชื่อหรือเพื่อคิด", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=365428", "image": "https://krisakornutama.github.io/project-sovereign/assets/books/365428.jpg", "inLanguage": "th" },
+    { "@type": "Book", "name": "เราโตมาเพื่อเชื่อหรือเพื่อคิด 2", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=370262", "image": "https://krisakornutama.github.io/project-sovereign/assets/books/370262.jpg", "inLanguage": "th" },
+    { "@type": "Book", "name": "มุ่งสู่จักรวรรดิ์ เล่ม 2", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=222303", "image": "https://krisakornutama.github.io/project-sovereign/assets/books/222303.jpg", "inLanguage": "th" },
+    { "@type": "Book", "name": "เมื่ออำนาจ ศีลธรรม และความโกรธพบกัน", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=401289", "image": "https://krisakornutama.github.io/project-sovereign/assets/books/401289.jpg", "inLanguage": "th" },
+    { "@type": "Book", "name": "The Nighttime Forest Orchestra", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=236380", "image": "https://krisakornutama.github.io/project-sovereign/assets/books/236380.jpg", "inLanguage": "en" },
+    { "@type": "Book", "name": "The world of bed Dream", "author": { "@id": "https://krisakornutama.github.io/project-sovereign/me.html#person" }, "publisher": { "@type": "Organization", "name": "เข้าใจตรงกันนะ" }, "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=236334", "image": "https://krisakornutama.github.io/project-sovereign/assets/books/236334.jpg", "inLanguage": "en" }
   ]
 }
 </script>
@@ -275,20 +276,20 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
 /* ═══════════════════════════════════════════════════════════════
    BOOKS — ข้อมูลคลังหนังสือทั้งหมดอยู่ตรงนี้ไฟล์เดียว
    เพิ่มเล่มใหม่ = เพิ่มบรรทัดในอาร์เรย์ แล้ว push
-   ฟิลด์: title (บังคับ) · author · url · note ·
+   ฟิลด์: title (บังคับ) · author · url · note · cover (ไฟล์ปกจริงใน assets/books/) · coverW/coverH (กว้าง/สูง px) ·
          category: 'กลยุทธ์' | 'การแพทย์' | 'สงคราม' | 'การเมืองการปกครอง' | 'ชีวประวัติ' | 'อื่น ๆ' (เว้นว่าง = อื่น ๆ) ·
          year (ตัวเลข พ.ศ./ค.ศ.) · publisher · order (เลขน้อยมาก่อน — สั่งลำดับการ์ดเอง)
    ═══════════════════════════════════════════════════════════════ */
 var CATEGORIES = ['กลยุทธ์', 'การแพทย์', 'สงคราม', 'การเมืองการปกครอง', 'ชีวประวัติ', 'อื่น ๆ'];
 var BOOKS_PUBLISHED = [
-  { title:'36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=374776', note:'ชุด 36 ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก', category:'ชีวประวัติ', publisher:'เข้าใจตรงกันนะ', order:1 },
-  { title:'36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก เล่ม2', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=375078', note:'เล่ม 2 ของชุดเดียวกัน', category:'ชีวประวัติ', publisher:'เข้าใจตรงกันนะ', order:2 },
-  { title:'เราโตมาเพื่อเชื่อหรือเพื่อคิด', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=365428', note:'ชุด เราโตมาเพื่อเชื่อหรือเพื่อคิด', category:'ธรรมะ/ปรัชญา', publisher:'เข้าใจตรงกันนะ', order:3 },
-  { title:'เราโตมาเพื่อเชื่อหรือเพื่อคิด 2', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=370262', note:'เล่ม 2 ของชุดเดียวกัน', category:'ธรรมะ/ปรัชญา', publisher:'เข้าใจตรงกันนะ', order:4 },
-  { title:'มุ่งสู่จักรวรรดิ์ เล่ม 2', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=222303', note:'ชุด มุ่งสู่จักรวรรดิ์', category:'ประวัติศาสตร์', publisher:'เข้าใจตรงกันนะ', order:5 },
-  { title:'เมื่ออำนาจ ศีลธรรม และความโกรธพบกัน', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=401289', publisher:'เข้าใจตรงกันนะ', order:6 },
-  { title:'The Nighttime Forest Orchestra', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=236380', publisher:'เข้าใจตรงกันนะ', order:7 },
-  { title:'The world of bed Dream', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=236334', publisher:'เข้าใจตรงกันนะ', order:8 },
+  { title:'36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=374776', cover:'assets/books/374776.jpg', coverW:307, coverH:460, note:'ชุด 36 ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก', category:'ชีวประวัติ', publisher:'เข้าใจตรงกันนะ', order:1 },
+  { title:'36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก เล่ม2', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=375078', cover:'assets/books/375078.jpg', coverW:307, coverH:460, note:'เล่ม 2 ของชุดเดียวกัน', category:'ชีวประวัติ', publisher:'เข้าใจตรงกันนะ', order:2 },
+  { title:'เราโตมาเพื่อเชื่อหรือเพื่อคิด', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=365428', cover:'assets/books/365428.jpg', coverW:307, coverH:460, note:'ชุด เราโตมาเพื่อเชื่อหรือเพื่อคิด', category:'ธรรมะ/ปรัชญา', publisher:'เข้าใจตรงกันนะ', order:3 },
+  { title:'เราโตมาเพื่อเชื่อหรือเพื่อคิด 2', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=370262', cover:'assets/books/370262.jpg', coverW:307, coverH:460, note:'เล่ม 2 ของชุดเดียวกัน', category:'ธรรมะ/ปรัชญา', publisher:'เข้าใจตรงกันนะ', order:4 },
+  { title:'มุ่งสู่จักรวรรดิ์ เล่ม 2', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=222303', cover:'assets/books/222303.jpg', coverW:312, coverH:395, note:'ชุด มุ่งสู่จักรวรรดิ์', category:'ประวัติศาสตร์', publisher:'เข้าใจตรงกันนะ', order:5 },
+  { title:'เมื่ออำนาจ ศีลธรรม และความโกรธพบกัน', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=401289', cover:'assets/books/401289.jpg', coverW:307, coverH:460, publisher:'เข้าใจตรงกันนะ', order:6 },
+  { title:'The Nighttime Forest Orchestra', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=236380', cover:'assets/books/236380.jpg', coverW:312, coverH:405, publisher:'เข้าใจตรงกันนะ', order:7 },
+  { title:'The world of bed Dream', author:'กฤษกรณ์ อุตมะ', url:'https://www.mebmarket.com/index.php?action=BookDetails&book_id=236334', cover:'assets/books/236334.jpg', coverW:312, coverH:311, publisher:'เข้าใจตรงกันนะ', order:8 },
 ];
 var BOOKS_READ = [
   // { title:'ชื่อหนังสือ', author:'ชื่อผู้เขียน', url:'https://...', note:'ทำไมเล่มนี้จึงอยู่บนชั้น', category:'สงคราม', year:2567, publisher:'สำนักพิมพ์', order:2 },
@@ -332,7 +333,9 @@ function ordered(arr){
 }
 
 function bookCard(b){
-  var cover = '<div class="cover"><p class="cv-t">' + esc(b.title) + '</p>' + (b.author ? '<p class="cv-a">' + esc(b.author) + '</p>' : '') + '</div>';
+  var cover = b.cover
+    ? '<div class="cover"><img src="' + esc(b.cover) + '" alt="ปกหนังสือ ' + esc(b.title) + '" width="' + b.coverW + '" height="' + b.coverH + '" loading="lazy" decoding="async"></div>'
+    : '<div class="cover"><p class="cv-t">' + esc(b.title) + '</p>' + (b.author ? '<p class="cv-a">' + esc(b.author) + '</p>' : '') + '</div>';
   var link = b.url ? '<a class="bk-link" href="' + esc(b.url) + '" target="_blank" rel="noopener">เปิดแหล่งเดิม ↗</a>' : '';
   var cat = '<span class="tag cat">' + esc(catOf(b)) + '</span>';
   var publine = [];
