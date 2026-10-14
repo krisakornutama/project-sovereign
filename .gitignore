@@ -1,9 +1,1 @@
 node_modules/
-.scraper-verify/
-
-# scraper: ฐานข้อมูล SQLite เป็นของรัน — ห้าม commit
-*.sqlite
-*.sqlite-wal
-*.sqlite-shm
-scraper/*/node_modules/
-scraper/frontend/dist/
