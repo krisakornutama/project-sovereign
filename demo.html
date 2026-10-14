@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ทดลองใช้จริง — Harvest Ledger แดชบอร์ดดึงคอนเทนต์</title>
-<meta name="description" content="ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) ได้โดยตรงจากหน้านี้ — ลองฟรี 3 ครั้งแรก ไม่ต้องสมัครสมาชิก">
+<meta name="description" content="ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) ได้โดยตรงจากหน้านี้ — ลองฟรี 3 ครั้งแรก เครดิตไม่มีวันหมดอายุ">
 <meta name="theme-color" content="#030712">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Ccircle cx='7' cy='7' r='3.6' fill='none' stroke='%2322d3ee' stroke-width='1.4'/%3E%3Cpath d='M10 10l3.4 3.4' stroke='%2334d399' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="canonical" href="https://sovereignoriginshop.dpdns.org/demo.html">
@@ -12,13 +12,14 @@
 <meta property="og:site_name" content="Project Sovereign">
 <meta property="og:locale" content="th_TH">
 <meta property="og:title" content="ทดลองใช้จริง — Harvest Ledger แดชบอร์ดดึงคอนเทนต์">
-<meta property="og:description" content="แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) — ลองฟรี 3 ครั้งแรก ไม่ต้องสมัครสมาชิก">
+<meta property="og:description" content="แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) — ลองฟรี 3 ครั้งแรก เครดิตไม่มีวันหมดอายุ">
 <meta property="og:url" content="https://sovereignoriginshop.dpdns.org/demo.html">
 <meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="nav.css">
 <style>
 :root{
   --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
@@ -31,13 +32,6 @@ body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line
 ::selection{background:rgba(52,211,153,.35);color:#ecfdf5}
 :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
 a{color:var(--green)}
-.topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:12px;
-  padding:13px 24px;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px)}
-.topnav{display:flex;gap:15px;font-family:var(--mono);font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
-.topnav::-webkit-scrollbar{display:none}
-.topnav a{color:var(--dim);text-decoration:none}
-.topnav a:hover{color:var(--green)}
-.topnav a[aria-current="page"]{color:var(--cyan);border-bottom:1px solid var(--cyan)}
 .hero{max-width:960px;margin:0 auto;padding:64px 24px 24px}
 .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;color:var(--cyan);margin:0 0 14px}
 h1{font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.25;margin:0 0 16px}
@@ -67,28 +61,41 @@ h1 em{font-style:normal;color:var(--cyan)}
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "ทดลองใช้จริง — Harvest Ledger",
-  "description": "ทดลองใช้แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท ฟรี 3 ครั้งแรก",
+  "description": "ทดลองใช้แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท ฟรี 3 ครั้งแรก เครดิตไม่มีวันหมดอายุ",
   "url": "https://sovereignoriginshop.dpdns.org/demo.html",
   "author": { "@id": "https://sovereignoriginshop.dpdns.org/me.html#person" }
 }
 </script>
 </head>
-<body>
-<header class="topbar">
-  <nav class="topnav" aria-label="เมนูหลัก">
-    <a href="index.html">ภาพรวม</a>
-    <a href="projects.html">ผลงาน</a>
-    <a href="demo.html" aria-current="page">ทดลองใช้</a>
-    <a href="books.html">คลังหนังสือ</a>
-    <a href="search.html">ค้นหา</a>
-    <a href="me.html">ผู้เขียน</a>
-  </nav>
-</header>
+<body class="shell">
+
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">&#9788;</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html">ปศุสัตว์</a>
+  <a href="fishery.html">การประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="shop.html">ร้านค้า</a>
+  <a href="demo.html" aria-current="page">ทดลองใช้</a>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+
 <main>
   <section class="hero">
     <p class="eyebrow">LIVE DEMO · HARVEST LEDGER</p>
     <h1>ทดลองใช้จริง <em>ไม่ต้องสมัคร</em></h1>
-    <p class="lede">แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) — วางลิงก์บทความแล้วกดดึงข้อมูลได้ทันที ฟรี 3 ครั้งแรก เกินจากนั้นเติมเครดิต Starter ฿99 หรือ Pro ฿299</p>
+    <p class="lede">แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) — วางลิงก์บทความแล้วกดดึงข้อมูลได้ทันที ฟรี 3 ครั้งแรก เกินจากนั้นเติมเครดิต Starter ฿99 หรือ Pro ฿299 (เครดิตไม่มีวันหมดอายุ)</p>
     <ol class="steps">
       <li>วางลิงก์บทความในช่องแล้วกดดึงข้อมูล — ระบบจะอ่านหัวข้อ คำอธิบาย และสถิติคำให้ทันที</li>
       <li>เครดิตฟรีหมดแล้วกดปุ่มซื้อแพ็ก — จ่ายผ่าน Stripe เป็นเงินบาท ระบบเติมเครดิตให้อัตโนมัติ</li>
