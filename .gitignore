@@ -1,1 +1,13 @@
 node_modules/
+
+# scraper: ฐานข้อมูล SQLite เป็นของรัน — ห้าม commit
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+scraper/*/node_modules/
+scraper/frontend/dist/
+
+# marketplace: สำเนาไฟล์ออเดอร์ที่นำเข้า + ตำแหน่งเก็บข้อมูลลูกค้า
+# เป็นข้อมูลจริงของร้าน (ชื่อ ที่อยู่ เบอร์โทร) ห้ามหลุดขึ้น public เด็ดขาด
+scraper/marketplace-storage/
+scraper/marketplace/marketplace-storage/

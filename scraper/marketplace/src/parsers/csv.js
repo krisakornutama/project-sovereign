@@ -3,6 +3,38 @@
 // Both platforms export UTF-8 CSV with quoted fields that may contain commas,
 // newlines and doubled quotes. Writing this by hand avoids a dependency for the
 // whole project just to read two files a week.
+//
+// Thai sellers export from Excel, which defaults to the Windows-874 (TIS-620)
+// codepage rather than UTF-8. A file read as the wrong encoding gives mojibake
+// and the SKU column silently matches nothing. decodeBuffer() sniffs for that.
+
+import { readFileSync } from 'node:fs';
+
+/**
+ * Detect TIS-620/Windows-874 and decode to a proper JS string.
+ *
+ * A well-formed UTF-8 file decodes without replacement characters. Thai in
+ * Windows-874 read as UTF-8 produces U+FFFD, so its presence means the file is
+ * not UTF-8. Windows-874 and TIS-620 differ only in 0x80-0x9F, outside the Thai
+ * range this reader handles.
+ */
+export function decodeBuffer(buf) {
+  const utf8 = new TextDecoder('utf-8', { fatal: false }).decode(buf);
+  if (!utf8.includes('\uFFFD')) return { text: utf8, encoding: 'utf-8' };
+
+  try {
+    const thai = new TextDecoder('windows-874').decode(buf);
+    if (/[\u0E00-\u0E7F]/.test(thai)) return { text: thai, encoding: 'windows-874' };
+  } catch {
+    // Decoder unavailable — fall through to whatever we have.
+  }
+  return { text: utf8, encoding: 'utf-8 (พบอักขระเพี้ยน — ไฟล์อาจไม่ใช่ UTF-8)' };
+}
+
+export function readCsvFile(path) {
+  const { text, encoding } = decodeBuffer(readFileSync(path));
+  return { text, encoding };
+}
 
 export function parseCsv(text) {
   const rows = [];

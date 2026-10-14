@@ -12,12 +12,14 @@
 // keys needed for any of this.
 
 import { readFileSync } from 'node:fs';
-import { makeOrder, toBaht, isCancelled } from './src/schema.js';
+import { makeOrder, toBaht, isCancelled, isReturn } from './src/schema.js';
 import { parseShopeeCsv } from './src/parsers/shopee.js';
 import { parseLazadaCsv } from './src/parsers/lazada.js';
-import { parseCsv, toObjects } from './src/parsers/csv.js';
+import { parseCsv, toObjects, readCsvFile } from './src/parsers/csv.js';
+import { validateCsv, assertImportable } from './src/validate.js';
 import { computeTax, pp30Line } from './src/tax.js';
 import { applyStock, OVERSELL_POLICY } from './src/stock.js';
+import { beginImport, finishImport, storeSource, listImports, readStored } from './src/audit.js';
 import {
   loadStock, persistOnHand, loadApplied, loadRestored, markStockApplied,
   saveOrder, saveStockItem, listOrders, knownOrders, setShop, getShop
@@ -64,7 +66,37 @@ if (cmd === 'import') {
   const channel = (flag('channel') || 'shopee').toLowerCase();
   if (!file) { console.error('ต้องระบุไฟล์: import orders.csv --channel shopee'); process.exit(1); }
 
-  const text = readFileSync(file, 'utf8');
+  const dry = has('dry-run');
+
+  // Read + sniff encoding, then check the header shape before parsing. A renamed
+  // column used to import happily with every amount at zero.
+  let text, encoding;
+  try {
+    ({ text, encoding } = readCsvFile(file));
+  } catch (err) {
+    console.error(`อ่านไฟล์ไม่สำเร็จ: ${err.message}`);
+    process.exit(1);
+  }
+
+  let report;
+  try {
+    report = assertImportable(text, channel, encoding);
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
+  if (report.missingImportant.length || report.encoding.includes('�')) {
+    console.warn(`⚠ ตรวจโครงสร้างไฟล์: ${report.message}`);
+    if (report.unmapped.length) {
+      console.warn(`  คอลัมน์ที่ไม่รู้จัก (ข้ามไป): ${report.unmapped.slice(0, 8).join(', ')}${report.unmapped.length > 8 ? ' …' : ''}`);
+    }
+  }
+
+  const importId = beginImport({
+    sourceFile: file, channel, encoding, dryRun: dry, headers: report.headers
+  });
+  const storedFile = dry ? null : storeSource(importId, file);
+
   let orders;
   try {
     if (channel === 'shopee') orders = parseShopeeCsv(text);
@@ -72,10 +104,9 @@ if (cmd === 'import') {
     else orders = toObjects(parseCsv(text)).map((r) => makeOrder({ channel, ...r }));
   } catch (err) {
     console.error(`อ่านไฟล์ไม่สำเร็จ: ${err.message}`);
+    finishImport(importId, { ordersRead: 0, warnings: [`ล้มเหลว: ${err.message}`] });
     process.exit(1);
   }
-
-  const dry = has('dry-run');
   const stock = loadStock();
   const applied = loadApplied();
   const restored = loadRestored();
@@ -89,8 +120,9 @@ if (cmd === 'import') {
   console.log(`อ่าน ${orders.length} ออเดอร์ จาก ${file} (ช่องทาง: ${channel})`);
   if (dry) console.log('— โหมดทดลอง ไม่เขียนลงฐานข้อมูล —');
 
-  let newCount = 0, skippedCount = 0, stockTouched = 0;
-  let totalNet = 0, totalVat = 0, totalInput = 0, totalPayable = 0, totalFee = 0;
+  let newCount = 0, skippedCount = 0, stockTouched = 0, unmatchedCount = 0;
+  let totalNet = 0, totalVat = 0, totalInput = 0, totalPayable = 0, totalFee = 0, totalGross = 0;
+  const allWarnings = [];
 
   for (const order of orders) {
     // Fill known cost from the catalogue BEFORE tax runs, otherwise the first
@@ -115,22 +147,34 @@ if (cmd === 'import') {
     // A cancelled or returned order is not a sale. Counting it inflates revenue
     // and VAT on both ภ.พ.30 and the profit figure.
     const cancelled = isCancelled(order.status);
+    const returned = isReturn(order.status);
+    // A return keeps its revenue (it was a real sale in its own period) but the
+    // stock goes back, so it stays in the totals while a cancel drops out.
     if (isNew && !cancelled) {
       totalNet += t.netSalesSatang;
       totalVat += t.outputVatSatang;
       totalInput += t.inputVatSatang;
       totalPayable += t.payableVatSatang;
       totalFee += order.platformFeeSatang;
+      totalGross += order.grossSatang;
     }
+    unmatchedCount += order.stockLines.filter((l) => l.action === 'unmatched').length;
+    allWarnings.push(...order.warnings.map((w) => `${order.orderNo}: ${w}`));
 
-    const flagMark = !isNew ? 'ซ้ำ (ไม่หักสต็อกซ้ำ)' : cancelled ? 'ยกเลิก — ไม่นับรายได้' : 'ใหม่';
+    const flagMark = !isNew
+      ? 'ซ้ำ (ไม่หักสต็อกซ้ำ)'
+      : cancelled
+        ? 'ยกเลิก — ไม่นับรายได้'
+        : returned
+          ? 'คืนสินค้า — คืนสต็อก รายได้ยังอยู่งวดเดิม ต้องออกใบลดหนี้'
+          : 'ใหม่';
     console.log(`\n${order.orderNo} [${order.status}] ${flagMark}`);
     console.log(`  ยอดที่ลูกค้าจ่าย : ${baht(order.grossSatang)}`);
     console.log(`  รายได้สุทธิ     : ${baht(t.netSalesSatang)}   VAT ขาย ${baht(t.outputVatSatang)} · ซื้อ ${baht(t.inputVatSatang)} · ต้องจ่าย ${baht(t.payableVatSatang)}`);
     console.log(`  ค่าธรรมเนียนแพลตฟอร์ม: ${baht(order.platformFeeSatang)}`);
     if (t.profitSatang !== null) console.log(`  กำไร          : ${baht(t.profitSatang)}`);
     for (const l of order.stockLines) {
-      const mark = { deducted: 'ตัดสต็อก', 'deducted-oversell': 'ตัดสต็อก (ขาดจริง!)', restored: 'คืนสต็อก', 'already-applied': 'ตัดไปแล้ว', unmatched: 'ไม่พบสินค้า', blocked: 'สต็อกไม่พอ', 'skipped-status': 'ยังไม่นับขาย' }[l.action] || l.action;
+      const mark = { deducted: 'ตัดสต็อก', 'deducted-oversell': 'ตัดสต็อก (ขาดจริง!)', restored: l.reversalKind === 'returned' ? 'คืนสต็อก (คืนสินค้า)' : 'คืนสต็อก', 'already-restored': 'คืนไปแล้ว', 'already-applied': 'ตัดไปแล้ว', unmatched: 'ไม่พบสินค้า', blocked: 'สต็อกไม่พอ', 'skipped-status': 'ยังไม่นับขาย' }[l.action] || l.action;
       console.log(`  สต็อก ${l.sku ?? '(ไม่มี SKU)'} x${l.qty} → ${mark}${l.onHandAfter !== null && l.onHandAfter !== undefined ? ` (เหลือ ${l.onHandAfter})` : ''}`);
       if (l.action === 'deducted') stockTouched++;
     }
@@ -151,9 +195,23 @@ if (cmd === 'import') {
   }
 
   console.log(`\n${'─'.repeat(52)}`);
-  console.log(`สรุป ${newCount} ออเดอร์ใหม่ · ซ้ำ ${skippedCount} · ตัดสต็อก ${stockTouched} รายการ`);
+  console.log(`สรุป ${newCount} ออเดอร์ใหม่ · ซ้ำ ${skippedCount} · ตัดสต็อก ${stockTouched} รายการ · SKU ไม่ตรง ${unmatchedCount}`);
   console.log(`รายได้สุทธิ ${baht(totalNet)} · VAT ขาย ${baht(totalVat)} · VAT ซื้อ ${baht(totalInput)} · VAT สุทธิ ${baht(totalPayable)}`);
-  console.log(`ค่าธรรมเนียนรวม ${baht(totalFee)}`);
+  console.log(`ค่าธรรมเนียนรวม ${baht(totalFee)} · ยอดขายรวม ${baht(totalGross)}`);
+
+  finishImport(importId, {
+    storedFile,
+    ordersRead: orders.length,
+    ordersNew: newCount,
+    ordersDup: skippedCount,
+    stockDeducted: stockTouched,
+    unmatchedSku: unmatchedCount,
+    grossSatang: totalGross,
+    netSalesSatang: totalNet,
+    vatPayableSatang: totalPayable,
+    warnings: allWarnings
+  });
+  console.log(`บันทึกประวัติการนำเข้าแล้ว (#${importId})${dry ? ' — โหมดทดลองไม่เก็บสำเนาไฟล์' : ''}`);
   process.exit(0);
 }
 
@@ -208,6 +266,29 @@ if (cmd === 'orders') {
       '  ' + r.status
     );
   }
+  process.exit(0);
+}
+
+if (cmd === 'imports') {
+  const rows = listImports(Number(flag('limit', '10')));
+  if (!rows.length) { console.log('ยังไม่มีประวัติการนำเข้า'); process.exit(0); }
+  console.log('#'.padEnd(5) + 'เวลา'.padEnd(22) + 'ช่องทาง'.padEnd(9) + 'ไฟล์'.padEnd(24) + 'ออเดอร์'.padStart(8) + 'ใหม่'.padStart(6) + 'ตัดสต็อก'.padStart(10) + '  VAT สุทธิ');
+  console.log('─'.repeat(100));
+  for (const r of rows) {
+    console.log(
+      String(r.id).padEnd(5) +
+      String(r.startedAt).replace('T', ' ').slice(0, 19).padEnd(22) +
+      String(r.channel).padEnd(9) +
+      String(r.sourceFile).slice(0, 22).padEnd(24) +
+      String(r.ordersRead).padStart(8) +
+      String(r.ordersNew).padStart(6) +
+      String(r.stockDeducted).padStart(10) +
+      '  ' + baht(r.vatPayableSatang) +
+      (r.dryRun ? '  [ทดลอง]' : '')
+    );
+  }
+  console.log('\nดูรายละเอียด: node marketplace/cli.mjs imports --limit 20');
+  console.log('สำเนาไฟล์ต้นทางอยู่ใน marketplace-storage/imports/');
   process.exit(0);
 }
 

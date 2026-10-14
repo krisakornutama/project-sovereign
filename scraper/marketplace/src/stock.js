@@ -10,7 +10,7 @@
 //  4. Never go negative silently. Stock is allowed to hit 0 and the oversell is
 //     reported, because in reality you already sold it.
 
-import { isCancelled, isCounted } from './schema.js';
+import { isCancelled, isReturn, isReversal, isCounted } from './schema.js';
 
 export const OVERSELL_POLICY = {
   ALLOW_AND_REPORT: 'allow-and-report',
@@ -29,8 +29,12 @@ export function applyStock(order, { stock = new Map(), applied = new Set(), rest
   const lines = [];
   const key = (l) => `${order.channel}|${order.orderNo}|${l.sku ?? l.name}`;
 
-  if (isCancelled(order.status)) {
-    // Restore whatever we previously deducted.
+  if (isReversal(order.status)) {
+    // Both a cancel and a return put the goods back on the shelf. What differs
+    // is the accounting, and that lives in tax.js — here it is only the count
+    // that matters. isReturn() is checked so a RETURN_REFUND status cannot fall
+    // through to the "not counted yet" branch and leave stock stuck down.
+    const wasCancelled = isCancelled(order.status);
     for (const line of order.lines) {
       const k = key(line);
       const entry = stock.get(line.sku);
@@ -44,11 +48,18 @@ export function applyStock(order, { stock = new Map(), applied = new Set(), rest
         qty: line.qty,
         action: already ? 'already-restored' : 'restored',
         onHandAfter: entry ? entry.onHand : null,
-        matched: Boolean(entry)
+        matched: Boolean(entry),
+        // Kept for the report: the CLI prints a different note per case.
+        reversalKind: wasCancelled ? 'cancelled' : 'returned'
       });
     }
     order.stockApplied = true;
     order.stockLines = lines;
+    if (isReturn(order.status)) {
+      order.warnings.push(
+        'ออเดอร์คืนสินค้า — คืนสต็อกแล้ว แต่รายได้เดิมยังอยู่ในงวดที่ขาย ต้องออกใบลดหนี้ (Credit Note) ชดเชย'
+      );
+    }
     return order;
   }
 

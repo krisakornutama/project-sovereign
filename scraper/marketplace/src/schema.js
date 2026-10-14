@@ -110,5 +110,31 @@ export function isCounted(status) {
 
 export function isCancelled(status) {
   const s = String(status).toUpperCase();
-  return s === 'CANCELLED' || s === 'CANCELED' || s === 'RETURNED';
+  return s === 'CANCELLED' || s === 'CANCELED';
+}
+
+/**
+ * A return is not the same as a cancellation and must not be treated as one.
+ *
+ * Cancel = the sale never happened → drop it from revenue, give the goods back.
+ * Return = the sale happened, then the buyer sent it back → the revenue stands
+ * (it is reported in the period it was made) but the stock comes back and a
+ * credit note is owed. Collapsing the two quietly misstates both the stock count
+ * and the VAT position, so they are kept apart deliberately.
+ */
+export function isReturn(status) {
+  const s = String(status).toUpperCase();
+  return (
+    s === 'RETURNED' ||
+    s === 'RETURN_REFUND' ||
+    s === 'REFUNDED' ||
+    s === 'RETURN_IN_TRANSIT' ||
+    s === 'คืนสินค้า' ||
+    s === 'คืนเงิน'
+  );
+}
+
+/** Goods go back on hand for a cancel or a return, but the VAT treatment differs. */
+export function isReversal(status) {
+  return isCancelled(status) || isReturn(status);
 }
