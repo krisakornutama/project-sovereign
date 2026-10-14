@@ -1,0 +1,5 @@
+Order ID,Order Time,Status,Buyer Username,Order Amount,Shipping Fee,Shopee Fee,Seller Voucher,SKU,Product Name,Quantity,Unit Price
+2501AAA,2026-10-14 10:00:00,พร้อมจัดส่ง,buk,500,50,49,0,A1,กาแฟคั่วกลาง,2,250
+2501AAA,2026-10-14 10:00:00,พร้อมจัดส่ง,buk,500,50,49,0,B2,ขนมปังกรอบ,1,500
+2501BBB,2026-10-14 11:00:00,พร้อมจัดส่ง,som,300,40,29,0,A1,กาแฟคั่วกลาง,1,300
+2501CCC,2026-10-14 12:00:00,ยกเลิก,chao,250,45,24,0,A1,กาแฟคั่วกลาง,1,250
