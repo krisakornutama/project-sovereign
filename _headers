@@ -1,22 +1,29 @@
 /*
- * headers — GitHub Pages เสิร์ฟไฟล์ static ตรง ๆ ไม่ผ่าน Jekyll และ **อ่าน
- * ไฟล์ `_headers` ไม่ได้** (เป็นฟีเจอร์ของ Cloudflare Pages / Netlify เท่านั้น)
- *
- * หน้านี้เลยถูก deploy บน Cloudflare ที่อยู่หน้า CF (CF-RAY ปรากฏใน header ของ
- * sovereignoriginshop.dpdns.org) — ซึ่งอ่าน `_headers` ได้จริง จึงใส่ไฟล์นี้ไว้
- * ที่ root เพื่อให้ Cloudflare นำไปใช้
- *
- * ถ้าวันหนึ่งย้ายกลับไป GitHub Pages ตรง ๆ ไฟล์นี้จะไม่มีผล — ต้องตั้งค่า
- * header ผ่าน Cloudflare Transform Rules หรือย้ายเป็น Cloudflare Pages จริง ๆ
- *
- * ทำไมต้องมี: ตรวจ live แล้วทั้ง 3 เว็บตอบกลับมาโดยไม่มี security header ใด ๆ
- * (ดูหลักฐานใน PLAN.md) → ง่ายต่อการโจมตีและไม่บังคับการอ้างอิงแบบปลอดภัย
- */
-
-/*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   Content-Security-Policy: default-src 'self'; base-uri 'self'; frame-ancestors 'self'; object-src 'none'; form-action 'self' https://formspree.io; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://harvest-ledger.pages.dev; connect-src 'self'; upgrade-insecure-requests
+
+# ─────────────────────────────────────────────────────────────────────────────
+# หมายเหตุ: ไฟล์นี้ยัง "ไม่มีผล" กับเว็บที่ live อยู่ตอนนี้
+#
+# ตรวจแล้ว (14/10/69): sovereignoriginshop.dpdns.org ตอบ 200 แต่ไม่มี header
+# ไหนเลย แม้ไฟล์นี้ deploy ขึ้นไปแล้วก็ตาม
+#
+# สาเหตุ: เว็บนี้เป็น **GitHub Pages** (โปรเจกต์ project-sovereign) ซึ่ง
+# ไม่อ่านไฟล์ `_headers` — ฟีเจอร์นี้ของ Cloudflare Pages / Netlify เท่านั้น
+# (CF-RAY ที่เห็นใน header คือ Cloudflare ที่ทำ proxy อยู่ข้างหน้า Pages
+#  แต่ตัว Pages เองไม่ได้อ่าน `_headers`)
+#
+# วิธีเปิดใช้จริง — เลือกทางใดทางหนึ่ง:
+#   A) Cloudflare Transform Rules → "Modify Response Header" (ทำได้ผ่าน CF
+#      dashboard โดยไม่ต้องย้ายเว็บ · แนะนำ เพราะทำได้เลย)
+#   B) ย้ายเว็บไปเป็น Cloudflare Pages จริง (อ่าน `_headers` ได้เอง)
+#   C) ถ้าอยู่หลัง nginx/Caddy ที่คุณควบคุม ใส่ header ที่นั่นแทน
+#
+# ค่า CSP ด้านบนอนุญาตตามที่หน้าเว็บใช้จริงแล้ว: inline script/style ทุกหน้า,
+# Google Fonts, formspree (ฟอร์มติดต่อใน projects.html + shop.html) และ frame
+# ไป harvest-ledger.pages.dev (หน้า demo.html เท่านั้น)
+# ─────────────────────────────────────────────────────────────────────────────
