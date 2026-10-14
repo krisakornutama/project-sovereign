@@ -5,6 +5,15 @@
 
 body.shell{--rail-w:190px}
 
+/* ข้ามเมนู — คีย์บอร์ด/โปรแกรมอ่านจอจะได้ข้ามแถบ 16 รายการไปที่เนื้อหาตรง ๆ
+   ซ่อนจากสายตาปกติ แต่โผล่เมื่อฟันด้วยแท็บ (อยู่ในโฟกัสครั้งแรก) */
+.skip-link{position:absolute;left:8px;top:-60px;z-index:100;
+  padding:10px 16px;border-radius:8px;
+  background:rgba(3,7,18,.96);border:1px solid var(--green);color:var(--green);
+  font-family:var(--mono);font-size:.75rem;text-decoration:none;transition:top .12s ease}
+.skip-link:focus{top:8px}
+.skip-link:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+
 .rail{position:fixed;top:0;bottom:0;left:0;z-index:55;width:var(--rail-w);
   display:flex;flex-direction:column;padding-left:26px;
   background:rgba(3,7,18,.92);backdrop-filter:blur(10px);
@@ -17,6 +26,12 @@ body.shell{--rail-w:190px}
 .spine-t{writing-mode:vertical-rl;font-family:var(--mono);font-weight:700;font-size:.62rem;
   letter-spacing:.34em;color:#2A2118}
 .spine::after{content:'';width:7px;height:7px;border-radius:1px;background:#B3352C}
+
+/* วงแหวนโฟกัส — ไม่มีเส้นนี้ตอนก่อน: ผู้ใช้คีย์บอร์ดแท็บไปเมนูแล้วไม่รู้ว่าอยู่ตรงไหน
+   :focus-visible แสดงเฉพาะตอนแท็บด้วยคีย์บอร์ด คลิกเมาส์จึงไม่เห็นวงเหลืองรบกวน */
+.rail a:not(.spine):focus-visible,.rail-toggle:focus-visible{
+  outline:2px solid var(--green);outline-offset:-2px;border-radius:4px}
+.rail-toggle:focus-visible{outline-offset:2px}
 
 .rail .seclab{padding:12px 16px 4px;font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;
   color:var(--faint);text-transform:uppercase}
@@ -46,5 +61,11 @@ body.shell footer{margin-left:var(--rail-w)}
   body.rail-open .rail{transform:none}
   .rail-scrim{position:fixed;inset:0;z-index:45;display:none;background:rgba(3,7,18,.55)}
   body.rail-open .rail-scrim{display:block}
+}
+
+/* ล็อกการเลื่อนหน้าเมื่อ drawer เปิด — ตอนก่อนพื้นหลังยังเลื่อนได้ ทำให้เนื้อหาในกรอบ
+   หลุดไปข้างใต้และปุ่ม ☰ กดยาก */
+@media (max-width:900px){
+  body.rail-open{overflow:hidden}
 }
 @media (prefers-reduced-motion:reduce){.rail{transition:none}}
