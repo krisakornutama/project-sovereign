@@ -45,7 +45,9 @@ h1 em{font-style:normal;color:var(--cyan)}
   font-family:var(--mono);font-size:.75rem;display:flex;align-items:center;justify-content:center}
 .frame-wrap{max-width:960px;margin:8px auto 0;padding:0 24px 24px}
 .frame{border:1px solid rgba(52,211,153,.35);border-radius:12px;overflow:hidden;background:#0b1220}
-.frame iframe{display:block;width:100%;height:min(78vh,720px);border:0;background:#0b1220}
+.frame iframe{display:block;width:100%;height:min(86vh,880px);border:0;background:#0b1220}
+.frame-note{margin:8px 0 0;font-family:var(--mono);font-size:.68rem;color:var(--faint)}
+.frame-note a{color:var(--cyan)}
 .fallback{max-width:960px;margin:0 auto;padding:0 24px 70px;color:var(--dim);font-size:.92rem}
 .fallback code{font-family:var(--mono);font-size:.82rem;background:rgba(52,211,153,.1);
   padding:2px 8px;border-radius:6px;overflow-wrap:anywhere}
@@ -99,15 +101,16 @@ h1 em{font-style:normal;color:var(--cyan)}
     <ol class="steps">
       <li>วางลิงก์บทความในช่องแล้วกดดึงข้อมูล — ระบบจะอ่านหัวข้อ คำอธิบาย และสถิติคำให้ทันที</li>
       <li>เครดิตฟรีหมดแล้วกดปุ่มซื้อแพ็ก — จ่ายผ่าน Stripe เป็นเงินบาท ระบบเติมเครดิตให้อัตโนมัติ</li>
-      <li>อยากใช้แบบเต็มจอ เปิดที่ <a href="https://harvest-ledger.pages.dev/">harvest-ledger.pages.dev</a></li>
+      <li>อยากใช้แบบเต็มจอ เปิดที่ <a href="https://harvest-ledger.pages.dev/app">harvest-ledger.pages.dev/app</a></li>
     </ol>
   </section>
   <div class="frame-wrap">
     <div class="frame">
-      <iframe src="https://harvest-ledger.pages.dev/" title="ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์" loading="lazy" referrerpolicy="no-referrer"></iframe>
+      <iframe src="https://harvest-ledger.pages.dev/app" title="ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์" loading="lazy" referrerpolicy="no-referrer"></iframe>
     </div>
   </div>
-  <p class="fallback">ถ้ากรอบด้านบนไม่แสดงผล เปิดโดยตรงที่ <code>https://harvest-ledger.pages.dev/</code> แล้วกลับมาอ่านต่อที่ <a href="projects.html">หน้าผลงาน</a> หรือ <a href="me.html">หน้าผู้เขียน</a></p>
+  <p class="frame-note">เลื่อนในกรอบได้ · หรือเปิดแบบเต็มจอที่ <a href="https://harvest-ledger.pages.dev/app" target="_blank" rel="noopener">harvest-ledger.pages.dev/app</a></p>
+  <p class="fallback">ถ้ากรอบด้านบนไม่แสดงผล เปิดโดยตรงที่ <code>https://harvest-ledger.pages.dev/app</code> แล้วกลับมาอ่านต่อที่ <a href="projects.html">หน้าผลงาน</a> หรือ <a href="me.html">หน้าผู้เขียน</a></p>
 </main>
 <script src="nav.js" defer></script>
 </body>
