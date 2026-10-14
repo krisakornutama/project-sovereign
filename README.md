@@ -1,6 +1,29 @@
-# Portfolio — Project Sovereign
+# Project Sovereign
+
+รีโปนี้มี **2 แอป** ที่ปล่อยแยกกัน แต่เก็บโค้ดไว้ที่เดียว
+
+| ส่วน | ที่อยู่ในรีโป | ปล่อยที่ไหน | ตั้งค่าตอน deploy |
+|---|---|---|---|
+**เว็บสาธารณะ** (15 หน้า static) | root (`*.html`) | `sovereignoriginshop.dpdns.org` | GitHub Pages — workflow กรองเฉพาะไฟล์เว็บ |
+**Sovereign Scraper** (micro-SaaS) | [`scraper/`](scraper/) | `harvest-ledger.pages.dev` + `api.sovereignoriginshop.dpdns.org` | Vercel (frontend) + Railway (backend) |
+
+> ⚠️ `scraper/` **ไม่ถูกปล่อยไปกับเว็บ** — workflow ตรวจแล้ว fail ถ้าโค้ดหลุดขึ้น GitHub Pages
+> ดู [`scraper/README.md`](scraper/README.md) สำหรับวิธีรันและกฎความปลอดภัย
+
+## เว็บสาธารณะ
 
 เว็บโชว์ผลงานแบบ static หลายหน้า (`index.html` = ทัวร์ทั้งระบบ + `projects.html` = ผลงานทีละชิ้น + ฟอร์มติดต่อ + `livestock.html` = ปศุสัตว์ + `fishery.html` = แบบแปลนการประมง + `farm.html` = เกษตร&สมุนไพร + `iot.html` = บ้าน IoT + `education.html` = โมดูล AI สอนลูก + `water.html` = ชัยภูมิน้ำ (แนวคิดรางน้ำ-บ่อ-พื้นที่เพาะปลูกแบบค่ายกล 8 ทิศ) + `books.html` = คลังหนังสือของนักเขียน: ผลงานที่ลงพิมพ์+ลิงก์แหล่งเดิม และชั้นหนังสือที่อ่าน + `search.html` = ค้นหาทั้งเว็บจากช่องเดียว + `en.html` = หน้าแรกภาษาอังกฤษ + `me.html` = หน้ารวมช่องทางผู้เขียน (Person schema + link-in-bio สำหรับ SEO ชื่อ "กฤษกรณ์ อุตมะ / Krisakorn Utama") + `sitemap.xml`/`robots.txt` = ให้ bot ทุกตัว crawl ครบทุกหน้า) — ไม่มี build step ไม่มี dependency โฮสต์ฟรีด้วย GitHub Pages
+
+## ตรวจเว็บก่อนปล่อย
+
+```bash
+npm install --no-fund --no-audit
+npx playwright install chromium      # จำเป็นสำหรับส่วนที่ตรวจในเบราว์เซอร์
+node scripts/audit.js               # ลิงก์ · anchor · console error · overflow · widget
+npm run test:templates              # เทมเพลตภาษีไทย + สต็อก (127 เคส)
+```
+
+`npm run audit` คือประตูก่อน deploy — CI จะไม่ปล่อยเว็บถ้าตรวจไม่ผ่าน
 
 ## วิธีขึ้น GitHub Pages (เลือกทางใดทางหนึ่ง)
 
