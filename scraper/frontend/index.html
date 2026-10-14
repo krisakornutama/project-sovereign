@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sovereign Scraper — Content Harvest Ledger</title>
+    <meta
+      name="description"
+      content="Automated content scraper dashboard. Paste a link, harvest clean content metadata, manage the ledger, top up credits in THB via Stripe."
+    />
+    <link rel="canonical" href="https://harvest-ledger.pages.dev/" />
+    <meta name="theme-color" content="#171a2e" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sovereign Scraper — Content Harvest Ledger" />
+    <meta
+      property="og:description"
+      content="Micro-SaaS dashboard for automated web content harvesting with THB credit top-ups."
+    />
+    <meta property="og:url" content="https://harvest-ledger.pages.dev/" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What does Sovereign Scraper do?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Paste any article URL and the API harvests its title, description and content stats into a searchable ledger."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do credit top-ups work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Buy Starter or Pro packs through Stripe Checkout. All charges are in Thai Baht (THB) and confirmed via verified webhooks."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my payment secure?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Cards are processed by Stripe. Our servers only store the publishable key and verified webhook receipts — never card numbers."
+            }
+          }
+        ]
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
