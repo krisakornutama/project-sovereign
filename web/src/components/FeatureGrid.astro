@@ -3,7 +3,7 @@ import { projects } from './features.js';
 import { icons } from './icons.js';
 ---
 
-<section class="py-20 sm:py-28 bg-white dark:bg-dark-950">
+<section id="features" class="py-20 sm:py-28 bg-white dark:bg-dark-950">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-3xl mx-auto mb-16">
       <p class="text-sm font-mono text-sovereign-600 dark:text-sovereign-400 tracking-widest uppercase mb-4">คุณสมบัติหลัก</p>
@@ -16,32 +16,42 @@ import { icons } from './icons.js';
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-      {projects.map((project) => (
-        <article class="group card-hover p-6 sm:p-8">
-          <div class="relative mb-6">
-            <div class="w-12 h-12 rounded-xl bg-sovereign-100 dark:bg-sovereign-900/30 flex items-center justify-center text-sovereign-600 dark:text-sovereign-400 group-hover:scale-110 transition-transform duration-300">
-              <div set:html={icons[project.icon]} />
+      {projects.map((project, i) => {
+        /* id ตามหมวดเดิมของหน้าแรกเว็บเก่า — ลิงก์เดิมจากหน้าอื่น/เมนูแนวตั้งยังกระโดดถึงจุดที่หมายถึง
+           sell=ขาย/POS · ai=โรงเรียน AI · ops=บ้านอัจฉริยะ · map=แผนที่ฟาร์ม · remind=แจ้งเตือน · fulfil=ตัดสต็อก/ส่งของ
+           money/tax อยู่ในการ์ด Business OS (บัญชี/ภาษี) เป็น span ซ่อนภายใน */
+        const cardIds = ['sell', 'ai', 'ops', 'map', 'remind', 'fulfil'];
+        const hiddenIds = [{ card: 0, id: 'money' }, { card: 0, id: 'tax' }];
+        const articleId = cardIds[i] ?? undefined;
+        const hiddenHere = hiddenIds.filter((h) => h.card === i);
+        return (
+          <article id={articleId} class="group card-hover p-6 sm:p-8">
+            <div class="relative mb-6">
+              <div class="w-12 h-12 rounded-xl bg-sovereign-100 dark:bg-sovereign-900/30 flex items-center justify-center text-sovereign-600 dark:text-sovereign-400 group-hover:scale-110 transition-transform duration-300">
+                <div set:html={icons[project.icon]} />
+              </div>
             </div>
-          </div>
-          <h3 class="text-heading-md font-bold text-dark-950 dark:text-white mb-3 group-hover:text-sovereign-600 dark:group-hover:text-sovereign-400 transition-colors">
-            {project.title}
-          </h3>
-          <p class="text-body text-dark-600 dark:text-dark-400 mb-6 leading-relaxed">
-            {project.description}
-          </p>
-          <a href={project.href} class="inline-flex items-center gap-2 text-sm font-medium text-sovereign-600 dark:text-sovereign-400 hover:text-sovereign-700 dark:hover:text-sovereign-300 group">
-            เรียนรู้เพิ่มเติม
-            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-          </a>
-        </article>
-      ))}
+            <h3 class="text-heading-md font-bold text-dark-950 dark:text-white mb-3 group-hover:text-sovereign-600 dark:group-hover:text-sovereign-400 transition-colors">
+              {project.title}
+            </h3>
+            <p class="text-body text-dark-600 dark:text-dark-400 mb-6 leading-relaxed">
+              {project.description}
+            </p>
+            {hiddenHere.map((h) => <span id={h.id} class="hidden" aria-hidden="true" />)}
+            <a href={project.links?.[0]?.href ?? '/demo.html'} class="inline-flex items-center gap-2 text-sm font-medium text-sovereign-600 dark:text-sovereign-400 hover:text-sovereign-700 dark:hover:text-sovereign-300 group">
+              เรียนรู้เพิ่มเติม
+              <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </a>
+          </article>
+        );
+      })}
     </div>
 
     <div class="mt-16 text-center">
-      <a href="/features" class="btn-primary btn-lg">
-        ดูคุณสมบัติทั้งหมด
+      <a href="/projects/" class="btn-primary btn-lg">
+        ดูโปรเจ็กต์ทั้งหมด
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
         </svg>

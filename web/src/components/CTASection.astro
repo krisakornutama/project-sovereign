@@ -17,7 +17,7 @@ import OrbScene from './react/OrbScene.tsx';
       ข้อมูลอยู่ในมือคุณ 100%
     </p>
 
-    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12" id="download">
       <a href="#download" class="btn-lg bg-white text-sovereign-700 hover:bg-sovereign-100 px-8 py-3">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -33,6 +33,9 @@ import OrbScene from './react/OrbScene.tsx';
     </div>
 
     <div class="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+      <!-- จุดกระโดดสำหรับลิงก์เดิมจากหน้าเว็บชุดแรก: fit = เหมาะกับใคร, faq = ข้อความพลิกธรรมดา -->
+      <span id="fit" class="hidden" aria-hidden="true"></span>
+      <span id="faq" class="hidden" aria-hidden="true"></span>
       <div class="p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
         <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/20 flex items-center justify-center">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

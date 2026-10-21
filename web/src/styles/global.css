@@ -31,7 +31,7 @@
   --color-accent-red: #f87171;
 
   --font-sans: "IBM Plex Sans Thai Looped", "Noto Sans Thai Looped", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --font-mono: "JetBrains Mono", "Fira Code", "Noto Sans Thai Looped", monospace;
 
   --font-size-display-xl: clamp(2.5rem, 5vw, 4rem);
   --font-size-display-lg: clamp(2rem, 4vw, 3rem);
