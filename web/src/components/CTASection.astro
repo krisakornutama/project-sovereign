@@ -1,0 +1,65 @@
+---
+import OrbScene from './react/OrbScene.tsx';
+---
+<section class="relative overflow-hidden py-20 sm:py-28 bg-gradient-to-b from-sovereign-600 via-sovereign-700 to-sovereign-800 text-white">
+  <!-- React Three Fiber orb — เครื่องประดับด้านขวา (ซ่อนบนจอ <lg) -->
+  <div class="orb-slot absolute -right-24 top-1/2 -translate-y-1/2 opacity-40 pointer-events-none hidden lg:block" aria-hidden="true">
+    <OrbScene client:only="react" className="orb-canvas" />
+  </div>
+
+  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <p class="text-sm font-mono text-sovereign-200 tracking-widest uppercase mb-4">พร้อมเริ่มต้นใช้งาน?</p>
+    <h2 class="text-display-lg font-bold mb-6">
+      เริ่มใช้งานฟรีวันนี้ <span class="text-sovereign-200">— ไม่ต้องใส่บัตรเครดิต</span>
+    </h2>
+    <p class="text-body-lg text-sovereign-200 max-w-2xl mx-auto mb-10">
+      ติดตั้งบนเครื่องตัวเอง 100% ฟรี ไม่มีค่าสมัครรายเดือน ไม่มีข้อจำกัดฟีเจอร์
+      ข้อมูลอยู่ในมือคุณ 100%
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+      <a href="#download" class="btn-lg bg-white text-sovereign-700 hover:bg-sovereign-100 px-8 py-3">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        ดาวน์โหลดติดตั้ง (Windows/Linux/Mac)
+      </a>
+      <a href="https://github.com/krisakornutama/sovereign-origin" target="_blank" rel="noopener noreferrer" class="btn-outline btn-lg border-white text-white hover:bg-white/10 w-full sm:w-auto">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+        </svg>
+        ดูโค้ดบน GitHub
+      </a>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+      <div class="p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/20 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2z" />
+          </svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">Self-hosted 100%</h3>
+        <p class="text-sovereign-300">ข้อมูลอยู่ในมือคุณ รันบนเครื่องตัวเอง</p>
+      </div>
+      <div class="p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/20 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2z" />
+          </svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">ไม่มีค่าใช้จ่าย</h3>
+        <p class="text-sovereign-300">ฟรีตลอดชีวิต ไม่มีค่าสมัครรายเดือน</p>
+      </div>
+      <div class="p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10">
+        <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-white/20 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.178-1.332 9-6.03 9-11.622 0-1.042-.13-2.062-.38-3.04z" />
+          </svg>
+        </div>
+        <h3 class="font-semibold text-white mb-2">ข้อมูลของคุณ</h3>
+        <p class="text-sovereign-300">เราไม่เก็บข้อมูลของคุณบนเซิร์ฟเวอร์ของเรา</p>
+      </div>
+    </div>
+  </div>
+</section>

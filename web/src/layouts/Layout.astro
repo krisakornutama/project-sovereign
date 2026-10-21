@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+}
+const { title, description = 'Sovereign - ระบบหลังบ้านร้านค้า ขาย รับเงิน บัญชีพร้อมส่งนักบัญชี', canonical, ogImage = '/og.png' } = Astro.props;
+---
+<!doctype html>
+<html lang="th" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical || Astro.url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sovereign" />
+    <meta property="og:locale" content="th_TH" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical || Astro.url} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="h-full flex flex-col bg-white dark:bg-dark-950 text-dark-900 dark:text-dark-50">
+    <a href="#main" class="skip-link">ข้ามไปเนื้อหาหลัก</a>
+    <slot />
+    <footer class="mt-auto border-t border-dark-200 dark:border-dark-800 py-6 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-dark-500 dark:text-dark-400">
+        <p>&copy; {new Date().getFullYear()} Sovereign. สงวนลิขสิทธิ์.</p>
+        <nav class="flex gap-6">
+          <a href="/privacy" class="hover:text-sovereign-600 dark:hover:text-sovereign-400 transition-colors">นโยบายความเป็นส่วนตัว</a>
+          <a href="/terms" class="hover:text-sovereign-600 dark:hover:text-sovereign-400 transition-colors">เงื่อนไขการใช้งาน</a>
+          <a href="/contact" class="hover:text-sovereign-600 dark:hover:text-sovereign-400 transition-colors">ติดต่อเรา</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

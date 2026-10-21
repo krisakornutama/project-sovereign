@@ -1,0 +1,67 @@
+---
+import { projects } from './features.js';
+import { icons } from './icons.js';
+---
+
+<section class="py-20 sm:py-28 bg-white dark:bg-dark-950">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <p class="text-sm font-mono text-sovereign-600 dark:text-sovereign-400 tracking-widest uppercase mb-4">ผลงานของเรา</p>
+      <h2 class="text-display-lg font-bold text-dark-950 dark:text-white mb-6">
+        ผลงาน <span class="text-sovereign-600 dark:text-sovereign-400">3 เสา</span>
+        <br class="hidden sm:block" />
+        <em class="text-sovereign-600 dark:text-sovereign-400">สินค้าที่ขายได้และหลักฐานความเชี่ยวชาญเบื้องหลังมัน</em>
+      </h2>
+      <p class="text-body-lg text-dark-600 dark:text-dark-400 max-w-2xl mx-auto">
+        ผลงาน 3 เสา: สินค้าที่ขายได้และหลักฐานความเชี่ยวชาญเบื้องหลังมัน — ระบบหลังบ้านธุรกิจคิดภาษีไทยเอง, โรงเรียนในบ้าน AI สอนลูก, ระบบนิเวศบ้าน IoT
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      {projects.map((project) => (
+        <article class="group card-hover p-6 sm:p-8">
+          <div class="relative mb-6">
+            <div class="w-12 h-12 rounded-xl bg-sovereign-100 dark:bg-sovereign-900/30 flex items-center justify-center text-sovereign-600 dark:text-sovereign-400 group-hover:scale-110 transition-transform duration-300">
+              <div set:html={icons[project.icon]} />
+            </div>
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <h3 class="text-heading-md font-bold text-dark-950 dark:text-white group-hover:text-sovereign-600 dark:group-hover:text-sovereign-400 transition-colors">
+              {project.title}
+            </h3>
+            <span class="badge badge-{project.statusColor} text-xs">
+              {project.status}
+            </span>
+          </div>
+          <p class="text-sm text-dark-600 dark:text-dark-400 mb-2 font-medium">{project.subtitle}</p>
+          <p class="text-body text-dark-600 dark:text-dark-400 mb-6 leading-relaxed">
+            {project.description}
+          </p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            {project.tech.map((tech) => (
+              <span class="badge badge-neutral text-xs">{tech}</span>
+            ))}
+          </div>
+          <div class="flex flex-wrap gap-2">
+            {project.links.map((link, i) => (
+              <a href={link.href} class={`inline-flex items-center gap-2 text-sm font-medium transition-colors ${
+                link.primary ? 'btn-primary btn-sm' : 'btn-outline btn-sm'
+              }`}>
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-16 text-center">
+      <a href="/features" class="btn-primary btn-lg">
+        ดูคุณสมบัติทั้งหมด
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

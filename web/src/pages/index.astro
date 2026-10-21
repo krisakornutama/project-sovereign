@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import StatsBar from '../components/StatsBar.astro';
+import CTASection from '../components/CTASection.astro';
+import DemoSandbox from '../components/DemoSandbox.astro';
+---
+
+<Layout
+  title="Sovereign - ระบบหลังบ้านร้านค้า ขาย รับเงิน บัญชีพร้อมส่งนักบัญชี"
+  description="ระบบหลังบ้านสำหรับร้านค้า ร้านอาหาร และฟาร์มปศุสัตว์: ขาย รับเงิน PromptPay แยก VAT ออกใบกำกับ ลงบัญชี และจัดรูปแบบข้อมูลให้พร้อมส่งต่อนักบัญชี/สรรพากร — self-hosted ทั้งหมด ฟรี"
+  canonical="https://sovereignoriginshop.dpdns.org/"
+  ogImage="/og.png"
+>
+  <main class="flex-1">
+    <Hero />
+    <StatsBar />
+    <FeatureGrid />
+    <DemoSandbox />
+    <CTASection />
+  </main>
+</Layout>

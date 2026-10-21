@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectHero from '../components/ProjectHero.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import ProjectInvite from '../components/ProjectInvite.astro';
+---
+
+<Layout
+  title="งานแต่ละชิ้น — Project Sovereign"
+  description="ผลงานทีละชิ้นของ Project Sovereign: ระบบหลังบ้านธุรกิจคิดภาษีไทยเอง, โรงเรียนในบ้าน AI สอนลูก, ระบบนิเวศบ้าน IoT, ตลาดอัจฉริยะ — แต่ละชิ้นเล่าแนวคิด สิ่งที่มีจริงวันนี้ และสิ่งที่ต้องการเพื่อร่วมมือกันทำให้ใช้งานจริงระดับมืออาชีพ"
+  canonical="https://sovereignoriginshop.dpdns.org/projects"
+  ogImage="/og.png"
+>
+  <main class="flex-1">
+    <ProjectHero />
+    <ProjectGrid />
+    <ProjectInvite />
+  </main>
+</Layout>
