@@ -16,7 +16,7 @@ export const projects = [
     tech: ['Next.js', 'Express', 'PostgreSQL', 'Prisma', 'Docker'],
     statusBadge: 'r3',
     links: [
-      { label: 'ลองใช้งาน', href: '/demo', primary: true },
+      { label: 'ลองใช้งาน', href: '/demo.html', primary: true },
       { label: 'ดูโค้ด', href: 'https://github.com/krisakornutama/sovereign-origin' },
     ],
   },
@@ -38,8 +38,8 @@ export const projects = [
     tech: ['Next.js', 'Python', 'Ollama', 'PostgreSQL'],
     statusBadge: 'r2',
     links: [
-      { label: 'ลองใช้งาน', href: '/demo', primary: true },
-      { label: 'ดูรายละเอียด', href: '/sovereign-school' },
+      { label: 'ลองใช้งาน', href: '/demo.html', primary: true },
+      { label: 'ดูรายละเอียด', href: '/education.html' },
     ],
   },
   {
@@ -60,7 +60,7 @@ export const projects = [
     tech: ['Node-RED', 'MQTT', 'Zigbee2MQTT', 'Docker', 'Raspberry Pi'],
     statusBadge: 'r3',
     links: [
-      { label: 'ดูรายละเอียด', href: '/iot' },
+      { label: 'ดูรายละเอียด', href: '/iot.html' },
       { label: 'ดูโค้ด', href: 'https://github.com/krisakornutama/sovereign-origin' },
     ],
   },
@@ -82,7 +82,7 @@ export const projects = [
     tech: ['Next.js', 'Python', 'TimescaleDB', 'MQTT', 'ESP32'],
     statusBadge: 'r2',
     links: [
-      { label: 'ดูรายละเอียด', href: '/farm' },
+      { label: 'ดูรายละเอียด', href: '/farm.html' },
       { label: 'ดูโค้ด', href: 'https://github.com/krisakornutama/sovereign-origin' },
     ],
   },
@@ -104,7 +104,7 @@ export const projects = [
     tech: ['ESP32', 'BLE', 'LoRa/LoRaWAN', 'MQTT', 'Node-RED'],
     statusBadge: 'r3',
     links: [
-      { label: 'สั่งซื้อ', href: '/shop/sovereign-guard-mini', primary: true },
+      { label: 'สั่งซื้อ', href: '/shop.html', primary: true },
       { label: 'ดูโค้ด', href: 'https://github.com/krisakornutama/sovereign-origin' },
     ],
   },
@@ -126,7 +126,7 @@ export const projects = [
     tech: ['Next.js', 'TypeScript', 'Shopee/Lazada API', 'PostgreSQL'],
     statusBadge: 'r2',
     links: [
-      { label: 'ดูรายละเอียด', href: '/marketplace' },
+      { label: 'ดูรายละเอียด', href: '/projects/' },
       { label: 'ดูโค้ด', href: 'https://github.com/krisakornutama/sovereign-origin' },
     ],
   },
@@ -148,7 +148,7 @@ export const projects = [
     tech: ['ESP32', 'BLE', 'LoRa/LoRaWAN', 'MQTT', 'Node-RED'],
     statusBadge: 'r3',
     links: [
-      { label: 'สั่งซื้อ', href: '/shop/sovereign-guard-mini', primary: true },
+      { label: 'สั่งซื้อ', href: '/shop.html', primary: true },
       { label: 'ดูโค้ด', href: 'https://github.com/krisakornutama/sovereign-origin' },
     ],
   },

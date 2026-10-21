@@ -7,6 +7,17 @@ import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+/** WebGL/context หาได้หรือไม่ — ไม่มีเอฟเฟกต์ก็ไม่พังหน้า (CI headless ไม่มี GPU ต้องผ่าน) */
+function hasWebGL(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+  } catch {
+    return false;
+  }
+}
+
 function Orb() {
   const innerRef = useRef<THREE.Mesh>(null);
   const outerRef = useRef<THREE.Mesh>(null);
@@ -47,6 +58,22 @@ function Orb() {
 }
 
 export default function OrbScene({ className }: { className?: string }) {
+  // ไม่มี WebGL → คืนวงกลมเกรเดียนต์สถิตแทน Canvas (ไม่มี renderer = ไม่มี error)
+  if (!hasWebGL()) {
+    return (
+      <div
+        className={className}
+        aria-hidden="true"
+        style={{
+          width: '100%',
+          height: '100%',
+          background:
+            'radial-gradient(circle at 35% 30%, #34d39966 0%, transparent 60%), radial-gradient(circle at 70% 75%, #22d3ee55 0%, transparent 55%), #022c22 85%, #011c15',
+          borderRadius: '50%',
+        }}
+      />
+    );
+  }
   return (
     <Canvas
       className={className}

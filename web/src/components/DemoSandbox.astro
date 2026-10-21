@@ -13,61 +13,69 @@
       </p>
     </div>
 
-    <div class="relative max-w-5xl mx-auto">
-      <!-- Demo iframe container -->
+    <div class="relative max-w-5xl mx-auto" id="ops">
+      <!-- แผงเดโม: ต่อจากเวอร์ชันเดิมที่ฝัง iframe (โดเมนเดโมในเครื่องเท่านั้น จึงไม่โหลดหน้าเว็บได้ทุกเครื่อง)
+           เวอร์ชันนี้ชี้ไปที่หน้าเดโมสาธารณะที่มีจริง (demo.html) เพราะฉะนั้นไม่มีกรอบพัง ไม่มี error ค้าง -->
       <div class="relative bg-dark-950 dark:bg-dark-900 rounded-2xl overflow-hidden shadow-elevated border border-dark-200 dark:border-dark-700">
-        <!-- Top bar -->
+        <!-- Top bar (ตกแต่งเสมือนหน้าต่างแอป) -->
         <div class="flex items-center gap-2 px-4 py-3 bg-dark-900 dark:bg-dark-950 border-b border-dark-700">
           <div class="flex gap-1.5">
-            <div class="w-3 h-3 rounded-full bg-red-500" />
-            <div class="w-3 h-3 rounded-full bg-amber-500" />
-            <div class="w-3 h-3 rounded-full bg-green-500" />
+            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+            <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+            <div class="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
           <div class="flex-1 text-center">
-            <span class="text-xs font-mono text-dark-400 dark:text-dark-500">https://demo.sovereign.local</span>
+            <span class="text-xs font-mono text-dark-400 dark:text-dark-500">Harvest Ledger — โหมดทดลอง</span>
           </div>
           <div class="flex gap-1.5 ml-auto">
-            <div class="w-8 h-2 rounded bg-dark-700" />
-            <div class="w-8 h-2 rounded bg-dark-700" />
-            <div class="w-8 h-2 rounded bg-dark-700" />
+            <div class="w-8 h-2 rounded bg-dark-700"></div>
+            <div class="w-8 h-2 rounded bg-dark-700"></div>
+            <div class="w-8 h-2 rounded bg-dark-700"></div>
           </div>
         </div>
 
-        <!-- Demo tabs -->
-        <div class="flex border-b border-dark-700 bg-dark-800/50 dark:bg-dark-900/50 px-4">
+        <!-- แท็บโมดูล (อ้างอิงชุดโมดูลในแอปจริง) -->
+        <div class="flex flex-wrap border-b border-dark-700 bg-dark-800/50 dark:bg-dark-900/50 px-4">
           {['POS', 'สต็อก', 'บัญชี', 'ภาษี', 'AI', 'ตั้งค่า'].map((tab) => (
-            <button class="py-3 px-4 text-sm font-medium text-dark-400 dark:text-dark-400 hover:text-white dark:hover:text-white border-b-2 border-transparent hover:border-sovereign-500 transition-colors">
-              {tab}
-            </button>
+            <span class="py-3 px-4 text-sm font-medium text-dark-400 dark:text-dark-500">{tab}</span>
           ))}
         </div>
 
-        <!-- Demo content area -->
-        <div class="h-[500px] sm:h-[600px] overflow-hidden relative">
-          <iframe
-            src="https://demo.sovereign.local"
-            title="Sovereign Demo Sandbox"
-            class="w-full h-full border-0"
-            loading="lazy"
-            referrerpolicy="no-referrer"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-          ></iframe>
-
-          <!-- Fallback for when iframe is blocked -->
-          <div class="absolute inset-0 flex items-center justify-center bg-dark-900 dark:bg-dark-950 p-8 hidden" id="iframe-fallback">
-            <div class="text-center max-w-md mx-auto">
-              <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-sovereign-100 dark:bg-sovereign-900/30 flex items-center justify-center">
-                <svg class="w-8 h-8 text-sovereign-600 dark:text-sovereign-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 20h12" />
-                </svg>
+        <!-- ตัวแผงเนื้อหาเดโม (สถิตแบบลื่นตา โครงร่างแอป POS) -->
+        <div class="h-[380px] sm:h-[440px] overflow-hidden relative">
+          <div class="absolute inset-0 flex flex-col sm:flex-row">
+            <!-- คอลัมน์เมนูสินค้า (โครงร่าง) -->
+            <div class="sm:w-1/3 border-b sm:border-b-0 sm:border-r border-dark-700 p-5 space-y-3">
+              {[3, 2, 4, 2, 3, 2].map((w, i) => (
+                <div class="flex items-center gap-3">
+                  <div class={`w-9 h-9 rounded-lg bg-dark-800 border border-dark-700 shrink-0 ${i % 2 ? 'bg-sovereign-900/40' : ''}`}></div>
+                  <div class="flex-1 space-y-2">
+                    <div class={`h-2.5 rounded bg-dark-800`} style={`width:${w * 12}%`}></div>
+                    <div class="h-2 rounded bg-dark-800/60" style={`width:${w * 7}%`}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <!-- โซนยอดรวม + โอกาสรับเงิน -->
+            <div class="flex-1 p-6 flex flex-col">
+              <div class="grid grid-cols-3 gap-3 mb-6">
+                {['บิลวันนี้', 'ยอดขาย', 'VAT'].map((label) => (
+                  <div class="p-3 rounded-lg bg-dark-800/70 border border-dark-700">
+                    <p class="text-[10px] sm:text-xs font-mono text-dark-500 mb-1.5">{label}</p>
+                    <div class="h-3.5 w-3/4 rounded bg-sovereign-700/70"></div>
+                  </div>
+                ))}
               </div>
-              <h3 class="text-heading-md font-bold text-white mb-2">โหมดทดลองไม่สามารถโหลดได้</h3>
-              <p class="text-dark-400 dark:text-dark-500 mb-4">
-                เบราว์เซอร์ของคุณอาจบล็อก iframe หรือเครือข่ายไม่สามารถเชื่อมต่อได้
-              </p>
-              <a href="https://demo.sovereign.local" target="_blank" rel="noopener noreferrer" class="btn-primary btn-md inline-flex">
-                เปิดโหมดทดลองในแท็บใหม่
-                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="space-y-2.5 flex-1">
+                {[10, 7, 9, 6].map((w) => <div class="h-2.5 rounded bg-dark-800" style={`width:${w}%`}></div>)}
+              </div>
+              <a
+                href="/demo.html"
+                class="btn-primary btn-lg mt-6 w-full justify-center"
+                aria-label="เปิดโหมดทดลอง Harvest Ledger ฉบับเต็ม"
+              >
+                เปิดโหมดทดลองฉบับเต็ม
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </a>
@@ -78,7 +86,7 @@
     </div>
 
     <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="https://demo.sovereign.local" target="_blank" rel="noopener noreferrer" class="btn-primary btn-lg w-full sm:w-auto">
+      <a href="/demo.html" class="btn-primary btn-lg w-full sm:w-auto">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
         </svg>

@@ -11,6 +11,18 @@ interface ShaderBGProps {
   speed?: number;
 }
 
+/** WebGL สร้าง context ได้หรือไม่ — ถ้าไม่ได้จะคืน fallback ธรรมดา หน้ายังใช้งานได้ครบ
+ *  (เครื่องไม่มี GPU / headless CI ไม่ต้องพัง และห้ามมี error ใน console) */
+function hasWebGL(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+  } catch {
+    return false;
+  }
+}
+
 export default function ShaderBG({ speed = 0.08 }: ShaderBGProps) {
   const [reduceMotion, setReduceMotion] = useState(false);
   useEffect(() => {
@@ -20,6 +32,21 @@ export default function ShaderBG({ speed = 0.08 }: ShaderBGProps) {
     mq.addEventListener('change', onChange);
     return () => mq.removeEventListener('change', onChange);
   }, []);
+
+  // ไม่มี WebGL → คืนพื้นหลังสถิตที่มีเกรเดียนต์ CSS แทน (ห้ามสร้าง renderer ที่จะยิง error)
+  if (!hasWebGL()) {
+    return (
+      <div
+        aria-hidden="true"
+        style={{
+          width: '100%',
+          height: '100%',
+          background:
+            'radial-gradient(120% 120% at 20% 10%, #10b98155 0%, transparent 55%), radial-gradient(90% 90% at 85% 85%, #22d3ee44 0%, transparent 50%), #04150f',
+        }}
+      />
+    );
+  }
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
