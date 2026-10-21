@@ -5,8 +5,9 @@ const checks = [
   { label: 'หน้าแรก = เว็บใหม่ Astro (astro-island + dark-950)', path: '/', expect: async (r, t) => r.status === 200 && t.includes('astro-island') && t.includes('dark-950') },
   { label: 'หน้าแรกมี island GlassStats/ShaderBG', path: '/', expect: async (r, t) => t.includes('GlassStats') && t.includes('ShaderBG') },
   { label: '/projects.html หน้าใหม่ 200', path: '/projects.html', expect: async (r) => r.status === 200 },
-  { label: 'หน้าเก่า /books.html ยังอยู่', path: '/books.html', expect: async (r) => r.status === 200 },
-  { label: 'หน้าเก่า /demo.html ยังอยู่', path: '/demo.html', expect: async (r) => r.status === 200 },
+  ...['books', 'water', 'search', 'en', 'farm', 'fishery', 'livestock', 'guardmini', 'iot', 'education', 'me', 'demo'].map((p) => ({
+    label: `/${p}.html 200`, path: `/${p}.html`, expect: async (r) => r.status === 200,
+  })),
   { label: 'LEAK: /scraper/README.md ต้อง 404', path: '/scraper/README.md', expect: async (r) => r.status === 404 },
   { label: 'package-lock.json ยังอยู่ตามเดิม (tree คงของ; workflow v2 ค่อยกรอง)', path: '/package-lock.json', expect: async (r) => r.status === 200 },
   { label: 'LEAK: /web/package.json ต้อง 404', path: '/web/package.json', expect: async (r) => r.status === 404 },
