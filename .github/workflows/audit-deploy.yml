@@ -30,7 +30,7 @@ jobs:
       - name: Audit (links, anchors, console, overflow, widgets)
         run: node scripts/audit.js
 
-  deploy:
+  build:
     needs: audit
     runs-on: ubuntu-latest
     permissions:
@@ -42,10 +42,56 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Build Astro (web/)
+        working-directory: web
+        run: |
+          npm ci --no-audit --no-fund
+          npx astro build
+          test -f dist/index.html
+
+      - name: Stage site (เว็บสาธารณะเท่านั้น — ห้ามโค้ดหลุด)
+        run: |
+          # ห้ามใช้ path: . (อัปโหลดทั้งรีโปร) — ต้องกรองเฉพาะไฟล์ที่ปล่อยจริง
+          mkdir -p _site
+
+          # 1) เว็บสถิตเดิม 15 หน้า (ยังให้เข้าถึงได้จนกว่าจะย้ายครบ)
+          cp ./*.html _site/
+          cp ./nav.css ./nav.js ./og.png ./robots.txt ./sitemap.xml ./*.txt _site/ 2>/dev/null || true
+          cp ./_headers _site/ 2>/dev/null || true
+          cp ./.nojekyll _site/ 2>/dev/null || true
+
+          # 2) เว็บใหม่จาก Astro — ทับเฉพาะ path ที่มีทั้งคู่ (/ และ /projects/) ตัวใหม่ชนะ
+          cp -R web/dist/. _site/
+
+          # ─── ด่านป้องกัน: แหล่งโค้ด/ไฟล์ระบบ ห้ามปรากฏบนเว็บสาธารณะ ───
+          if [ -e _site/scraper ] || [ -e _site/web ] || [ -e _site/scripts ] || [ -e _site/templates ]; then
+            echo "::error::โฟลเดอร์ซอร์สโค้ด (scraper/web/scripts/templates) ติดไปกับเว็บ — หยุด deploy"; exit 1
+          fi
+          if find _site -type d | grep -q 'node_modules'; then
+            echo "::error::node_modules ติดไปกับเว็บ — หยุด deploy"; exit 1
+          fi
+          if find _site -type f \( -name 'package.json' -o -name 'package-lock.json' -o -name 'README.md' -o -name '.env*' \) | grep -q .; then
+            echo "::error::ไฟล์ metadata/secret (package*.json / README / .env) ติดไปกับเว็บ — หยุด deploy"; exit 1
+          fi
+          if find _site -type f \( -name '*.astro' -o -name '*.ts' -o -name '*.tsx' -o -name '*.mjs' -o -name '*.jsonl' \) | grep -q .; then
+            echo "::error::ซอร์สโค้ด (.astro/.ts/.tsx/.mjs) ติดไปกับเว็บ — หยุด deploy"; exit 1
+          fi
+          # .js อนุญาตเฉพาะ nav.js (ของเว็บเก่า) และไฟล์ built ใน _astro/
+          if find _site -type f -name '*.js' ! -name 'nav.js' ! -path '*/_astro/*' | grep -q .; then
+            echo "::error::มี .js นอกเหนือจาก nav.js/_astro — หยุด deploy"; exit 1
+          fi
+          ls -la _site
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
