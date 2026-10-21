@@ -105,12 +105,12 @@ h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
 .pipe{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 20px}
 .stage{font-family:var(--mono);font-size:.74rem;border:1px solid rgba(34,211,153,.3);border-radius:8px;padding:7px 13px;color:#a7f3d0;background:rgba(52,211,153,.05)}
 .arrow{color:var(--faint);font-family:var(--mono)}
-.loopgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.loop{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--panel)}
+.loopgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.loop{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--panel);min-width:0}
 .loop .ic{font-size:1.2rem}
 .loop h3{font-size:.86rem;font-weight:600;color:#ecfdf5;margin:8px 0 4px}
-.loop p{font-size:.74rem;color:var(--dim);margin:0;line-height:1.7}
-.loop .ep{font-family:var(--mono);font-size:.6rem;color:var(--cyan);display:block;margin-top:8px}
+.loop p{font-size:.74rem;color:var(--dim);margin:0;line-height:1.7;overflow-wrap:anywhere}
+.loop .ep{font-family:var(--mono);font-size:.6rem;color:var(--cyan);display:block;margin-top:8px;overflow-wrap:anywhere}
 
 /* ── progress report ── */
 .rep{display:grid;grid-template-columns:1fr 1fr;gap:12px}
