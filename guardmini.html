@@ -1,17 +1,4 @@
-<!doctype html>
-<html lang="th">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SovereignGuardMini — เฝ้าตู้แช่/ห้องเย็นแบบไม่เจาะตู้ · Project Sovereign</title>
-<meta name="description" content="กล่องเฝ้าระวังอุณหภูมิ/ไฟฟ้าสำหรับร้านอาหารและร้านค้า: ติดตั้งด้วยแท่นแม่เหล็กไม่เจาะตู้ ไม่ตัดสายไฟเดิม ตั้งค่าแจ้งเตือน Telegram ใน 3 นาที ข้อมูลอยู่ในร้าน 100% ไม่มีค่าบริการรายเดือน รับประกัน 1 ปี เสียเปลี่ยนกล่องใหม่ทันที">
-<meta name="author" content="กฤษกรณ์ อุตมะ (Krisakorn Utama)">
-<meta name="theme-color" content="#030712">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Cpath d='M3 6.5 8 3l5 3.5V13H3z' fill='%23F2D8D8'/%3E%3Crect x='6.8' y='8' width='2.4' height='5' fill='%23030712'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
+<!DOCTYPE html><html lang="th"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SovereignGuardMini — เฝ้าตู้แช่/ห้องเย็นแบบไม่เจาะตู้ · Project Sovereign</title><meta name="description" content="กล่องเฝ้าระวังอุณหภูมิ/ไฟฟ้าสำหรับร้านอาหารและร้านค้า: ติดตั้งด้วยแท่นแม่เหล็กไม่เจาะตู้ ไม่ตัดสายไฟเดิม ตั้งค่าแจ้งเตือน Telegram ใน 3 นาที ข้อมูลอยู่ในร้าน 100% ไม่มีค่าบริการรายเดือน รับประกัน 1 ปี เสียเปลี่ยนกล่องใหม่ทันที"><meta name="author" content="กฤษกรณ์ อุตมะ (Krisakorn Utama)"><meta name="theme-color" content="#030712"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Cpath d='M3 6.5 8 3l5 3.5V13H3z' fill='%23F2D8D8'/%3E%3Crect x='6.8' y='8' width='2.4' height='5' fill='%23030712'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
 :root{
   --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
   --green:#34d399; --cold:#22d3ee; --warn:#fbbf24; --alarm:#f87171;
@@ -167,221 +154,17 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
 .ev-date { font-size: 11.5px; color: #64748b; }
 .ev-canvas { width: 100%; height: 100%; display: block; }
 @media (max-width: 640px) { .ev-grid { grid-template-columns: 1fr; } }
-</style>
-<link rel="stylesheet" href="nav.css">
-<link rel="canonical" href="https://sovereignoriginshop.dpdns.org/guardmini.html">
-<meta property="og:type" content="website">
-<meta property="og:title" content="SovereignGuardMini — เฝ้าตู้แช่/ห้องเย็นแบบไม่เจาะตู้ · Project Sovereign">
-<meta property="og:description" content="กล่องเฝ้าระวังอุณหภูมิ/ไฟฟ้าสำหรับร้านอาหารและร้านค้า: ติดตั้งด้วยแท่นแม่เหล็กไม่เจาะตู้ ไม่ตัดสายไฟเดิม ตั้งค่าแจ้งเตือน Telegram ใน 3 นาที ข้อมูลอยู่ในร้าน 100% ไม่มีค่าบริการรายเดือน รับประกัน 1 ปี เสียเปลี่ยนกล่องใหม่ทันที">
-<meta property="og:url" content="https://sovereignoriginshop.dpdns.org/guardmini.html">
-<meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png">
-<meta property="og:image:alt" content="Project Sovereign — ระบบหลังบ้านร้านค้า ฟาร์ม และบัญชี">
-<meta name="twitter:card" content="summary_large_image">
-</head>
-<body class="shell">
-<a class="skip-link" href="#main">ข้ามไปเนื้อหาหลัก</a>
-
-<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">&#9788;</button>
-<aside class="rail" id="siteRail" role="navigation" aria-label="เมนูหน้าเว็บ">
-  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
-  <p class="seclab">หน้าเว็บ</p>
-  <a href="index.html">ภาพรวม</a>
-  <a href="projects.html">ผลงาน</a>
-  <a href="livestock.html">ปศุสัตว์</a>
-  <a href="fishery.html">การประมง</a>
-  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
-  <a href="guardmini.html" aria-current="page">SovereignGuardMini</a>
-  <a href="iot.html">บ้าน IoT</a>
-  <a href="education.html">AI สอนลูก</a>
-  <a href="books.html">คลังหนังสือ</a>
-  <a href="water.html">ชัยภูมิน้ำ</a>
-  <p class="seclab">เครื่องมือ</p>
-  <a href="shop.html">ร้านค้า</a>
-  <a href="demo.html">ทดลองใช้</a>
-  <a href="search.html">ค้นหา</a>
-  <a href="me.html">ผู้เขียน</a>
-  <a href="en.html">EN</a>
-</aside>
-
-<header class="topbar">
-  <nav class="topnav" aria-label="เมนูหลัก">
-    <a href="index.html">ภาพรวม</a>
-    <a href="#roi">ROI</a>
-    <a href="#install">ติดตั้ง 3 นาที</a>
-    <a href="#sla">รับประกัน</a>
-    <a href="#data">ข้อมูลเป็นของคุณ</a>
-    <a href="#failure">เมื่อไฟ/เน็ตมีปัญหา</a>
-    <a href="#evidence">หลักฐานหน้างาน</a>
-    <a href="#honest">ตรงไปตรงมา</a>
-  </nav>
-</header>
-
-<main id="main">
-  <!-- ═══ HERO + แถบเฝ้าระวังจำลอง ═══ -->
-  <section class="hero">
-    <p class="eyebrow">PROJECT SOVEREIGN · SOVEREIGNGUARDMINI</p>
-    <h1>ตู้แช่หลักหมื่นอยู่ในความเสี่ยง<br>กล่องเฝ้าระวัง <em>พันกว่าบาท</em> ปิดความเสี่ยงนั้น</h1>
-    <p class="lede">SovereignGuardMini ดักอุณหภูมิ/ไฟฟ้าผิดปกติของตู้แช่ ห้องเย็น และอุปกรณ์สำคัญในร้าน แล้วแจ้งเตือนเข้า Telegram ทันทีที่ค่าออกนอกเกณฑ์ — ติดตั้งด้วยแท่นแม่เหล็กไม่เจาะตู้ ไม่ตัดสายไฟเดิม ตั้งค่าเสร็จใน 3 นาที</p>
-
-    <div class="demo">
-      <div class="demo-hud">
-        <span class="hud-id"><b>Fridge-01</b> · ตู้แช่หน้าร้าน</span>
-        <span class="hud-net ok" id="hudNet">● online</span>
-      </div>
-      <div class="demo-main">
-        <div>
-          <div class="lcd">
-            <span class="lcd-t">TEMP</span>
-            <span class="lcd-v" id="lcdTemp">-16.2°C</span>
-            <span class="lcd-b" id="lcdZone">โซนปลอดภัย · บันทึกทุก 60 วิ</span>
-          </div>
-          <div class="bar" id="bar" role="img" aria-label="แถบอุณหภูมิจำลอง จาก +8 องศา ถึง -20 องศา โซนปลอดภัยของตู้แช่อยู่ช่วงล่าง"></div>
-          <div class="scale"><span>+8°</span><span>0°</span><span>−5°</span><span>−10°</span><span>−15°</span><span>−20°</span></div>
-        </div>
-        <div class="alertbox">
-          <div class="ab-h"><span class="ab-dot"></span>ข้อความที่เจ้าของได้รับ</div>
-          <div class="ab-item" id="abItem" aria-live="polite">พร้อมเฝ้าระวัง — อุณหภูมิปกติทุกจุด</div>
-        </div>
-      </div>
-      <div class="demo-ctl" role="group" aria-label="จำลองเหตุขัดข้อง">
-        <span class="ctl-lab">จำลองเหตุ:</span>
-        <button type="button" class="ctl" data-sc="power">ไฟดับ</button>
-        <button type="button" class="ctl" data-sc="net">เน็ตหลุด</button>
-        <button type="button" class="ctl" data-sc="sensor">เซ็นเซอร์หลุด</button>
-        <button type="button" class="ctl ctl-reset" id="resetBtn" hidden>กลับสู่ปกติ</button>
-      </div>
-    </div>
-
-    <div class="cta">
-      <a class="btn btn-primary" href="#roi">ดูเหตุผลที่คุ้มก่อนซื้อ →</a>
-      <a class="btn btn-ghost" href="index.html">กลับหน้าภาพรวม</a>
-    </div>
-    <p class="meta-line">แถบข้างบนเป็นการจำลองพฤติกรรมเพื่อสาธิต · ตัวเลขเปรียบเทียบเป็นตัวอย่างคำนวณจากกรณีทั่วไป</p>
-  </section>
-
-  <!-- ═══ ROI ═══ -->
-  <section id="roi">
-    <p class="k-ch">// ROI-CENTRIC · <b>ความเสี่ยงที่ป้องกันได้</b></p>
-    <h2>คิดเป็น "ความเสี่ยงที่ป้องกันได้" ไม่ใช่ "ของแปลกใหม่"</h2>
-    <p class="sub">เจ้าของร้านไม่ได้ซื้อกล่อง — ซื้อการนอนตื่นสายโดยไม่ต้องลุกไปเช็คตู้แช่ และไม่เจอวัตถุดิบหลักหมื่นเสียหายเพราะไฟดับตอนตีสาม</p>
-    <div class="roi">
-      <div class="pricebox">
-        <div class="p">1,290–1,490 ฿ <small>ต่อจุด</small></div>
-        <div class="n">
-          ราคาขายปลีกต่อกล่อง (ตัวอย่างตลาด) · จ่ายครั้งเดียว ไม่มีค่ารายเดือน<br>
-          ข้อมูลทั้งหมดอยู่ในร้าน — ไม่มีค่า SaaS แอบแฝง
-        </div>
-      </div>
-      <div class="riskbox">
-        <div class="p">10,000+ ฿</div>
-        <div class="n">
-          มูลค่าวัตถุดิบในตู้แช่ร้านอาหารทั่วไป (เนื้อ อาหารทะเล ผัก ของสด) — ทั้งหมดเสี่ยงเสียหายจากไฟดับ/คอมเพรสเซอร์พัง/ปิดประตูไม่สนิทโดยไม่มีใครรู้
-        </div>
-      </div>
-    </div>
-    <p class="ratio">
-      ถ้ากล่องช่วยกันเหตุได้แค่ <b>1 ครั้ง</b> ในอายุหลายปีของมัน ก็คืนทุนแล้ว — ส่วนที่เหลือคือกำไรที่<b>ไม่ต้องเสียไปเลย</b> และการติดตั้งไม่กระทบการขายแม้แต่นาทีเดียว
-    </p>
-  </section>
-
-  <!-- ═══ INSTALL ═══ -->
-  <section id="install">
-    <p class="k-ch">// ZERO-CONFIG &amp; NON-INVASIVE</p>
-    <h2>ติดตั้งเองได้ใน 3 นาที ไม่เจาะ ไม่ตัดสาย</h2>
-    <p class="sub">พนักงานหน้าร้านติดเองได้ — ไม่ต้องรอช่าง ไม่ต้องปิดร้าน ไม่กระทบอุปกรณ์เดิมของร้าน</p>
-    <div class="steps">
-      <div class="step"><div class="no">ขั้นที่ 1 · ~1 นาที</div><h3>แปะแท่นแม่เหล็ก</h3><p>แปะกล่องบนแท่นยึดแม่เหล็กนอกตู้ — ไม่ต้องเจาะตู้ ไม่ทิ้งรอย ย้ายตำแหน่งได้ทุกเมื่อ</p></div>
-      <div class="step"><div class="no">ขั้นที่ 2 · ~1 นาที</div><h3>สอดเซนเซอร์เข้าขอบยาง</h3><p>สายเซนเซอร์แบนพิเศษ สอดเข้าขอบยางประตูตู้ได้ทันที — ไม่ต้องเจาะรู ไม่ต้องแกะฉนวน</p></div>
-      <div class="step"><div class="no">ขั้นที่ 3 · ~1 นาที</div><h3>เชื่อมแจ้งเตือน</h3><p>เปิดหน้าตั้งค่าจากมือถือ กรอก Telegram ของร้าน — ทดสอบส่งข้อความ 1 ครั้ง จบ</p></div>
-    </div>
-    <ul class="bullet">
-      <li><b>ไม่ตัดต่อสายไฟเดิมของร้าน</b> — ใช้ปลั๊กปกติ ตัดความกังวลเรื่องความปลอดภัยไฟฟ้าและประกันอาคาร</li>
-      <li><b>ไม่กระทบการขาย</b> — ไม่ต้องปิดร้าน ไม่ต้องขยับตู้ ติดวันนี้ เฝ้าได้ทันที</li>
-      <li><b>ย้ายได้</b> — ย้ายกิจการ/เปลี่ยนตู้ ถอนแล้วไปติดร้านใหม่ได้ทันที</li>
-    </ul>
-  </section>
-
-  <!-- ═══ SLA ═══ -->
-  <section id="sla">
-    <p class="k-ch">// SLA &amp; MODULAR SUPPORT</p>
-    <h2>รับประกัน 1 ปีเต็ม เสีย = เปลี่ยนกล่องใหม่ทันที</h2>
-    <p class="sub">ออกแบบให้ซ่อมง่ายและไม่กระทบการทำงานของร้าน — เพราะการรอซ่อมคือความเสี่ยงที่ร้านต้องแบกเอง</p>
-    <div class="sla">
-      <div class="card"><div class="t">เสียเปลี่ยนกล่องใหม่ทันที (Drop-in Replacement)</div><div class="d">ในระยะรับประกัน ถ้ากล่องมีปัญหา ส่งกล่องเก่ากลับแล้วใช้กล่องใหม่ต่อได้ทันที — ตั้งค่าใหม่ใน 3 นาที ร้านกลับมาเฝ้าได้ในวันเดียว</div><span class="st">ระบุชัดในเงื่อนไข</span></div>
-      <div class="card"><div class="t">Modular Support</div><div class="d">ตัวเครื่อง แท่นแม่เหล็ก สายเซนเซอร์ เป็นโมดูลแยกกัน — อะไรชำรุดเปลี่ยนเฉพาะชิ้นนั้น ไม่ต้องทิ้งทั้งชุด</div><span class="st">ซ่อมบำรุงง่าย</span></div>
-      <div class="card"><div class="t">รับประกัน 1 ปีเต็ม</div><div class="d">ครอบคลุมความผิดปกติของตัวเครื่องและเซนเซอร์ — เงื่อนไขแบบชัดเจน ไม่ซ่อนข้อความเล็ก</div><span class="st">1 ปี</span></div>
-    </div>
-  </section>
-
-  <!-- ═══ DATA ═══ -->
-  <section id="data">
-    <p class="k-ch">// DATA OWNERSHIP &amp; ZERO SAAS FEE</p>
-    <h2>ข้อมูลยอดขาย สต็อก และการเฝ้าระวัง อยู่ในร้าน 100%</h2>
-    <p class="sub">Mini PC ภายในร้านเป็นที่เก็บข้อมูลทั้งหมด — ไม่มี Cloud ข้างนอกอ่าน ไม่มีผู้ขายถือสิทธิ์ข้อมูลแทนคุณ</p>
-    <div class="sla">
-      <div class="card"><div class="t">ข้อมูลอยู่ในเครื่องร้าน 100%</div><div class="d">ยอดขาย สต็อก บัญชี และบันทึกอุณหภูมิ เก็บใน Mini PC ภายในร้าน — ไม่มีข้อมูลหลุดออก Cloud ภายนอก</div><span class="st">Data Sovereignty</span></div>
-      <div class="card"><div class="t">ไม่มีค่าบริการซอฟต์แวร์รายเดือน</div><div class="d">ไม่มี subscription ไม่มีค่า cloud ไม่มีค่าเปิดฟีเจอร์ — ค่าใช้จ่ายเดียวคือค่าไฟที่จ่ายอยู่แล้ว</div><span class="st">Zero SaaS Fee</span></div>
-      <div class="card"><div class="t">สำรองอัตโนมัติ ซ้อมกู้จริง</div><div class="d">ระบบหลังบ้านสำรองฐานข้อมูลทุกวันตีสาม และซ้อมกู้คืนจริง — ไฟดับ/เครื่องเสีย ข้อมูลไม่หาย</div><span class="st">Backup &amp; Restore</span></div>
-      <div class="card"><div class="t">เตือนผ่านช่องทางที่ร้านมีอยู่แล้ว</div><div class="d">Telegram เป็นเพียงช่องทาง "ส่งข้อความ" — ข้อมูลจริงยังอยู่ในร้าน ช่องทางเปลี่ยนได้ทุกเมื่อ</div><span class="st">ไม่ผูกมัดแพลตฟอร์ม</span></div>
-    </div>
-  </section>
-
-  <!-- ═══ FAILURE MODES ═══ -->
-  <section id="failure">
-    <p class="k-ch">// FAILURE MODE HANDLING</p>
-    <h2>เมื่อไฟ/เน็ต/เซ็นเซอร์มีปัญหา — ระบบทำอะไร</h2>
-    <p class="sub">ออกแบบเผื่อวันร้าน เพราะเหตุขัดข้องมักเกิดตอนที่มองไม่เห็น — ลองกดจำลองทั้งสามเหตุได้จากแถบเฝ้าระวังข้างบน</p>
-    <div class="fail">
-      <div class="fcase"><div class="ic">🌐</div><h3>เน็ตหลุด</h3><p>กล่องเก็บบันทึกอุณหภูมิไว้ใน Memory ชั่วคราว — พอเน็ตกลับมา ยังส่งประวัติที่ขาดหายไปให้ครบ แจ้งเตือนสำคัญเก็บไว้ส่งทีหลัง ไม่หายไปเลย</p><div class="res">ผล: ไม่มีช่องว่างข้อมูล</div></div>
-      <div class="fcase"><div class="ic">🔌</div><h3>ไฟดับ</h3><p>กล่องทำงานต่อด้วยแบตเตอรี่สำรอง และส่งข้อความ "ไฟดับ" เข้า Telegram ทันทีที่ตรวจพบ — ร้านรู้ตัวก่อนของเสีย</p><div class="res">ผล: รู้ตัวภายในนาที</div></div>
-      <div class="fcase"><div class="ic">📡</div><h3>เซ็นเซอร์หลุด/เสีย</h3><p>ถ้าเซ็นเซอร์เงียบผิดปกติ ระบบส่ง Heartbeat เตือนว่า "มองไม่เห็นตู้แล้ว" — ไม่ปล่อยให้เงียบพร้อมกับความมั่นใจลวง</p><div class="res">ผล: ไม่เงียบโดยไม่บอก</div></div>
-    </div>
-  </section>
-
-  <!-- ═══ HONEST ═══ -->
-  <!-- ═══ หลักฐานหน้างานจริง (เจ้าของเติมผ่าน evidence/evidence.json — เว็บเรนเดอร์เอง) ═══ -->
-  <section id="evidence">
-    <p class="k-ch">// หลักฐานหน้างานจริง — Real-World Evidence</p>
-    <h2>ไม่ใช่แค่โค้ด — ของจริงกำลังถูกสร้าง</h2>
-    <p class="lede">ชิ้นงานฮาร์ดแวร์กำลังประกอบทีละชิ้น ส่วนนี้คือบันทึกหน้างานที่ต่อเติมเรื่อย ๆ — รูปตัวเครื่อง คลิปทดสอบเซนเซอร์ และกราฟอุณหภูมิจากการใช้จริง</p>
-    <div id="evidenceGrid" class="ev-grid" aria-live="polite">กำลังโหลดหลักฐาน…</div>
-    <noscript>
-      <div class="ev-item"><div class="ev-body"><b>หลักฐานหน้างาน</b><br>เปิดไฟล์ที่ portfolio/evidence/ โดยตรง หรือเปิดใช้ JavaScript เพื่อดูแกลเลอรี</div></div>
-    </noscript>
-  </section>
-
-  <section id="honest">
-    <p class="k-ch">// ตรงไปตรงมา</p>
-    <h2>สถานะจริงของสินค้านี้</h2>
-    <div class="honest">
-      <h3>ตรงไปตรงมา</h3>
-      <ul>
-        <li><b>ระบบเฝ้าระวังฝั่งซอฟต์แวร์มีจริงและรันอยู่ทุกวัน</b> — watchdog เช็คหน้าเว็บทุก 30 วินาที ฟื้นเองเมื่อล้ม (ทดสอบ kill จริง) และแจ้งเตือน Telegram วิ่งจริงในระบบบ้าน</li>
-        <li><b>กล่องฮาร์ดแวร์ยังเป็นชิ้นงานกำลังพัฒนา</b> — หน้านี้คือสเปกเป้าหมาย (ราคา แท่นแม่เหล็ก แบตสำรอง) ไม่ใช่สินค้าพร้อมส่งวันนี้</li>
-        <li><b>ต้องการพาร์ตเนอร์ผลิต/อุปกรณ์</b> — ร้านที่สนใจทดลองใช้จริง 1 จุด หรือผู้ประกอบการที่อยากร่วมผลิต ติดต่อได้จากหน้า <a href="me.html">ผู้เขียน</a></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ═══ DEVELOPER CREDIT ═══ -->
-  <section id="credit">
-    <p class="k-ch">// ผู้พัฒนา</p>
-    <h2>ออกแบบและพัฒนาโดย</h2>
-    <p class="sub" style="margin-bottom:18px">กฤษกรณ์ อุตมะ (Krisakorn Utama) — <b style="color:#ecfdf5">System Architect</b> · ผู้ออกแบบระบบหลังบ้านธุรกิจ ระบบควบคุมบ้าน IoT และกลไก watchdog/backup ที่ SovereignGuardMini ใช้</p>
-    <div class="cta">
-      <a class="btn btn-primary" href="projects.html">ดูคลังผลงานและวิจัยเชิงวิศวกรรมทั้งหมด →</a>
-      <a class="btn btn-ghost" href="me.html">โปรไฟล์ผู้สร้าง</a>
-    </div>
-  </section>
-</main>
-
-<footer>
-  PROJECT SOVEREIGN · สร้างบนเครื่องส่วนตัวด้วย AI pair (Codebuff) · ก.ย. 2569<br>
-  ราคา/ตัวเลขเปรียบเทียบเป็นตัวอย่างตลาด · หน้านี้โฮสต์ฟรีด้วย GitHub Pages
-</footer>
-
-<script src="nav.js" defer></script>
-<script>
+</style><link rel="stylesheet" href="nav.css"><link rel="canonical" href="https://sovereignoriginshop.dpdns.org/guardmini.html"><meta property="og:type" content="website"><meta property="og:title" content="SovereignGuardMini — เฝ้าตู้แช่/ห้องเย็นแบบไม่เจาะตู้ · Project Sovereign"><meta property="og:description" content="กล่องเฝ้าระวังอุณหภูมิ/ไฟฟ้าสำหรับร้านอาหารและร้านค้า: ติดตั้งด้วยแท่นแม่เหล็กไม่เจาะตู้ ไม่ตัดสายไฟเดิม ตั้งค่าแจ้งเตือน Telegram ใน 3 นาที ข้อมูลอยู่ในร้าน 100% ไม่มีค่าบริการรายเดือน รับประกัน 1 ปี เสียเปลี่ยนกล่องใหม่ทันที"><meta property="og:url" content="https://sovereignoriginshop.dpdns.org/guardmini.html"><meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png"><meta property="og:image:alt" content="Project Sovereign — ระบบหลังบ้านร้านค้า ฟาร์ม และบัญชี"><meta name="twitter:card" content="summary_large_image"></head> <body class="shell"> <a class="skip-link" href="#main">ข้ามไปเนื้อหาหลัก</a> <button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">&#9788;</button> <aside class="rail" id="siteRail" role="navigation" aria-label="เมนูหน้าเว็บ"> <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a> <p class="seclab">หน้าเว็บ</p> <a href="index.html">ภาพรวม</a> <a href="projects.html">ผลงาน</a> <a href="livestock.html">ปศุสัตว์</a> <a href="fishery.html">การประมง</a> <a href="farm.html">เกษตร &amp; สมุนไพร</a> <a href="guardmini.html" aria-current="page">SovereignGuardMini</a> <a href="iot.html">บ้าน IoT</a> <a href="education.html">AI สอนลูก</a> <a href="books.html">คลังหนังสือ</a> <a href="water.html">ชัยภูมิน้ำ</a> <p class="seclab">เครื่องมือ</p> <a href="shop.html">ร้านค้า</a> <a href="demo.html">ทดลองใช้</a> <a href="search.html">ค้นหา</a> <a href="me.html">ผู้เขียน</a> <a href="en.html">EN</a> </aside> <header class="topbar"> <nav class="topnav" aria-label="เมนูหลัก"> <a href="index.html">ภาพรวม</a> <a href="#roi">ROI</a> <a href="#install">ติดตั้ง 3 นาที</a> <a href="#sla">รับประกัน</a> <a href="#data">ข้อมูลเป็นของคุณ</a> <a href="#failure">เมื่อไฟ/เน็ตมีปัญหา</a> <a href="#evidence">หลักฐานหน้างาน</a> <a href="#honest">ตรงไปตรงมา</a> </nav> </header> <main id="main"> <!-- ═══ HERO + แถบเฝ้าระวังจำลอง ═══ --> <section class="hero"> <p class="eyebrow">PROJECT SOVEREIGN · SOVEREIGNGUARDMINI</p> <h1>ตู้แช่หลักหมื่นอยู่ในความเสี่ยง<br>กล่องเฝ้าระวัง <em>พันกว่าบาท</em> ปิดความเสี่ยงนั้น</h1> <p class="lede">SovereignGuardMini ดักอุณหภูมิ/ไฟฟ้าผิดปกติของตู้แช่ ห้องเย็น และอุปกรณ์สำคัญในร้าน แล้วแจ้งเตือนเข้า Telegram ทันทีที่ค่าออกนอกเกณฑ์ — ติดตั้งด้วยแท่นแม่เหล็กไม่เจาะตู้ ไม่ตัดสายไฟเดิม ตั้งค่าเสร็จใน 3 นาที</p> <div class="demo"> <div class="demo-hud"> <span class="hud-id"><b>Fridge-01</b> · ตู้แช่หน้าร้าน</span> <span class="hud-net ok" id="hudNet">● online</span> </div> <div class="demo-main"> <div> <div class="lcd"> <span class="lcd-t">TEMP</span> <span class="lcd-v" id="lcdTemp">-16.2°C</span> <span class="lcd-b" id="lcdZone">โซนปลอดภัย · บันทึกทุก 60 วิ</span> </div> <div class="bar" id="bar" role="img" aria-label="แถบอุณหภูมิจำลอง จาก +8 องศา ถึง -20 องศา โซนปลอดภัยของตู้แช่อยู่ช่วงล่าง"></div> <div class="scale"><span>+8°</span><span>0°</span><span>−5°</span><span>−10°</span><span>−15°</span><span>−20°</span></div> </div> <div class="alertbox"> <div class="ab-h"><span class="ab-dot"></span>ข้อความที่เจ้าของได้รับ</div> <div class="ab-item" id="abItem" aria-live="polite">พร้อมเฝ้าระวัง — อุณหภูมิปกติทุกจุด</div> </div> </div> <div class="demo-ctl" role="group" aria-label="จำลองเหตุขัดข้อง"> <span class="ctl-lab">จำลองเหตุ:</span> <button type="button" class="ctl" data-sc="power">ไฟดับ</button> <button type="button" class="ctl" data-sc="net">เน็ตหลุด</button> <button type="button" class="ctl" data-sc="sensor">เซ็นเซอร์หลุด</button> <button type="button" class="ctl ctl-reset" id="resetBtn" hidden>กลับสู่ปกติ</button> </div> </div> <div class="cta"> <a class="btn btn-primary" href="#roi">ดูเหตุผลที่คุ้มก่อนซื้อ →</a> <a class="btn btn-ghost" href="index.html">กลับหน้าภาพรวม</a> </div> <p class="meta-line">แถบข้างบนเป็นการจำลองพฤติกรรมเพื่อสาธิต · ตัวเลขเปรียบเทียบเป็นตัวอย่างคำนวณจากกรณีทั่วไป</p> </section> <!-- ═══ ROI ═══ --> <section id="roi"> <p class="k-ch">// ROI-CENTRIC · <b>ความเสี่ยงที่ป้องกันได้</b></p> <h2>คิดเป็น "ความเสี่ยงที่ป้องกันได้" ไม่ใช่ "ของแปลกใหม่"</h2> <p class="sub">เจ้าของร้านไม่ได้ซื้อกล่อง — ซื้อการนอนตื่นสายโดยไม่ต้องลุกไปเช็คตู้แช่ และไม่เจอวัตถุดิบหลักหมื่นเสียหายเพราะไฟดับตอนตีสาม</p> <div class="roi"> <div class="pricebox"> <div class="p">1,290–1,490 ฿ <small>ต่อจุด</small></div> <div class="n">
+ราคาขายปลีกต่อกล่อง (ตัวอย่างตลาด) · จ่ายครั้งเดียว ไม่มีค่ารายเดือน<br>
+ข้อมูลทั้งหมดอยู่ในร้าน — ไม่มีค่า SaaS แอบแฝง
+</div> </div> <div class="riskbox"> <div class="p">10,000+ ฿</div> <div class="n">
+มูลค่าวัตถุดิบในตู้แช่ร้านอาหารทั่วไป (เนื้อ อาหารทะเล ผัก ของสด) — ทั้งหมดเสี่ยงเสียหายจากไฟดับ/คอมเพรสเซอร์พัง/ปิดประตูไม่สนิทโดยไม่มีใครรู้
+</div> </div> </div> <p class="ratio">
+ถ้ากล่องช่วยกันเหตุได้แค่ <b>1 ครั้ง</b> ในอายุหลายปีของมัน ก็คืนทุนแล้ว — ส่วนที่เหลือคือกำไรที่<b>ไม่ต้องเสียไปเลย</b> และการติดตั้งไม่กระทบการขายแม้แต่นาทีเดียว
+</p> </section> <!-- ═══ INSTALL ═══ --> <section id="install"> <p class="k-ch">// ZERO-CONFIG &amp; NON-INVASIVE</p> <h2>ติดตั้งเองได้ใน 3 นาที ไม่เจาะ ไม่ตัดสาย</h2> <p class="sub">พนักงานหน้าร้านติดเองได้ — ไม่ต้องรอช่าง ไม่ต้องปิดร้าน ไม่กระทบอุปกรณ์เดิมของร้าน</p> <div class="steps"> <div class="step"><div class="no">ขั้นที่ 1 · ~1 นาที</div><h3>แปะแท่นแม่เหล็ก</h3><p>แปะกล่องบนแท่นยึดแม่เหล็กนอกตู้ — ไม่ต้องเจาะตู้ ไม่ทิ้งรอย ย้ายตำแหน่งได้ทุกเมื่อ</p></div> <div class="step"><div class="no">ขั้นที่ 2 · ~1 นาที</div><h3>สอดเซนเซอร์เข้าขอบยาง</h3><p>สายเซนเซอร์แบนพิเศษ สอดเข้าขอบยางประตูตู้ได้ทันที — ไม่ต้องเจาะรู ไม่ต้องแกะฉนวน</p></div> <div class="step"><div class="no">ขั้นที่ 3 · ~1 นาที</div><h3>เชื่อมแจ้งเตือน</h3><p>เปิดหน้าตั้งค่าจากมือถือ กรอก Telegram ของร้าน — ทดสอบส่งข้อความ 1 ครั้ง จบ</p></div> </div> <ul class="bullet"> <li><b>ไม่ตัดต่อสายไฟเดิมของร้าน</b> — ใช้ปลั๊กปกติ ตัดความกังวลเรื่องความปลอดภัยไฟฟ้าและประกันอาคาร</li> <li><b>ไม่กระทบการขาย</b> — ไม่ต้องปิดร้าน ไม่ต้องขยับตู้ ติดวันนี้ เฝ้าได้ทันที</li> <li><b>ย้ายได้</b> — ย้ายกิจการ/เปลี่ยนตู้ ถอนแล้วไปติดร้านใหม่ได้ทันที</li> </ul> </section> <!-- ═══ SLA ═══ --> <section id="sla"> <p class="k-ch">// SLA &amp; MODULAR SUPPORT</p> <h2>รับประกัน 1 ปีเต็ม เสีย = เปลี่ยนกล่องใหม่ทันที</h2> <p class="sub">ออกแบบให้ซ่อมง่ายและไม่กระทบการทำงานของร้าน — เพราะการรอซ่อมคือความเสี่ยงที่ร้านต้องแบกเอง</p> <div class="sla"> <div class="card"><div class="t">เสียเปลี่ยนกล่องใหม่ทันที (Drop-in Replacement)</div><div class="d">ในระยะรับประกัน ถ้ากล่องมีปัญหา ส่งกล่องเก่ากลับแล้วใช้กล่องใหม่ต่อได้ทันที — ตั้งค่าใหม่ใน 3 นาที ร้านกลับมาเฝ้าได้ในวันเดียว</div><span class="st">ระบุชัดในเงื่อนไข</span></div> <div class="card"><div class="t">Modular Support</div><div class="d">ตัวเครื่อง แท่นแม่เหล็ก สายเซนเซอร์ เป็นโมดูลแยกกัน — อะไรชำรุดเปลี่ยนเฉพาะชิ้นนั้น ไม่ต้องทิ้งทั้งชุด</div><span class="st">ซ่อมบำรุงง่าย</span></div> <div class="card"><div class="t">รับประกัน 1 ปีเต็ม</div><div class="d">ครอบคลุมความผิดปกติของตัวเครื่องและเซนเซอร์ — เงื่อนไขแบบชัดเจน ไม่ซ่อนข้อความเล็ก</div><span class="st">1 ปี</span></div> </div> </section> <!-- ═══ DATA ═══ --> <section id="data"> <p class="k-ch">// DATA OWNERSHIP &amp; ZERO SAAS FEE</p> <h2>ข้อมูลยอดขาย สต็อก และการเฝ้าระวัง อยู่ในร้าน 100%</h2> <p class="sub">Mini PC ภายในร้านเป็นที่เก็บข้อมูลทั้งหมด — ไม่มี Cloud ข้างนอกอ่าน ไม่มีผู้ขายถือสิทธิ์ข้อมูลแทนคุณ</p> <div class="sla"> <div class="card"><div class="t">ข้อมูลอยู่ในเครื่องร้าน 100%</div><div class="d">ยอดขาย สต็อก บัญชี และบันทึกอุณหภูมิ เก็บใน Mini PC ภายในร้าน — ไม่มีข้อมูลหลุดออก Cloud ภายนอก</div><span class="st">Data Sovereignty</span></div> <div class="card"><div class="t">ไม่มีค่าบริการซอฟต์แวร์รายเดือน</div><div class="d">ไม่มี subscription ไม่มีค่า cloud ไม่มีค่าเปิดฟีเจอร์ — ค่าใช้จ่ายเดียวคือค่าไฟที่จ่ายอยู่แล้ว</div><span class="st">Zero SaaS Fee</span></div> <div class="card"><div class="t">สำรองอัตโนมัติ ซ้อมกู้จริง</div><div class="d">ระบบหลังบ้านสำรองฐานข้อมูลทุกวันตีสาม และซ้อมกู้คืนจริง — ไฟดับ/เครื่องเสีย ข้อมูลไม่หาย</div><span class="st">Backup &amp; Restore</span></div> <div class="card"><div class="t">เตือนผ่านช่องทางที่ร้านมีอยู่แล้ว</div><div class="d">Telegram เป็นเพียงช่องทาง "ส่งข้อความ" — ข้อมูลจริงยังอยู่ในร้าน ช่องทางเปลี่ยนได้ทุกเมื่อ</div><span class="st">ไม่ผูกมัดแพลตฟอร์ม</span></div> </div> </section> <!-- ═══ FAILURE MODES ═══ --> <section id="failure"> <p class="k-ch">// FAILURE MODE HANDLING</p> <h2>เมื่อไฟ/เน็ต/เซ็นเซอร์มีปัญหา — ระบบทำอะไร</h2> <p class="sub">ออกแบบเผื่อวันร้าน เพราะเหตุขัดข้องมักเกิดตอนที่มองไม่เห็น — ลองกดจำลองทั้งสามเหตุได้จากแถบเฝ้าระวังข้างบน</p> <div class="fail"> <div class="fcase"><div class="ic">🌐</div><h3>เน็ตหลุด</h3><p>กล่องเก็บบันทึกอุณหภูมิไว้ใน Memory ชั่วคราว — พอเน็ตกลับมา ยังส่งประวัติที่ขาดหายไปให้ครบ แจ้งเตือนสำคัญเก็บไว้ส่งทีหลัง ไม่หายไปเลย</p><div class="res">ผล: ไม่มีช่องว่างข้อมูล</div></div> <div class="fcase"><div class="ic">🔌</div><h3>ไฟดับ</h3><p>กล่องทำงานต่อด้วยแบตเตอรี่สำรอง และส่งข้อความ "ไฟดับ" เข้า Telegram ทันทีที่ตรวจพบ — ร้านรู้ตัวก่อนของเสีย</p><div class="res">ผล: รู้ตัวภายในนาที</div></div> <div class="fcase"><div class="ic">📡</div><h3>เซ็นเซอร์หลุด/เสีย</h3><p>ถ้าเซ็นเซอร์เงียบผิดปกติ ระบบส่ง Heartbeat เตือนว่า "มองไม่เห็นตู้แล้ว" — ไม่ปล่อยให้เงียบพร้อมกับความมั่นใจลวง</p><div class="res">ผล: ไม่เงียบโดยไม่บอก</div></div> </div> </section> <!-- ═══ HONEST ═══ --> <!-- ═══ หลักฐานหน้างานจริง (เจ้าของเติมผ่าน evidence/evidence.json — เว็บเรนเดอร์เอง) ═══ --> <section id="evidence"> <p class="k-ch">// หลักฐานหน้างานจริง — Real-World Evidence</p> <h2>ไม่ใช่แค่โค้ด — ของจริงกำลังถูกสร้าง</h2> <p class="lede">ชิ้นงานฮาร์ดแวร์กำลังประกอบทีละชิ้น ส่วนนี้คือบันทึกหน้างานที่ต่อเติมเรื่อย ๆ — รูปตัวเครื่อง คลิปทดสอบเซนเซอร์ และกราฟอุณหภูมิจากการใช้จริง</p> <div id="evidenceGrid" class="ev-grid" aria-live="polite">กำลังโหลดหลักฐาน…</div> <noscript> <div class="ev-item"><div class="ev-body"><b>หลักฐานหน้างาน</b><br>เปิดไฟล์ที่ portfolio/evidence/ โดยตรง หรือเปิดใช้ JavaScript เพื่อดูแกลเลอรี</div></div> </noscript> </section> <section id="honest"> <p class="k-ch">// ตรงไปตรงมา</p> <h2>สถานะจริงของสินค้านี้</h2> <div class="honest"> <h3>ตรงไปตรงมา</h3> <ul> <li><b>ระบบเฝ้าระวังฝั่งซอฟต์แวร์มีจริงและรันอยู่ทุกวัน</b> — watchdog เช็คหน้าเว็บทุก 30 วินาที ฟื้นเองเมื่อล้ม (ทดสอบ kill จริง) และแจ้งเตือน Telegram วิ่งจริงในระบบบ้าน</li> <li><b>กล่องฮาร์ดแวร์ยังเป็นชิ้นงานกำลังพัฒนา</b> — หน้านี้คือสเปกเป้าหมาย (ราคา แท่นแม่เหล็ก แบตสำรอง) ไม่ใช่สินค้าพร้อมส่งวันนี้</li> <li><b>ต้องการพาร์ตเนอร์ผลิต/อุปกรณ์</b> — ร้านที่สนใจทดลองใช้จริง 1 จุด หรือผู้ประกอบการที่อยากร่วมผลิต ติดต่อได้จากหน้า <a href="me.html">ผู้เขียน</a></li> </ul> </div> </section> <!-- ═══ DEVELOPER CREDIT ═══ --> <section id="credit"> <p class="k-ch">// ผู้พัฒนา</p> <h2>ออกแบบและพัฒนาโดย</h2> <p class="sub" style="margin-bottom:18px">กฤษกรณ์ อุตมะ (Krisakorn Utama) — <b style="color:#ecfdf5">System Architect</b> · ผู้ออกแบบระบบหลังบ้านธุรกิจ ระบบควบคุมบ้าน IoT และกลไก watchdog/backup ที่ SovereignGuardMini ใช้</p> <div class="cta"> <a class="btn btn-primary" href="projects.html">ดูคลังผลงานและวิจัยเชิงวิศวกรรมทั้งหมด →</a> <a class="btn btn-ghost" href="me.html">โปรไฟล์ผู้สร้าง</a> </div> </section> </main> <footer>
+PROJECT SOVEREIGN · สร้างบนเครื่องส่วนตัวด้วย AI pair (Codebuff) · ก.ย. 2569<br>
+ราคา/ตัวเลขเปรียบเทียบเป็นตัวอย่างตลาด · หน้านี้โฮสต์ฟรีด้วย GitHub Pages
+</footer> <script src="nav.js" defer></script> <script>
 // ── หลักฐานหน้างานจริง: อ่าน evidence/evidence.json แล้วเรนเดอร์ (รูป/วิดีโอ/กราฟ CSV) ──
 (function loadEvidence() {
   const grid = document.getElementById('evidenceGrid');
@@ -480,8 +263,7 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
     .then((j) => render(j.items || []))
     .catch(() => { grid.innerHTML = '<div class="ev-item"><div class="ev-body">ยังไม่มีไฟล์หลักฐาน — เติมที่ <code>evidence/evidence.json</code></div></div>'; });
 })();
-</script>
-<script>
+</script> <script>
 /* แถบเฝ้าระวังจำลอง — จำลองพฤติกรรมสามเหตุขัดข้องตามที่หน้าอธิบาย (ข้อมูลจริงดูหัวข้อ ตรงไปตรงมา) */
 (function () {
   'use strict';
@@ -582,6 +364,4 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
   paint(SAFE);
   idle();
 })();
-</script>
-</body>
-</html>
+</script> </body> </html>
