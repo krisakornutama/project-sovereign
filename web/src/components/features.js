@@ -126,7 +126,7 @@ export const projects = [
     tech: ['Next.js', 'TypeScript', 'Shopee/Lazada API', 'PostgreSQL'],
     statusBadge: 'r2',
     links: [
-      { label: 'ดูรายละเอียด', href: '/projects/' },
+      { label: 'ดูรายละเอียด', href: '/projects.html' },
       { label: 'ดูโค้ด', href: 'https://github.com/krisakornutama/sovereign-origin' },
     ],
   },

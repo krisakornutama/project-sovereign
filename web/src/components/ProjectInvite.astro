@@ -1,6 +1,6 @@
 ---
 ---
-<section class="py-12 sm:py-16 bg-sovereign-50 dark:bg-sovereign-900/20 rounded-2xl border border-sovereign-200 dark:border-sovereign-800">
+<section id="contact" class="py-12 sm:py-16 bg-sovereign-50 dark:bg-sovereign-900/20 rounded-2xl border border-sovereign-200 dark:border-sovereign-800">
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <div class="w-16 h-16 mx-auto mb-4 rounded-xl bg-sovereign-100 dark:bg-sovereign-900/30 flex items-center justify-center">
       <svg class="w-8 h-8 text-sovereign-600 dark:text-sovereign-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,6 +54,38 @@
       </div>
     </div>
 
+    <!-- ฟอร์มติดต่อ (พฤติกรรมเดิมจากหน้าผลงานรุ่นแรก: ตรวจครบก่อนรับ, ไม่มีเซิร์ฟเวอร์ของเว็บนี้)
+         ป้องกันบ้าระยะ: ไม่มี POST ไป endpoint จริงจนกว่าจะตั้งค่าปลายทาง — แสดงข้อความสถานะเสมอ -->
+    <form id="contactForm" novalidate class="mt-10 max-w-2xl mx-auto text-left">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="cName" class="block text-sm font-medium text-dark-700 dark:text-dark-300 mb-1.5">ชื่อ / ชื่อเล่น</label>
+          <input id="cName" name="name" type="text" autocomplete="name" placeholder="เช่น พี่บอย" class="w-full rounded-lg border border-dark-300 dark:border-dark-600 bg-white dark:bg-dark-800 text-dark-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sovereign-500 transition-colors" />
+        </div>
+        <div>
+          <label for="cEmail" class="block text-sm font-medium text-dark-700 dark:text-dark-300 mb-1.5">อีเมลตอบกลับ</label>
+          <input id="cEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="w-full rounded-lg border border-dark-300 dark:border-dark-600 bg-white dark:bg-dark-800 text-dark-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sovereign-500 transition-colors" />
+        </div>
+      </div>
+      <div class="mt-4">
+        <label for="cTopic" class="block text-sm font-medium text-dark-700 dark:text-dark-300 mb-1.5">ชิ้นงานที่สนใจ</label>
+        <select id="cTopic" name="topic" class="w-full rounded-lg border border-dark-300 dark:border-dark-600 bg-white dark:bg-dark-800 text-dark-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sovereign-500 transition-colors">
+          {['ยังเลือกไม่ได้ — สอบถามก่อน', 'Sovereign Business OS', 'Sovereign School', 'Sovereign IoT', 'SovereignGuard Mini', 'Sovereign Marketplace', 'ร่วมทีม/พาร์ตเนอร์'].map((t) => (
+            <option value={t}>{t}</option>
+          ))}
+        </select>
+      </div>
+      <div class="mt-4">
+        <label for="cMsg" class="block text-sm font-medium text-dark-700 dark:text-dark-300 mb-1.5">ข้อความ</label>
+        <textarea id="cMsg" name="message" rows="4" placeholder="เล่าสั้น ๆ ว่าสนใจตรงไหน อยากช่วยอะไร หรืออยากรู้อะไรเพิ่ม" class="w-full rounded-lg border border-dark-300 dark:border-dark-600 bg-white dark:bg-dark-800 text-dark-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sovereign-500 transition-colors"></textarea>
+      </div>
+      <div class="mt-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <button type="submit" class="btn-primary btn-lg">ส่งข้อความ</button>
+        <p class="text-xs text-dark-500 dark:text-dark-400">* ฟอร์ม static — ตรวจข้อมูลฝั่งเว็บก่อน แล้วตั้งปลายทางจริงทีหลัง (ไม่มีสคริปต์ติดตาม)</p>
+      </div>
+      <p id="formMsg" role="status" aria-live="polite" class="mt-3 text-sm font-medium text-dark-700 dark:text-dark-200"></p>
+    </form>
+
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
       <a href="https://github.com/krisakornutama/sovereign-origin/discussions" target="_blank" rel="noopener noreferrer" class="btn-primary btn-lg w-full sm:w-auto">
         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
@@ -69,4 +101,21 @@
       </a>
     </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var form = document.getElementById('contactForm');
+      var msg = document.getElementById('formMsg');
+      if (!form || !msg) return;
+      var say = function (t, cls) { msg.textContent = t; msg.className = cls || 'mt-3 text-sm font-medium text-dark-700 dark:text-dark-200'; };
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = document.getElementById('cName').value.trim();
+        var email = document.getElementById('cEmail').value.trim();
+        if (!name) { say('กรอกให้ครบก่อนนะ: ชื่อ (และอีเมลตอบกลับ)'); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say('รูปแบบอีเมลยังไม่ถูกต้อง — ลองอีกครั้ง'); return; }
+        say('ตรวจครบแล้ว — ปลายทางส่งจริงยังไม่ได้ตั้งค่า: คุณส่งเรื่องนี้ตรง ๆ ได้ที่ GitHub Discussions หรืออีเมลที่กล่องด้านล่างขอบข้างบน');
+      });
+    })();
+  </script>
 </section>
