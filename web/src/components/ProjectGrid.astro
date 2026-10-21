@@ -3,7 +3,7 @@ import { projects } from './features.js';
 import { icons } from './icons.js';
 ---
 
-<section class="py-20 sm:py-28 bg-white dark:bg-dark-950">
+<section id="projects" class="py-20 sm:py-28 bg-white dark:bg-dark-950">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-3xl mx-auto mb-16">
       <p class="text-sm font-mono text-sovereign-600 dark:text-sovereign-400 tracking-widest uppercase mb-4">ผลงานของเรา</p>
@@ -56,6 +56,8 @@ import { icons } from './icons.js';
     </div>
 
     <div class="mt-16 text-center">
+      <!-- จุดกระโดดเดิมจากลิงก์ที่เคยชี้ projects.html#demo (หน้าเดโมจริงก็ยังอยู่ที่ /demo.html) -->
+      <span id="demo" class="hidden" aria-hidden="true"></span>
       <a href="/shop.html" class="btn-primary btn-lg">
         ไปหน้าร้าน (สั่งซื้ออุปกรณ์)
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -85,6 +85,61 @@
       </div>
     </div>
 
+    <!-- วิทเจ็ตงวดภาษี (เวอร์ชันแปลงจากหน้าแรกรุ่นแรก: เลือกงวด → ตราแบบ ภ.พ.30 + ตัวเลขภาษีเปลี่ยนตาม) -->
+    <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      <div class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-dark-900 border border-dark-200 dark:border-dark-700 shadow-card">
+        <p class="text-sm font-mono text-sovereign-600 dark:text-sovereign-400 tracking-widest uppercase mb-4">ลองเลือกงวดภาษี</p>
+        <h3 class="text-heading-md font-bold text-dark-950 dark:text-white mb-4">คิดภาษีอัตโนมัติรายงวด</h3>
+        <label for="periodSel" class="block text-sm font-medium text-dark-600 dark:text-dark-400 mb-2">งวดภาษี (สลับได้ทันที)</label>
+        <select id="periodSel" class="w-full rounded-lg border border-dark-300 dark:border-dark-600 bg-white dark:bg-dark-800 text-dark-900 dark:text-white px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-sovereign-500 transition-colors">
+          <option value="2569-09" selected>กันยายน 2569</option>
+          <option value="2569-08">สิงหาคม 2569</option>
+          <option value="2569-07">กรกฎาคม 2569</option>
+        </select>
+        <ul class="mt-5 space-y-2 text-sm text-dark-600 dark:text-dark-400 list-disc list-inside">
+          <li><b class="text-dark-900 dark:text-white">ปฏิทินยื่น</b> 5 แบบ นับวันถอยหลังอัตโนมัติ — เหลือ ≤14 วันเริ่มเตือน</li>
+          <li>อัตราตามกฎหมายจริง ณ ก.ย. 2569 (VAT 7% ถึง 30 ก.ย. 2570 แล้วขึ้น 10% เอง)</li>
+        </ul>
+      </div>
+
+      <div class="p-6 sm:p-8 rounded-2xl bg-dark-950 dark:bg-dark-900 text-white border border-dark-700 shadow-elevated">
+        <div class="inline-flex flex-col items-center px-5 py-3 rounded-xl border-2 border-emerald-400/70 text-emerald-300 mb-4" id="stampWrap" aria-label="ตรางวดภาษีบนแบบยื่น">
+          <small class="text-[11px] font-mono tracking-widest text-emerald-400/80">งวดภาษี</small>
+          <span class="text-lg font-bold" id="stampPeriod">กันยายน 2569</span>
+        </div>
+        <p class="text-xs font-mono text-dark-400 tracking-widest mb-2">แบบยื่นรายเดือน · กรมสรรพากร</p>
+        <div class="text-display-md font-bold mb-2">แบบ ภ.พ.30</div>
+        <p class="text-sm text-dark-400 mb-5">แบบแสดงรายการภาษีมูลค่าเพิ่ม ตามประมวลรัษฎากร</p>
+        <p class="text-sm text-dark-400 mb-4">เลขประจำตัวผู้เสียภาษี <span class="inline-block w-24 border-b border-dashed border-dark-500 align-middle"></span></p>
+        <div class="space-y-2.5 text-sm">
+          <div class="flex items-center justify-between border-b border-dark-800 pb-2"><span><span class="text-dark-500 font-mono">๑</span> ภาษีขาย</span><b class="font-mono" id="amtOut">700.00</b></div>
+          <div class="flex items-center justify-between border-b border-dark-800 pb-2"><span><span class="text-dark-500 font-mono">๒</span> ภาษีซื้อ</span><b class="font-mono" id="amtIn">210.00</b></div>
+          <div class="flex items-center justify-between border-b border-dark-800 pb-2"><span><span class="text-dark-500 font-mono">๓</span> ภาษีซื้อยกมา</span><b class="font-mono" id="amtPrev">0.00</b></div>
+          <div class="flex items-center justify-between"><span><span class="text-dark-500 font-mono">๔</span> ภาษีสุทธิ</span><b class="font-mono text-emerald-300" id="amtNet">490.00</b></div>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      (function () {
+        var PERIODS = {
+          '2569-09': { label: 'กันยายน 2569', out: '700.00', in: '210.00', prev: '0.00', net: '490.00' },
+          '2569-08': { label: 'สิงหาคม 2569', out: '560.00', in: '210.00', prev: '0.00', net: '350.00' },
+          '2569-07': { label: 'กรกฎาคม 2569', out: '420.00', in: '70.00',  prev: '0.00', net: '350.00' }
+        };
+        var sel = document.getElementById('periodSel');
+        var stamp = document.getElementById('stampPeriod');
+        if (!sel || !stamp) return;
+        var set = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+        sel.addEventListener('change', function () {
+          var d = PERIODS[sel.value];
+          if (!d) return;
+          stamp.textContent = d.label;
+          set('amtOut', d.out); set('amtIn', d.in); set('amtPrev', d.prev); set('amtNet', d.net);
+        });
+      })();
+    </script>
+
     <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
       <a href="/demo.html" class="btn-primary btn-lg w-full sm:w-auto">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
