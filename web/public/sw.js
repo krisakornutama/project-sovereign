@@ -6,7 +6,7 @@
    - ตัดสิน "สำเร็จ" ที่ตอบ 2xx เท่านั้น — คำตอบอื่น (404/502 จาก proxy กลางฯ) ต้องตกลงแคช ไม่งั้นออฟไลน์พัง
    - install ตั้งล่วงหน้าเฉพาะไฟล์ชื่อคงที่ — เจอ 404 ที่รายการไหนก็ข้าม (ไม่ทำ install พังทั้ง sw)
    - bump VERSION เมื่อเปลี่ยนรายการเริ่มต้นใหญ่ ๆ (เก่าจะถูกลบเมื่อ activate) */
-const VERSION = 'sovereign-offline-v3';
+const VERSION = 'sovereign-offline-v4';
 const PAGES_CACHE = VERSION + '-pages';
 const RUNTIME_CACHE = VERSION + '-runtime';
 
@@ -15,6 +15,7 @@ const PRECACHE = [
   '/projects.html', '/demo.html', '/shop.html', '/guardmini.html', '/farm.html',
   '/iot.html', '/education.html', '/me.html', '/books.html', '/water.html',
   '/search.html', '/en.html', '/livestock.html', '/fishery.html',
+  '/pos.html', '/media.html', '/backup.html',
   '/nav.css', '/nav.js', '/favicon.svg', '/grid.svg',
   '/assets/books/222303.jpg', '/assets/books/236334.jpg', '/assets/books/236380.jpg',
   '/assets/books/365428.jpg', '/assets/books/370262.jpg', '/assets/books/374776.jpg',

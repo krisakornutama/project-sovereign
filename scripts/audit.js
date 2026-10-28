@@ -452,6 +452,53 @@ async function main() {
     report(noName.includes('ชื่อ'), 'widget shop: missing name rejected', JSON.stringify(noName.slice(0, 40)));
   } else report(false, 'widget shop: #buyForm missing');
 
+  // pos: offline cash-bill ledger — totals, queue, export guard. Fully local; the
+  // widget must work with zero network, so the audit never stubs a backend here.
+  await goto('pos.html');
+  await p.evaluate(() => { try { localStorage.removeItem('sovereign_pos_bills'); } catch (e) {} });
+  if (await p.locator('#posAdd').count()) {
+    await p.locator('#posExport').click();
+    await p.waitForTimeout(150);
+    const emptyMsg = await p.locator('#posMsg').innerText().catch(() => '');
+    report(emptyMsg.includes('ยังไม่มีบิล'), 'widget pos: export blocked while the queue is empty', JSON.stringify(emptyMsg.slice(0, 40)));
+
+    await p.fill('#pName', 'ชาเย็น');
+    await p.fill('#pPrice', '35');
+    await p.fill('#pQty', '2');
+    await p.locator('#posAdd').click();
+    await p.waitForTimeout(150);
+    const total = await p.locator('#cartTotal').innerText();
+    report(total.includes('70'), 'widget pos: line total computed 35×2=70', JSON.stringify(total));
+
+    await p.locator('#posSave').click();
+    await p.waitForTimeout(200);
+    const billCount = await p.locator('#billList .bill').count();
+    report(billCount === 1, 'widget pos: saved bill lands in the on-device queue', `bills=${billCount}`);
+
+    await p.evaluate(() => { try { localStorage.removeItem('sovereign_pos_bills'); } catch (e) {} });
+  } else report(false, 'widget pos: #posAdd missing');
+
+  // media: local folder vault — picker + both players mounted; nothing uploads
+  await goto('media.html');
+  const dirInput = await p.locator('#dirInput').count();
+  report(dirInput === 1, 'widget media: folder picker mounted (files never leave the machine)');
+  const mediaPlayers = (await p.locator('#mVideo').count()) + (await p.locator('#mAudio').count());
+  report(mediaPlayers === 2, 'widget media: video+audio players mounted');
+  const mediaBody = await p.locator('main').innerText().catch(() => '');
+  report(mediaBody.includes('Jellyfin'), 'widget media: LAN server guide present');
+
+  // backup: official-export guide + localStorage checklist
+  await goto('backup.html');
+  if (await p.locator('#bkList input[type=checkbox]').count()) {
+    const bkBox = p.locator('#bkList input[type=checkbox]').first();
+    await bkBox.check();
+    await p.waitForTimeout(150);
+    const bar = await p.locator('#bkBar').innerText().catch(() => '');
+    report(bar.includes('1/8') && bar.includes('%'), 'widget backup: checklist progress updates', JSON.stringify(bar.slice(0, 40)));
+    await bkBox.uncheck();
+    await p.evaluate(() => { try { localStorage.removeItem('sovereign_bk_check'); } catch (e) {} });
+  } else report(false, 'widget backup: #bkList checklist missing');
+
   // projects: contact form validation without navigation
   await goto('projects.html');
   if (await p.locator('#contactForm button[type=submit]').count()) {
