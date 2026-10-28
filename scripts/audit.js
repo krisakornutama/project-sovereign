@@ -173,7 +173,7 @@ async function main() {
       const errs = [];
       p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
       p.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
-      await p.goto(`http://127.0.0.1:4919/${page}`, { waitUntil: 'networkidle', timeout: 30000 });
+      await p.goto(`http://127.0.0.1:4919/${page}`, { waitUntil: 'load', timeout: 30000 });
       // รอสัญญาณจริงของฟอนต์ (fonts.ready) แทนหน้าต่างตาย 400ms — CDN มาช้ากว่านั้นคือเรื่องเครือข่าย ไม่ใช่ defect ของหน้า
       await p.evaluate(() => Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 8000))]));
       await p.waitForTimeout(150);
@@ -206,7 +206,7 @@ async function main() {
   const p = await ctx.newPage();
   p.on('pageerror', (e) => { failures++; console.log('FAIL widget pageerror: ' + e.message); });
 
-  async function goto(f) { await p.goto(`http://127.0.0.1:4919/${f}`, { waitUntil: 'networkidle' }); }
+  async function goto(f) { await p.goto(`http://127.0.0.1:4919/${f}`, { waitUntil: 'load' }); }
 
   // index: VAT period picker re-stamps the seal
   await goto('index.html');
@@ -394,7 +394,7 @@ async function main() {
     const onPageError = (e) => errs.push('pageerror: ' + e.message);
     dp.on('console', onConsole);
     dp.on('pageerror', onPageError);
-    await dp.goto(`http://127.0.0.1:4919/${page}`, { waitUntil: 'networkidle', timeout: 30000 });
+    await dp.goto(`http://127.0.0.1:4919/${page}`, { waitUntil: 'load', timeout: 30000 });
     await dp.waitForTimeout(300);
     const m = await dp.evaluate(() => {
       const h = document.querySelector('h1, h2');
