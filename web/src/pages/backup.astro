@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>สำรองข้อมูลตัวเองจาก Facebook/Instagram — Project Sovereign</title>
+<meta name="description" content="คู่มือดาวน์โหลดข้อมูลของคุณจาก Facebook และ Instagram ด้วยเครื่องมือส่งออกทางการของ Meta จัดเก็บลงเครื่องแบบมีระบบ ทำซ้ำตามจังหวะ และเปิดดูได้แม้เน็ตตัด — พร้อมข้อควรระวังเรื่องความเป็นส่วนตัว" />
+<meta name="theme-color" content="#030712" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Cpath d='M8 3v7M8 10l-3-3M8 10l3-3' stroke='%2334d399' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3Cpath d='M4 13h8' stroke='%2322d3ee' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style is:inline>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
+  --green:#34d399; --cyan:#22d3ee; --txt:#e5e7eb; --dim:#9ca3af; --faint:#6b7280;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Noto Sans Thai Looped','Cascadia Code','Courier New',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(34,211,238,.10),transparent 64%),
+  radial-gradient(1200px 700px at 50% 115%,rgba(52,211,153,.06),transparent 62%)}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:
+  linear-gradient(rgba(52,211,153,.02) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(34,211,238,.015) 1px,transparent 1px);background-size:36px 36px;
+  -webkit-mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%);
+  mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%)}
+::selection{background:rgba(52,211,153,.35);color:#ecfdf5}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+a{color:var(--green)}
+
+.topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:13px 24px;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px)}
+.topnav{display:flex;gap:15px;font-family:var(--mono);font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.topnav::-webkit-scrollbar{display:none}
+.topnav a{color:var(--dim);text-decoration:none}
+.topnav a:hover{color:var(--green)}
+.topnav a[aria-current="page"]{color:var(--green);border-bottom:1px solid var(--green)}
+
+.hero{max-width:1080px;margin:0 auto;padding:70px 24px 56px}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;color:var(--cyan);margin:0 0 14px}
+h1{font-size:clamp(1.9rem,5vw,3.2rem);font-weight:700;line-height:1.2;margin:0 0 18px;max-width:820px}
+h1 em{font-style:normal;color:var(--green);text-shadow:0 0 24px rgba(52,211,153,.35)}
+.lede{color:var(--dim);font-size:1.02rem;max-width:680px;margin:0 0 26px}
+.meta-line{font-family:var(--mono);font-size:.72rem;color:var(--faint);margin:0 0 30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;font-weight:600;font-size:.9rem;text-decoration:none;padding:11px 22px;border-radius:9px;transition:box-shadow .15s ease,background .15s ease,border-color .15s ease}
+.btn-primary{background:var(--green);color:#030712}
+.btn-primary:hover{box-shadow:0 0 26px rgba(52,211,153,.4)}
+.btn-ghost{border:1px solid rgba(52,211,153,.4);color:var(--green)}
+.btn-ghost:hover{border-color:var(--green);background:rgba(52,211,153,.08)}
+
+html{scroll-padding-top:70px}
+section{max-width:1080px;margin:0 auto;padding:64px 24px;scroll-margin-top:70px}
+.k-ch{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;color:var(--cyan);margin:0 0 10px}
+.k-ch b{color:var(--green)}
+h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
+.sub{color:var(--dim);font-size:.92rem;margin:0 0 34px;max-width:680px}
+.bullet{color:var(--dim);font-size:.88rem;padding-left:20px;margin:0;line-height:2}
+.bullet b,.hl{color:#ecfdf5}
+code.c{font-family:var(--mono);font-size:.76rem;color:#a7f3d0;background:rgba(3,7,12,.7);border:1px solid var(--line);border-radius:6px;padding:2px 8px;overflow-wrap:anywhere}
+pre{font-family:var(--mono);font-size:.76rem;color:#a7f3d0;background:rgba(3,7,12,.7);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;line-height:1.9;margin:10px 0 20px}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px 22px}
+.card h3{margin:0 0 12px;font-size:1rem;color:#ecfdf5;font-weight:600}
+.steps{margin:0;padding-left:20px;color:var(--dim);font-size:.86rem;line-height:2}
+.steps b{color:#ecfdf5}
+.card .opt{font-size:.78rem;color:var(--faint);margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+
+.check{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px 22px}
+#bkBar{font-family:var(--mono);font-size:.74rem;color:var(--green);margin:0 0 12px}
+#bkList{margin:0;padding:0;list-style:none}
+#bkList li{margin:8px 0}
+#bkList label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:.86rem;color:var(--dim)}
+#bkList input{margin-top:4px;width:16px;height:16px;accent-color:var(--green);flex:none}
+#bkList b{color:#ecfdf5}
+
+.warn{border:1px dashed rgba(245,158,11,.4);background:rgba(245,158,11,.05);border-radius:12px;padding:20px 24px}
+.warn h3{margin:0 0 10px;font-size:.95rem;color:#fbbf24}
+.warn ul{margin:0;padding-left:20px}
+.warn li{font-size:.85rem;color:var(--dim);margin:6px 0}
+
+footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px;
+  font-family:var(--mono);font-size:.7rem;color:var(--faint);line-height:2}
+
+@media (max-width:900px){
+  .two{grid-template-columns:1fr;gap:30px}
+  .hero{padding:56px 20px 46px}
+  section{padding:52px 20px}
+}
+@media (max-width:480px){
+  .topnav{gap:10px;font-size:.64rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+<link rel="stylesheet" href="nav.css">
+<link rel="canonical" href="https://sovereignoriginshop.dpdns.org/backup.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="สำรองข้อมูลตัวเองจาก Facebook/Instagram — Project Sovereign">
+<meta property="og:description" content="ดาวน์โหลดข้อมูลของคุณจาก Facebook และ Instagram ด้วยเครื่องมือทางการของ Meta เก็บลงเครื่องแบบมีระบบ เปิดดูได้แม้เน็ตตัด — พร้อมข้อควรระวังความเป็นส่วนตัว">
+<meta property="og:url" content="https://sovereignoriginshop.dpdns.org/backup.html">
+<meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png">
+<meta property="og:image:alt" content="Project Sovereign — ระบบหลังบ้านร้านค้า ฟาร์ม และบัญชี">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body class="shell">
+<a class="skip-link" href="#main">ข้ามไปเนื้อหาหลัก</a>
+
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">&#9788;</button>
+<aside class="rail" id="siteRail" role="navigation" aria-label="เมนูหน้าเว็บ">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html">ปศุสัตว์</a>
+  <a href="fishery.html">การประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="shop.html">ร้านค้า</a>
+  <a href="pos.html">ขายออฟไลน์</a>
+  <a href="media.html">คลังสื่อ</a>
+  <a href="backup.html" aria-current="page">สำรองข้อมูล</a>
+  <a href="demo.html">ทดลองใช้</a>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+
+<header class="topbar">
+  <nav class="topnav" aria-label="เมนูหลัก">
+    <a href="index.html">ภาพรวม</a>
+    <a href="index.html#sell">๑ ขาย</a>
+    <a href="index.html#fulfil">๒ ส่ง</a>
+    <a href="index.html#money">๓ เงิน</a>
+    <a href="index.html#tax">๔ ภาษี</a>
+    <a href="index.html#remind">๕ เตือน</a>
+    <a href="index.html#ai">๖ AI</a>
+    <a href="index.html#ops">๗ เฝ้าระบบ</a>
+    <a href="backup.html" aria-current="page">สำรองข้อมูล</a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <p class="eyebrow">PROJECT SOVEREIGN · OFFLINE DATA OWNERSHIP</p>
+    <h1>โพสต์ รูป และความจำ<br><em>ต้องมีสำเนาอยู่ในมือคุณด้วย</em></h1>
+    <p class="lede">Facebook และ Instagram มีเครื่องมือดาวน์โหลดข้อมูลของคุณ (Export) ให้ใช้โดยตรงตามข้อกำหนดแพลตฟอร์ม — หน้านี้สรุปเส้นทางทางการ วิธีจัดโฟลเดอร์เก็บให้เปิดดูได้แม้เน็ตตัด จังหวะทำซ้ำ และกติกาความเป็นส่วนตัวที่ห้ามพลาด</p>
+    <p class="meta-line">ชื่อเมนูอ้างอิงตามหน้าตั้งค่าล่าสุด ณ ต.ค. 2569 — แพลตฟอร์มเปลี่ยนคำ/ตำแหน่งเมนูได้ แนวทางยังเดิมเสมอ</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#steps">เริ่มดาวน์โหลดข้อมูล →</a>
+      <a class="btn btn-ghost" href="#check">เช็กลิสต์สำรอง</a>
+    </div>
+  </section>
+
+  <!-- ═══ STEPS ═══ -->
+  <section id="steps">
+    <p class="k-ch">// เส้นทางทางการ · <b>ไม่ใช่เครื่องมือลับ</b></p>
+    <h2>ดาวน์โหลดข้อมูลของคุณจาก Meta</h2>
+    <p class="sub">ทั้งสองแพลตฟอร์มให้ดาวน์โหลดข้อมูลตัวเองได้จากหน้าตั้งค่าเสมอ — ของคุณคุณได้สำเนา ไม่ต้องใช้โปรแกรมจากข้างนอกเลย</p>
+    <div class="two">
+      <div class="card">
+        <h3>📘 Facebook</h3>
+        <ol class="steps">
+          <li>เปิด <b>ตั้งค่าและความเป็นส่วนตัว</b> → <b>ตั้งค่า</b></li>
+          <li>เข้า <b>ข้อมูลของคุณบน Facebook</b></li>
+          <li>เลือก <b>ดาวน์โหลดข้อมูลโปรไฟล์</b> (Download your information)</li>
+          <li>เลือก <b>ชนิดข้อมูล</b> — อย่างน้อย: โพสต์ รูปภาพ วิดีโอ ข้อความ รายชื่อเพื่อน</li>
+          <li>เลือกช่วงเวลา + <b>คุณภาพสื่อสูง</b> + รูปแบบไฟล์ แล้วกดสร้างไฟล์</li>
+        </ol>
+        <p class="opt">ไฟล์จะถูกเตรียม (อาจใช้เวลานานถ้าข้อมูลเยอะ) แล้วแจ้งให้กดดาวน์โหลดในหน้าเดียวกัน — ลิงก์ดาวน์โหลดมีอายุ ต้องกดให้ทัน</p>
+      </div>
+      <div class="card">
+        <h3>📷 Instagram</h3>
+        <ol class="steps">
+          <li>เปิดแอป → โปรไฟล์ → เมนู ☰ → <b>ศูนย์บัญชี</b> (Accounts Center)</li>
+          <li>เข้า <b>ข้อมูลและสิทธิ์ของคุณ</b></li>
+          <li>เลือก <b>ดาวน์โหลดข้อมูลของคุณ</b> (Download your information)</li>
+          <li>เลือกบัญชี + <b>ชนิดข้อมูล</b> (โพสต์ รีลส์ สตอรี่ ข้อความ DM รายชื่อผู้ติดตาม)</li>
+          <li>เลือกช่วงเวลา + <b>คุณภาพสื่อสูง</b> แล้วส่งคำขอ</li>
+        </ol>
+        <p class="opt">ไฟล์ส่งไปที่ที่คุณเลือก (แจ้งในแอปหรืออีเมล) — ข้อมูลมาเป็นแพ็กเกจ ZIP ให้แตกไฟล์เก็บทันที</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ORGANIZE ═══ -->
+  <section id="folder">
+    <p class="k-ch">// เก็บให้เปิดได้ตอนเน็ตตัด</p>
+    <h2>จัดโฟลเดอร์ให้เปิดดูได้ทันที</h2>
+    <p class="sub">หลังแตก ZIP ให้เก็บตามรอบสำรอง — ไฟล์ HTML ในแพ็กเกจเปิดในเบราว์เซอร์ได้โดยไม่ต้องมีเน็ตเลย</p>
+    <pre>Backup\
+  fb-2026-10\   (แตก ZIP ของ Facebook รอบนี้)
+    your_facebook_activity\  (โพสต์ รูป ข้อความ)
+    index.html  ← ดับเบิลคลิกเปิดดูได้เลย
+  ig-2026-10\   (แตก ZIP ของ Instagram รอบนี้)
+  fb-2027-01\   (รอบถัดไป …)
+  README.txt    (จดวันที่ทำ + ไฟล์ในรอบนั้นครบอะไรบ้าง)</pre>
+    <ul class="bullet">
+      <li><b>เลือก HTML เมื่อสั่งส่งออก</b> — เปิดอ่านได้ทันทีในเบราว์เซอร์ ส่วน JSON เหมาะกับงานโปรแกรม (ขอทั้งสองแบบก็ได้ถ้าแพลตฟอร์มให้เลือก)</li>
+      <li><b>ช่วงเวลาล่าสุดพอ</b> — สำรองทับตามรอบ แต่เก็บรอบเก่าไว้ถ้ามีพื้นที่ เผื่ออยากย้อนเวอร์ชันเก่าของโพสต์</li>
+      <li><b>ทำซ้ำทุก 3 เดือน</b> — ตั้งเตือนในปฏิทิน: วันสำรองข้อมูล หรือทำก่อนทริป/ช่วงที่วางแผนใช้ออฟไลน์</li>
+      <li><b>สำรองสองที่</b> — เครื่องหลัก + ดิสก์นอก/USB ทดลองเปิดไฟล์จากสำเนาจริงอย่างน้อยครั้งแรก</li>
+    </ul>
+  </section>
+
+  <!-- ═══ CHECKLIST ═══ -->
+  <section id="check">
+    <p class="k-ch">// เครื่องมือจำ · <b>บันทึกในเครื่อง</b></p>
+    <h2>เช็กลิสต์รอบสำรองนี้</h2>
+    <p class="sub">ติกไปได้กลับมาทำต่อ — สถานะเก็บในเบราว์เซอร์เครื่องนี้ (ไม่มีการส่งขึ้นเน็ต)</p>
+    <div class="check">
+      <p id="bkBar">ความครบ 0/8 — 0%</p>
+      <ul id="bkList">
+        <li><label><input type="checkbox" /> <span><b>สั่งส่งออก Facebook</b> — เลือกชนิดข้อมูล ช่วงเวลา คุณภาพสูง</span></label></li>
+        <li><label><input type="checkbox" /> <span><b>สั่งส่งออก Instagram</b> — ผ่านศูนย์บัญชี</span></label></li>
+        <li><label><input type="checkbox" /> <span><b>ได้รับแจ้งไฟล์พร้อม</b> — กดดาวน์โหลดให้ทันก่อนลิงก์หมดอายุ</span></label></li>
+        <li><label><input type="checkbox" /> <span><b>แตก ZIP</b> — เก็บตามโครงโฟลเดอร์ fb/ig พร้อมเดือน</span></label></li>
+        <li><label><input type="checkbox" /> <span><b>เปิด index.html ตรวจ</b> — โพสต์/รูปโผล่ครบแบบออฟไลน์</span></label></li>
+        <li><label><input type="checkbox" /> <span><b>คัดลอกไปดิสก์นอก</b> — สำเนาที่สองพร้อมเสมอ</span></label></li>
+        <li><label><input type="checkbox" /> <span><b>จด README.txt</b> — วันที่ + เนื้อหาในรอบนั้น</span></label></li>
+        <li><label><input type="checkbox" /> <span><b>ตั้งเตือนรอบถัดไป</b> — อีก 3 เดือน</span></label></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══ PRIVACY ═══ -->
+  <section id="privacy">
+    <p class="k-ch">// กติกาที่ห้ามพลาด</p>
+    <h2>ความเป็นส่วนตัวของไฟล์สำรอง</h2>
+    <div class="warn">
+      <h3>ตรงไปตรงมา</h3>
+      <ul>
+        <li><b>ห้ามอัปโหลดไฟล์สำรองขึ้น GitHub/ที่สาธารณะ</b> — แพ็กเกจนี้มีข้อความส่วนตัว รูปคนในครอบครัว ที่อยู่ติดต่อ การโพสต์ขึ้น repo สาธารณะคือรั่วในวันเดียว ข้อมูลส่วนตัวเก็บที่เครื่อง/ดิสก์นอกเท่านั้น (GitHub คือที่เก็บโค้ด ไม่ใช่ที่เก็บข้อมูลส่วนตัว)</li>
+        <li><b>ลบสำเนาในเครื่องที่ใช้ร่วมกัน</b> — ถ้าแตกไฟล์ในเครื่องคนอื่น/คอมกลาง ให้ลบหลังใช้เสร็จ</li>
+        <li><b>สำรองไม่ใช่การลบต้นทาง</b> — ข้อมูลยังอยู่กับแพลตฟอร์มตามเดิม สำเนาช่วยให้คุณมีทางเลือก ไม่ใช่ย้ายบ้าน</li>
+        <li><b>ไฟล์ส่งออกบางส่วนอาจไม่ครบทุกอย่าง</b> — ชนิดข้อมูลขึ้นกับสิ่งที่แพลตฟอร์มให้เลือก ตรวจเนื้อหาในไฟล์จริงทุกรอบ อย่าเชื่อว่าครบเอง</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  PROJECT SOVEREIGN · สร้างบนเครื่องส่วนตัวด้วย AI pair (Codebuff) · ก.ย. 2569<br>
+  คู่มือนี้ใช้เครื่องมือทางการของแพลตฟอร์มเท่านั้น · โฮสต์ฟรีด้วย GitHub Pages
+</footer>
+
+<script is:inline src="nav.js" defer></script>
+<script is:inline>
+(function(){
+  'use strict';
+  var KEY = 'sovereign_bk_check';
+  var boxes = [].slice.call(document.querySelectorAll('#bkList input[type=checkbox]'));
+  var bar = document.getElementById('bkBar');
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  function paint(){
+    var done = 0;
+    boxes.forEach(function(b){ if (b.checked) done++; });
+    var pct = boxes.length ? Math.round(done * 100 / boxes.length) : 0;
+    bar.textContent = 'ความครบ ' + done + '/' + boxes.length + ' — ' + pct + '%';
+  }
+  boxes.forEach(function(b, i){
+    b.checked = !!saved[i];
+    b.addEventListener('change', function(){
+      saved[i] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+      paint();
+    });
+  });
+  paint();
+})();
+</script>
+</body>
+</html>

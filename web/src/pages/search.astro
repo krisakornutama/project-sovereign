@@ -108,6 +108,9 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
   <a href="water.html">ชัยภูมิน้ำ</a>
   <p class="seclab">เครื่องมือ</p>
   <a href="shop.html">ร้านค้า</a>
+  <a href="pos.html">ขายออฟไลน์</a>
+  <a href="media.html">คลังสื่อ</a>
+  <a href="backup.html">สำรองข้อมูล</a>
   <a href="demo.html">ทดลองใช้</a>
   <a href="search.html" aria-current="page">ค้นหา</a>
   <a href="me.html">ผู้เขียน</a>
@@ -171,13 +174,16 @@ var PAGES = [
   { file: 'iot.html',       type: 'system',   label: 'บ้าน IoT' },
   { file: 'education.html', type: 'edu',      label: 'AI สอนลูก' },
   { file: 'books.html',     type: 'books',    label: 'คลังหนังสือ' },
+  { file: 'pos.html',       type: 'tool',     label: 'ขายออฟไลน์' },
+  { file: 'media.html',     type: 'tool',     label: 'คลังสื่อ' },
+  { file: 'backup.html',    type: 'tool',     label: 'สำรองข้อมูล' },
   { file: 'me.html',        type: 'author',   label: 'ผู้เขียน' },
   { file: 'en.html',        type: 'system',   label: 'English' }
 ];
 var PAGES_BOOKS = PAGES.filter(function (p) { return p.file === 'books.html'; })[0];
 var PAGES_WATER = PAGES.filter(function (p) { return p.file === 'water.html'; })[0];
-var TYPE_TH = { system: 'ระบบ', project: 'ผลงาน', farm: 'ฟาร์ม', concept: 'แนวคิด', edu: 'การศึกษา', books: 'หนังสือ', author: 'ผู้เขียน', en: 'English' };
-var TYPE_ORDER = ['system', 'project', 'farm', 'concept', 'edu', 'books', 'author', 'en'];
+var TYPE_TH = { system: 'ระบบ', project: 'ผลงาน', farm: 'ฟาร์ม', concept: 'แนวคิด', edu: 'การศึกษา', tool: 'เครื่องมือ', books: 'หนังสือ', author: 'ผู้เขียน', en: 'English' };
+var TYPE_ORDER = ['system', 'project', 'farm', 'concept', 'edu', 'tool', 'books', 'author', 'en'];
 
 function stripTags(s){ return s.replace(/<[^>]*>/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '\"').replace(/&nbsp;/g, ' '); }
 

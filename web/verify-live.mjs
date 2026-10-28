@@ -5,7 +5,7 @@ const checks = [
   { label: 'หน้าแรก = เว็บใหม่ Astro (astro-island + dark-950)', path: '/', expect: async (r, t) => r.status === 200 && t.includes('astro-island') && t.includes('dark-950') },
   { label: 'หน้าแรกมี island GlassStats/ShaderBG', path: '/', expect: async (r, t) => t.includes('GlassStats') && t.includes('ShaderBG') },
   { label: '/projects.html หน้าใหม่ 200', path: '/projects.html', expect: async (r) => r.status === 200 },
-  ...['books', 'water', 'search', 'en', 'farm', 'fishery', 'livestock', 'guardmini', 'iot', 'education', 'me', 'demo'].map((p) => ({
+  ...['books', 'water', 'search', 'en', 'farm', 'fishery', 'livestock', 'guardmini', 'iot', 'education', 'me', 'demo', 'pos', 'media', 'backup'].map((p) => ({
     label: `/${p}.html 200`, path: `/${p}.html`, expect: async (r) => r.status === 200,
   })),
   { label: 'LEAK: /scraper/README.md ต้อง 404', path: '/scraper/README.md', expect: async (r) => r.status === 404 },
@@ -21,7 +21,7 @@ let fail = 0;
 for (const c of checks) {
   try {
     const res = await fetch(BASE + c.path, { redirect: 'manual' });
-    const text = c.path === '/' ? await res.text() : '';
+    const text = await res.text();
     const ok = await c.expect(res, text);
     console.log(ok ? 'PASS' : 'FAIL', '|', c.label, '| status', res.status);
     if (!ok) fail++;
