@@ -30,6 +30,12 @@ const { title, description = 'Sovereign - ระบบหลังบ้าน�
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <script is:inline>
+      if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+        try { navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {}); } catch (e) {}
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet" />
