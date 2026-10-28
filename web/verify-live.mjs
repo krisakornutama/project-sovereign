@@ -12,6 +12,9 @@ const checks = [
   { label: 'package-lock.json ยังอยู่ตามเดิม (tree คงของ; workflow v2 ค่อยกรอง)', path: '/package-lock.json', expect: async (r) => r.status === 200 },
   { label: 'LEAK: /web/package.json ต้อง 404', path: '/web/package.json', expect: async (r) => r.status === 404 },
   { label: 'LEAK: /scraper/marketplace/cli.mjs ต้อง 404', path: '/scraper/marketplace/cli.mjs', expect: async (r) => r.status === 404 },
+  { label: '/sw.js service worker 200 (โหมดออฟไลน์)', path: '/sw.js', expect: async (r, t) => r.status === 200 && t.includes('sovereign-offline') },
+  { label: '/manifest.webmanifest 200 (PWA)', path: '/manifest.webmanifest', expect: async (r, t) => r.status === 200 && t.includes('"start_url"') },
+  { label: 'nav.js มีส่วนลงทะเบียน SW ครบทุกหน้า', path: '/nav.js', expect: async (r, t) => r.status === 200 && t.includes('serviceWorker.register') },
 ];
 
 let fail = 0;

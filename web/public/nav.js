@@ -1,6 +1,21 @@
 /* nav.js — ปุ่ม ☰ เปิด/ปิด drawer หมวดหน้าเว็บฝั่งซ้ายบนจอเล็ก (ไม่มี dependency)
    ปิดด้วย: กดปุ่มซ้ำ · Esc · แตะนอก drawer (scrim) · เลือกลิงก์
-   บนมือถือ ตอน drawer ปิด rail ถูกซ่อนจากโปรแกรมอ่านหน้าจอด้วย (aria-hidden) */
+   บนมือถือ ตอน drawer ปิด rail ถูกซ่อนจากโปรแกรมอ่านหน้าจอด้วย (aria-hidden)
+   top: ลงทะเบียน service worker (โหมดออฟไลน์) + แนะไฟล์ manifest ให้ทุกหน้าโดยแก้ที่เดียว */
+(function () {
+  'use strict';
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+  let link = document.querySelector('link[rel="manifest"]');
+  if (!link) {
+    link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = '/manifest.webmanifest';
+    document.head.appendChild(link);
+  }
+  try { navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {}); } catch (e) {}
+})();
+
 (function () {
   'use strict';
   var toggle = document.querySelector('.rail-toggle');

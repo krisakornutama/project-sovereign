@@ -1,0 +1,14 @@
+{
+  "name": "Sovereign — หลังบ้านร้านค้า/ร้านอาหาร/ฟาร์ม (self-hosted)",
+  "short_name": "Sovereign",
+  "description": "ระบบหลังบ้านธุรกิจ/ฟาร์มแบบ self-hosted — ใช้งานออฟไลน์ได้หลังเปิดครั้งแรก",
+  "lang": "th",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
