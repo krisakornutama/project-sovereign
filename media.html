@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="th"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>คลังสื่อออฟไลน์ — เปิดดูจากโฟลเดอร์ในเครื่อง — Project Sovereign</title><meta name="description" content="คลังสื่อออฟไลน์: เลือกโฟลเดอร์วิดีโอ/เพลงในเครื่องแล้วเปิดดูได้ทันทีโดยไฟล์ไม่ถูกอัปขึ้นอินเทอร์เน็ต พร้อมคู่มือเก็บสื่อที่มีสิทธิ์ลงเครื่อง และตั้งเซิร์ฟเวอร์สื่อในเครือข่ายบ้าน (Jellyfin) ให้ทุกจอดูได้แม้เน็ตตัด"><meta name="theme-color" content="#030712"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Cpath d='M6 5l5 3-5 3z' fill='%2334d399'/%3E%3Crect x='3' y='3' width='10' height='10' rx='1.5' fill='none' stroke='%2322d3ee' stroke-width='1.2'/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
+  --green:#34d399; --cyan:#22d3ee; --txt:#e5e7eb; --dim:#9ca3af; --faint:#6b7280;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Noto Sans Thai Looped','Cascadia Code','Courier New',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(34,211,238,.10),transparent 64%),
+  radial-gradient(1200px 700px at 50% 115%,rgba(52,211,153,.06),transparent 62%)}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:
+  linear-gradient(rgba(52,211,153,.02) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(34,211,238,.015) 1px,transparent 1px);background-size:36px 36px;
+  -webkit-mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%);
+  mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%)}
+::selection{background:rgba(52,211,153,.35);color:#ecfdf5}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+a{color:var(--green)}
+
+.topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:13px 24px;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px)}
+.topnav{display:flex;gap:15px;font-family:var(--mono);font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.topnav::-webkit-scrollbar{display:none}
+.topnav a{color:var(--dim);text-decoration:none}
+.topnav a:hover{color:var(--green)}
+.topnav a[aria-current="page"]{color:var(--green);border-bottom:1px solid var(--green)}
+
+.hero{max-width:1080px;margin:0 auto;padding:70px 24px 56px}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;color:var(--cyan);margin:0 0 14px}
+h1{font-size:clamp(1.9rem,5vw,3.2rem);font-weight:700;line-height:1.2;margin:0 0 18px;max-width:800px}
+h1 em{font-style:normal;color:var(--green);text-shadow:0 0 24px rgba(52,211,153,.35)}
+.lede{color:var(--dim);font-size:1.02rem;max-width:680px;margin:0 0 26px}
+.meta-line{font-family:var(--mono);font-size:.72rem;color:var(--faint);margin:0 0 30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;font-weight:600;font-size:.9rem;text-decoration:none;padding:11px 22px;border-radius:9px;transition:box-shadow .15s ease,background .15s ease,border-color .15s ease}
+.btn-primary{background:var(--green);color:#030712}
+.btn-primary:hover{box-shadow:0 0 26px rgba(52,211,153,.4)}
+.btn-ghost{border:1px solid rgba(52,211,153,.4);color:var(--green)}
+.btn-ghost:hover{border-color:var(--green);background:rgba(52,211,153,.08)}
+
+html{scroll-padding-top:70px}
+section{max-width:1080px;margin:0 auto;padding:64px 24px;scroll-margin-top:70px}
+.k-ch{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;color:var(--cyan);margin:0 0 10px}
+.k-ch b{color:var(--green)}
+h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
+h3{font-size:1rem;font-weight:600;color:#ecfdf5;margin:18px 0 6px}
+.sub{color:var(--dim);font-size:.92rem;margin:0 0 34px;max-width:680px}
+.bullet{color:var(--dim);font-size:.88rem;padding-left:20px;margin:0;line-height:2}
+.bullet b,.hl{color:#ecfdf5}
+code.c{font-family:var(--mono);font-size:.76rem;color:#a7f3d0;background:rgba(3,7,12,.7);border:1px solid var(--line);border-radius:6px;padding:2px 8px;overflow-wrap:anywhere}
+pre{font-family:var(--mono);font-size:.76rem;color:#a7f3d0;background:rgba(3,7,12,.7);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;line-height:1.9;margin:10px 0 20px}
+
+/* ── vault ── */
+.vault{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px 22px}
+.picker{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.picker label{font-family:var(--mono);font-size:.72rem;color:#a7f3d0;border:1px dashed rgba(52,211,153,.45);
+  border-radius:10px;padding:12px 18px;cursor:pointer;background:rgba(52,211,153,.05)}
+.picker label:hover{background:rgba(52,211,153,.12)}
+.picker input{position:absolute;width:1px;height:1px;opacity:0}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:.68rem;padding:7px 13px;border-radius:99px;cursor:pointer;
+  border:1px solid rgba(52,211,153,.3);background:transparent;color:var(--dim)}
+.chip.on{border-color:var(--green);color:var(--green);background:rgba(52,211,153,.1)}
+#mSearch{font-family:var(--mono);font-size:.8rem;color:#a7f3d0;background:#0b1220;border:1px solid rgba(34,211,153,.35);
+  border-radius:8px;padding:9px 12px;min-width:200px;flex:1}
+#mCount{font-family:var(--mono);font-size:.66rem;color:var(--faint);margin:12px 2px 8px}
+.mlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.mfile{display:block;text-align:left;border:1px solid rgba(52,211,153,.18);border-radius:9px;cursor:pointer;
+  padding:10px 12px;background:rgba(3,7,12,.5);color:var(--txt)}
+.mfile:hover{border-color:var(--green);background:rgba(52,211,153,.07)}
+.mfile b{display:block;font-size:.8rem;font-weight:600;color:#ecfdf5;overflow-wrap:anywhere}
+.mfile span{font-family:var(--mono);font-size:.62rem;color:var(--faint)}
+.player{margin-top:18px}
+.player video,.player audio{width:100%;border-radius:10px;background:#0b1220;border:1px solid var(--line)}
+.player video{max-height:480px}
+.player .ph{border:1px dashed var(--line);border-radius:10px;padding:26px;text-align:center;
+  font-family:var(--mono);font-size:.7rem;color:var(--faint)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px 22px}
+.card p{color:var(--dim);font-size:.86rem;margin:0 0 10px}
+.warn{border:1px dashed rgba(245,158,11,.4);background:rgba(245,158,11,.05);border-radius:12px;padding:20px 24px}
+.warn h3{margin:0 0 10px;font-size:.95rem;color:#fbbf24}
+.warn ul{margin:0;padding-left:20px}
+.warn li{font-size:.85rem;color:var(--dim);margin:6px 0}
+
+footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px;
+  font-family:var(--mono);font-size:.7rem;color:var(--faint);line-height:2}
+
+@media (max-width:900px){
+  .two{grid-template-columns:1fr;gap:30px}
+  .hero{padding:56px 20px 46px}
+  section{padding:52px 20px}
+}
+@media (max-width:480px){
+  .topnav{gap:10px;font-size:.64rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style><link rel="stylesheet" href="nav.css"><link rel="canonical" href="https://sovereignoriginshop.dpdns.org/media.html"><meta property="og:type" content="website"><meta property="og:title" content="คลังสื่อออฟไลน์ — Project Sovereign"><meta property="og:description" content="เลือกโฟลเดอร์สื่อในเครื่องแล้วเปิดดูได้ทันที ไฟล์ไม่ออกจากเครื่อง — พร้อมคู่มือเก็บสื่อที่มีสิทธิ์และตั้งเซิร์ฟเวอร์สื่อในบ้าน (Jellyfin)"><meta property="og:url" content="https://sovereignoriginshop.dpdns.org/media.html"><meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png"><meta property="og:image:alt" content="Project Sovereign — ระบบหลังบ้านร้านค้า ฟาร์ม และบัญชี"><meta name="twitter:card" content="summary_large_image"></head> <body class="shell"> <a class="skip-link" href="#main">ข้ามไปเนื้อหาหลัก</a> <button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">&#9788;</button> <aside class="rail" id="siteRail" role="navigation" aria-label="เมนูหน้าเว็บ"> <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a> <p class="seclab">หน้าเว็บ</p> <a href="index.html">ภาพรวม</a> <a href="projects.html">ผลงาน</a> <a href="livestock.html">ปศุสัตว์</a> <a href="fishery.html">การประมง</a> <a href="farm.html">เกษตร &amp; สมุนไพร</a> <a href="guardmini.html">SovereignGuardMini</a> <a href="iot.html">บ้าน IoT</a> <a href="education.html">AI สอนลูก</a> <a href="books.html">คลังหนังสือ</a> <a href="water.html">ชัยภูมิน้ำ</a> <p class="seclab">เครื่องมือ</p> <a href="shop.html">ร้านค้า</a> <a href="pos.html">ขายออฟไลน์</a> <a href="media.html" aria-current="page">คลังสื่อ</a> <a href="backup.html">สำรองข้อมูล</a> <a href="demo.html">ทดลองใช้</a> <a href="search.html">ค้นหา</a> <a href="me.html">ผู้เขียน</a> <a href="en.html">EN</a> </aside> <header class="topbar"> <nav class="topnav" aria-label="เมนูหลัก"> <a href="index.html">ภาพรวม</a> <a href="index.html#sell">๑ ขาย</a> <a href="index.html#fulfil">๒ ส่ง</a> <a href="index.html#money">๓ เงิน</a> <a href="index.html#tax">๔ ภาษี</a> <a href="index.html#remind">๕ เตือน</a> <a href="index.html#ai">๖ AI</a> <a href="index.html#ops">๗ เฝ้าระบบ</a> <a href="media.html" aria-current="page">คลังสื่อ</a> </nav> </header> <main id="main"> <!-- ═══ HERO ═══ --> <section class="hero"> <p class="eyebrow">PROJECT SOVEREIGN · OFFLINE MEDIA VAULT</p> <h1>คลังสื่อของคุณเอง<br><em>ไฟล์ไม่ต้องออกจากเครื่อง</em></h1> <p class="lede">เลือกโฟลเดอร์วิดีโอ/เพลงในเครื่อง แล้วเปิดดูได้ทันทีในหน้านี้ — ทำงานแบบอ่านไฟล์จากดิสก์โดยตรง ไม่มีการอัปโหลด ไม่มีเซิร์ฟเวอร์ ไม่มีบัญชี พร้อมคู่มือสะสมสื่อที่มีสิทธิ์และเปิดเซิร์ฟเวอร์สื่อในบ้านให้ทุกจอดูได้แม้เน็ตตัด</p> <p class="meta-line">ความเป็นส่วนตัว: หน้านี้อ่านไฟล์ในเครื่องอย่างเดียว — ไม่มีคำขอเน็ตเวิร์กใด ๆ ในตัวเล่นสื่อ</p> <div class="cta"> <a class="btn btn-primary" href="#pick">เลือกโฟลเดอร์สื่อ →</a> <a class="btn btn-ghost" href="#jelly">ตั้งเซิร์ฟเวอร์ในบ้าน</a> </div> </section> <!-- ═══ VAULT ═══ --> <section id="pick"> <p class="k-ch">// เปิดจากดิสก์โดยตรง · <b>ไม่อัปโหลด</b></p> <h2>เปิดโฟลเดอร์สื่อในเครื่อง</h2> <p class="sub">กดปุ่มเลือกโฟลเดอร์ (Chrome/Edge แนะนำ) รายการไฟล์จะโผล่ข้างล่าง กดไฟล์ไหนก็เล่นไฟล์นั้น — ทำงานได้แม้เน็ตตัด เพราะทุกอย่างเกิดในเครื่อง</p> <div class="vault"> <div class="picker"> <label for="dirInput">📂 เลือกโฟลเดอร์ในเครื่อง…</label> <input type="file" id="dirInput" webkitdirectory directory multiple accept="video/*,audio/*"> <input id="mSearch" type="search" placeholder="กรองตามชื่อไฟล์" aria-label="กรองตามชื่อไฟล์"> <div class="chips" role="group" aria-label="กรองตามชนิด"> <button class="chip on" data-mkind="all" type="button">ทั้งหมด</button> <button class="chip" data-mkind="video" type="button">วิดีโอ</button> <button class="chip" data-mkind="audio" type="button">เสียง</button> </div> </div> <p id="mCount">เลือกโฟลเดอร์ในเครื่องแล้วรายการจะโผล่ที่นี่ — ไฟล์ไม่ถูกอัปขึ้นอินเทอร์เน็ต</p> <div class="mlist" id="mList"></div> <div class="player"> <div class="ph" id="mPh">ตัวเล่นสื่อจะโผล่ตรงนี้เมื่อกดไฟล์จากรายการ</div> <video id="mVideo" controls hidden playsinline></video> <audio id="mAudio" controls hidden></audio> </div> </div> </section> <!-- ═══ COLLECT LEGALLY ═══ --> <section id="collect"> <p class="k-ch">// สะสมอย่างถูกสิทธิ์</p> <h2>เก็บสื่อที่คุณมีสิทธิ์ลงเครื่อง</h2> <p class="sub">คลังสื่อจะมีของให้ดูก็ต่อเมื่อมีไฟล์จริงในดิสก์ — ทางที่ถูกกฎหมายและทนทานที่สุดคือเก็บของที่คุณเป็นเจ้าของหรือมีสิทธิ์ใช้</p> <div class="two"> <div class="card"> <h3>สื่อของคุณเอง</h3> <p>คลิปที่คุณอัปเดตขึ้นแพลตฟอร์มเอง สามารถดาวน์โหลดกลับลงเครื่องได้จากเมนูของแพลตฟอร์มโดยตรง (เช่น YouTube Studio → ดาวน์โหลดวิดีโอต้นฉบับ) คุณภาพเต็มและไม่ต้องใช้เครื่องมือเสริม</p> <h3>สื่อที่เปิดให้ใช้ฟรี</h3> <p>คลัง Creative Commons, Public Domain (เช่น archive.org, Wikimedia Commons) มีไฟล์ดาวน์โหลดตรง ๆ ตามสัญญาอนุญาตของแต่ละชิ้น</p> <h3>เครื่องมือบันทึกที่คุณมีสิทธิ์</h3> <p>ชุดเครื่องมือโอเพนซอร์สอย่าง <code class="c">yt-dlp</code> ช่วยเก็บสื่อได้ — ใช้ได้ก็ต่อเมื่อสื่อนั้นเป็นของคุณหรืออนุญาตให้ดาวน์โหลด ตรวจสัญญาอนุญาตและข้อตกลงของแพลตฟอร์มก่อนใช้เสมอ</p> </div> <div class="card"> <h3>จัดระเบียบให้ค้นง่ายตอนออฟไลน์</h3> <pre>MediaVault\
+  videos\   (วิดีโอรายการยาว)
+  music\    (เสียง/เพลง)
+  kids\     (ของ AI สอนลูก)
+  docs\     (เอกสารสแกน)</pre> <p>เก็บชื่อไฟล์ให้อ่านชื่อแล้วรู้เรื่อง ตัวกรองในหน้านี้ค้นจากชื่อไฟล์เป็นหลัก</p> <h3>สำรองสองที่</h3> <p>ดิสก์เดียวคือไม่มีสำรอง — คัดลอกไว้อีกที่ (ดิสก์นอก/NAS) แล้วทดลองเปิดไฟล์จากสำเนาจริงสักครั้ง</p> </div> </div> </section> <!-- ═══ JELLYFIN LAN ═══ --> <section id="jelly"> <p class="k-ch">// บ้านทั้งบ้านดูได้ · <b>LAN เท่านั้น</b></p> <h2>เซิร์ฟเวอร์สื่อในบ้าน (Jellyfin)</h2> <p class="sub">ถ้ามีเครื่องคอม/แผงเซิร์ฟเวอร์วิ่งตลอด ติดตั้ง Jellyfin แล้วชี้ไปที่โฟลเดอร์สื่อ — ทุกจอในบ้าน (ทีวี มือถือ แท็บเล็ต) เปิดดูผ่าน Wi-Fi บ้านได้โดยไม่ต้องมีอินเทอร์เน็ต</p> <ul class="bullet"> <li><b>ติดตั้งในเครื่องที่เก็บไฟล์</b> — Docker ทางที่ง่ายที่สุด: <code class="c">docker run -d --name jellyfin -p 8096:8096 -v C:\MediaVault:/media jellyfin/jellyfin</code></li> <li><b>เปิดหน้าตั้งค่าครั้งแรก</b> — พอร์ต 8096 บนเครื่องตัวเอง (<code class="c">http://localhost:8096</code>) ตั้งภาษาไทย ชี้โฟลเดอร์สื่อ สแกนไลบรารี</li> <li><b>เพิ่มผู้ใช้แยกตามคน</b> — บัญชีพ่อแม่ลูกแยกกัน กำหนดได้ว่าโปรไฟล์ไหนเห็นโฟลเดอร์ไหน</li> <li><b>เปิดจากจออื่น</b> — ใส่ IP ของเครื่องตัวเซิร์ฟเวอร์ในเบราว์เซอร์หรือแอป Jellyfin เช่น <code class="c">http://192.168.1.10:8096</code></li> </ul> </section> <!-- ═══ WARN ═══ --> <section id="store"> <p class="k-ch">// ตรงไปตรงมา</p> <h2>ข้อควรระวังของคลังสื่อ</h2> <div class="warn"> <h3>ตรงไปตรงมา</h3> <ul> <li><b>อย่าอัปโหลดสื่อส่วนตัวขึ้น GitHub สาธารณะ</b> — คลังสื่อคือของใช้ในบ้าน เก็บบนดิสก์/NAS เท่านั้น การโพสต์ไฟล์ขึ้นที่สาธารณะเพื่อ "เก็บกลอนแก้ว" เป็นการเปิดข้อมูลส่วนตัวและเสี่ยงลิขสิทธิ์พร้อมกัน</li> <li><b>ไฟล์บางรูปแบบอาจเปิดไม่ได้ในเบราว์เซอร์</b> — เบราว์เซอร์เล่น mp4/webm/mp3 ได้กว้าง แต่ mkv/avi/เสียงบางชนิดอาจไม่เล่น แปลงเป็น mp4/mp3 หรือใช้ Jellyfin ช่วยทรานส์โค้ดให้</li> <li><b>หน้านี้ไม่ใช่ที่เก็บไฟล์</b> — หน้านี้เป็นแค่หน้าต่างเปิดไฟล์จากดิสก์ ไฟล์จริงยังอยู่ที่โฟลเดอร์ของคุณ ไม่มีอะไรถูกคัดลอกเข้าเว็บนี้</li> </ul> </div> </section> </main> <footer>
+PROJECT SOVEREIGN · สร้างบนเครื่องส่วนตัวด้วย AI pair (Codebuff) · ก.ย. 2569<br>
+หน้านี้อ่านไฟล์ในเครื่องอย่างเดียว ไม่มีข้อมูลออกจากเครื่อง · โฮสต์ฟรีด้วย GitHub Pages
+</footer> <script src="nav.js" defer></script> <script>
+(function(){
+  'use strict';
+  var input = document.getElementById('dirInput');
+  var list = document.getElementById('mList');
+  var q = document.getElementById('mSearch');
+  var count = document.getElementById('mCount');
+  var ph = document.getElementById('mPh');
+  var video = document.getElementById('mVideo');
+  var audio = document.getElementById('mAudio');
+  var files = [];
+  var EXT = {
+    video: ['mp4', 'webm', 'mkv', 'mov', 'm4v', 'avi'],
+    audio: ['mp3', 'm4a', 'wav', 'ogg', 'oga', 'opus', 'flac', 'aac']
+  };
+  function extOf(name){
+    var p = name.lastIndexOf('.');
+    return p >= 0 ? name.slice(p + 1).toLowerCase() : '';
+  }
+  function kindOf(name){
+    var e = extOf(name);
+    if (EXT.video.indexOf(e) >= 0) return 'video';
+    if (EXT.audio.indexOf(e) >= 0) return 'audio';
+    return null;
+  }
+  function human(n){
+    if (n > 1073741824) return (n / 1073741824).toFixed(2) + ' GB';
+    if (n > 1048576) return (n / 1048576).toFixed(1) + ' MB';
+    return Math.max(1, Math.round(n / 1024)) + ' KB';
+  }
+  function currentKind(){
+    var on = document.querySelector('[data-mkind].on');
+    return on ? on.getAttribute('data-mkind') : 'all';
+  }
+  function render(){
+    var kind = currentKind();
+    var term = q.value.trim().toLowerCase();
+    list.innerHTML = '';
+    var shown = 0;
+    files.forEach(function(x){
+      if (kind !== 'all' && x.kind !== kind) return;
+      if (term && x.f.name.toLowerCase().indexOf(term) < 0) return;
+      shown++;
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'mfile';
+      var t = document.createElement('b'); t.textContent = x.f.name;
+      var s = document.createElement('span');
+      s.textContent = (x.kind === 'video' ? 'วิดีโอ' : 'เสียง') + ' · ' + human(x.f.size);
+      b.appendChild(t); b.appendChild(s);
+      b.addEventListener('click', function(){ play(x); });
+      list.appendChild(b);
+    });
+    count.textContent = shown
+      ? 'พบ ' + shown + ' ไฟล์สื่อจากโฟลเดอร์ที่เลือก'
+      : (files.length ? 'ไม่พบไฟล์สื่อตามเงื่อนไขกรอง' : 'เลือกโฟลเดอร์ในเครื่องแล้วรายการจะโผล่ที่นี่ — ไฟล์ไม่ถูกอัปขึ้นอินเทอร์เน็ต');
+  }
+  function play(x){
+    ph.hidden = true;
+    var el = x.kind === 'video' ? video : audio;
+    var other = x.kind === 'video' ? audio : video;
+    try { other.pause(); } catch (e) {}
+    other.hidden = true; el.hidden = false;
+    if (el._url) { try { URL.revokeObjectURL(el._url); } catch (e) {} }
+    el._url = URL.createObjectURL(x.f);
+    el.src = el._url;
+    var p = el.play();
+    if (p && p.catch) p.catch(function(){});
+  }
+  input.addEventListener('change', function(){
+    files = [].slice.call(input.files || [])
+      .map(function(f){ return { f: f, kind: kindOf(f.name) }; })
+      .filter(function(x){ return !!x.kind; });
+    render();
+  });
+  q.addEventListener('input', render);
+  [].slice.call(document.querySelectorAll('[data-mkind]')).forEach(function(b){
+    b.addEventListener('click', function(){
+      [].slice.call(document.querySelectorAll('[data-mkind]')).forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      render();
+    });
+  });
+  render();
+})();
+</script> </body> </html>
