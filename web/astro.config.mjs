@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   integrations: [react()],
@@ -13,6 +14,9 @@ export default defineConfig({
     format: 'file',
   },
   vite: {
+    /* astro 7 + tailwind 4: ใช้ vite plugin ตรง ๆ (postcss-import ของ vite เก่าจับ @import "tailwindcss"
+       เป็น path ไฟล์ก่อน plugin tailwind ทำงาน — vite plugin ตัดปัญหานี้ตั้งแต่ต้นทาง) */
+    plugins: [tailwindcss()],
     build: {
       /* แยกชุดไลบรารีหนักออกเป็นจุดแยก ให้โค้ดแอปและหน้าเว็บโหลดไวกว่าโหลดรวมก้อนเดียว */
       rollupOptions: {
@@ -25,13 +29,6 @@ export default defineConfig({
             return undefined;
           },
         },
-      },
-    },
-    css: {
-      postcss: {
-        plugins: [
-          await import('@tailwindcss/postcss').then(m => m.default()),
-        ],
       },
     },
   },
