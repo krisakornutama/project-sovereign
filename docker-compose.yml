@@ -1,0 +1,28 @@
+# docker-compose.yml — Project Sovereign static site
+# รันได้ทันทีบนเครื่องคุณ (Raspberry Pi, Mini PC, Home Server ฯลฯ)
+#   docker-compose up -d
+# แล้วเปิดเบราว์เซอร์ไปที่ http://localhost:8080
+#
+# ต้นทุน: 0 บาท (ใช้ฮาร์ดแวร์ที่มีอยู่แล้ว · โฮสต์เองที่บ้าน · ไม่ต้องจ่ายค่าเซิร์ฟเวอร์)
+
+services:
+  sovereign-web:
+    image: ghcr.io/sovereign-origin/project-sovereign:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sovereign-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    # อ่านอย่างเดียว ป้องกันการเขียนทับไฟล์ใน container
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

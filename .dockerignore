@@ -1,0 +1,19 @@
+node_modules/
+.state/
+*.log
+.git/
+.github/
+.dockerignore
+Dockerfile
+docker-compose.yml
+README.md
+DOCKER.md
+package.json
+package-lock.json
+sw.js
+_nav.js (placeholder)
+.scraper/
+.templates/
+webhook-service/
+tmp-wt/
+so-origin-readonly/
