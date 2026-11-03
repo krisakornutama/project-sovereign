@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sovereign OS — ระบบหลังบ้านธุรกิจ ติดตั้งเอง ขายของได้ทันที</title>
+<meta name="description" content="Sovereign OS ระบบปฏิบัติการธุรกิจสำหรับร้านเล็ก ฟาร์ม และสต็อก: POS สต็อก ปศุสัตว์ พลังงาน การเงิน เภสัชกรรม ควบคุมรถ สตาร์ทเร็วบน Electron + Node.js โฮสต์เองบนเครื่อง ไม่ต้องพึ่งคลาวด์">
+<meta name="theme-color" content="#030712">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Crect x='3' y='3' width='4.4' height='4.4' rx='1' fill='%2334d399'/%3E%3Crect x='8.6' y='3' width='4.4' height='4.4' rx='1' fill='none' stroke='%2334d399' stroke-width='1.1'/%3E%3Crect x='3' y='8.6' width='4.4' height='4.4' rx='1' fill='none' stroke='%2334d399' stroke-width='1.1'/%3E%3Crect x='8.6' y='8.6' width='4.4' height='4.4' rx='1' fill='%2322d3ee'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.65); --line:rgba(52,211,153,.22);
+  --green:#34d399; --cyan:#22d3ee; --txt:#f0f4f8; --dim:#a1a1aa; --faint:#71717a;
+  --paper:#F2D8D8; --paper-edge:#D9B2B0; --ink:#2B2320; --stamp:#B3352C;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Noto Sans Thai Looped','Cascadia Code','Courier New',monospace;
+  --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(34,211,238,.10),transparent 64%),
+  radial-gradient(1200px 700px at 50% 115%,rgba(52,211,238,.06),transparent 62%)}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:
+  linear-gradient(rgba(52,211,153,.02) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(34,211,238,.015) 1px,transparent 1px);background-size:36px 36px;
+  -webkit-mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%);
+  mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%)}
+::selection{background:rgba(52,211,153,.35);color:#ecfdf5}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+a{color:var(--green);text-decoration:none}
+.mono{font-family:var(--mono)}
+/* topbar */
+.topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 24px;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px)}
+.topnav{display:flex;gap:15px;font-family:var(--mono);font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.topnav::-webkit-scrollbar{display:none}
+.topnav a{color:var(--dim)}
+.topnav a:hover{color:var(--green)}
+/* hero */
+.hero{max-width:900px;margin:0 auto;padding:70px 24px 56px}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;color:var(--cyan);margin:0 0 14px}
+h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:700;line-height:1.2;margin:0 0 18px;max-width:800px}
+h1 em{font-style:normal;color:var(--green);text-shadow:0 0 24px rgba(52,211,153,.35)}
+.lede{color:var(--dim);font-size:1.05rem;max-width:660px;margin:0 0 28px}
+.meta-line{font-family:var(--mono);font-size:.72rem;color:var(--faint);margin:0 0 30px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;font-weight:600;font-size:.9rem;text-decoration:none;padding:12px 24px;border-radius:9px;transition:all .15s ease;border:1px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.btn-primary{background:linear-gradient(135deg,#34d399 0%,#10b981 100%);color:#030712;border-color:rgba(52,211,153,.4);box-shadow:0 4px 14px rgba(52,211,153,.35)}
+.btn-primary:hover{box-shadow:0 6px 20px rgba(52,211,153,.55);transform:translateY(-1px);border-color:#34d399}
+.btn-ghost{border:1px solid rgba(52,211,153,.45);color:#34d399;background:rgba(52,211,153,.06)}
+.btn-ghost:hover{background:rgba(52,211,153,.15);border-color:#34d399;transform:translateY(-1px)}
+/* sections */
+html{scroll-padding-top:70px}
+section{max-width:980px;margin:0 auto;padding:64px 24px;scroll-margin-top:70px}
+.k-ch{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;color:var(--cyan);margin:0 0 10px}
+.k-ch b{color:var(--green)}
+h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
+.sub{color:var(--dim);font-size:.92rem;margin:0 0 34px;max-width:700px}
+.grid{display:grid;gap:18px}
+@media (min-width:760px){.grid-2{grid-template-columns:1fr 1fr}}
+.card{border:1px solid rgba(52,211,153,.18);border-radius:var(--radius);background:var(--panel);padding:28px 30px;box-shadow:var(--shadow);transition:transform .15s ease, box-shadow .15s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.35), 0 0 0 1px rgba(52,211,153,.25)}
+.card h3{font-size:1.15rem;font-weight:600;margin:0 0 6px}
+.card .tag{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--cyan);margin:0 0 8px}
+.card p{font-size:.88rem;color:var(--dim);margin:0 0 16px;line-height:1.7}
+.card ul{margin:0 0 16px;padding:0;list-style:none}
+.card li{font-size:.84rem;color:var(--dim);padding:5px 0 5px 20px;position:relative;line-height:1.7}
+.card li::before{content:'·';position:absolute;left:7px;color:var(--green);font-weight:700}
+/* proof table */
+table{width:100%;border-collapse:collapse;font-size:.8rem;font-family:var(--mono);margin:10px 0 0}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--dim)}
+th{background:rgba(52,211,153,.06);color:var(--green);font-weight:600}
+code{font-family:var(--mono);font-size:.8rem;color:#a5f3fc;background:rgba(34,211,238,.08);padding:1px 6px;border-radius:4px}
+/* install steps */
+.steps{display:grid;gap:14px}
+.step{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:rgba(17,24,39,.4)}
+.step .num{font-family:var(--mono);font-size:1.2rem;font-weight:700;color:var(--green)}
+.step p{font-size:.86rem;color:var(--dim);margin:6px 0 0;line-height:1.6}
+/* license compare */
+.compare{border-collapse:collapse;width:100%;font-size:.82rem;font-family:var(--mono);margin-top:12px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.compare th,.compare td{border:1px solid rgba(52,211,153,.18);padding:12px 14px;text-align:left;color:var(--dim);background:rgba(17,24,39,.5)}
+.compare th{background:rgba(52,211,153,.06);color:var(--green)}
+.compare td.yes{color:var(--green)}
+.compare td.no{color:var(--faint)}
+/* faq */
+.faq{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px 24px;margin:0 0 12px}
+.faq q{font-weight:600;color:#ecfdf5}
+.faq a{color:var(--dim)}
+.faq a:hover{color:var(--green)}
+/* cta */
+.cta-box{border:1px solid var(--line);border-radius:16px;background:rgba(52,211,153,.08);padding:34px 36px;text-align:center}
+.cta-box h2{color:#ecfdf5;margin:0 0 10px}
+.cta-box p{color:var(--dim);margin:0 0 24px;font-size:.9rem}
+footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px;font-family:var(--mono);font-size:.7rem;color:var(--faint);line-height:2}
+@media (max-width:900px){.hero{padding:56px 20px 46px}section{padding:52px 20px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">ข้ามไปเนื้อหาหลัก</a>
+
+<header class="topbar">
+  <nav class="topnav" aria-label="เมนูหลัก">
+    <a href="#promise">คำสัญญา</a>
+    <a href="#for">สำหรับใคร</a>
+    <a href="#inside">ข้างในมีอะไร</a>
+    <a href="#proof">หลักฐาน</a>
+    <a href="#install">ติดตั้ง 3 ขั้นตอน</a>
+    <a href="#license">เปรียบเทียบใบอนุญาต</a>
+    <a href="#faq">คำถามพบบ่อย</a>
+    <a href="#buy">ซื้อเลย</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- PROMISE -->
+  <section id="promise" class="hero">
+    <p class="eyebrow">SOVEREIGN OS · ซอฟต์แวร์ธุรกิจ ติดตั้งเอง</p>
+    <h1>ระบบหลังบ้านธุรกิจ ที่คุณ <em>โฮสต์เอง</em> ขายของได้ตั้งแต่วันแรก</h1>
+    <p class="lede">Sovereign OS คือระบบปฏิบัติการธุรกิจสำหรับร้านเล็ก ฟาร์ม และสต็อก ครบชุดในตัว — POS ขายหน้าร้าน สต็อกสินค้า ปศุสัตว์และฟาร์ม พลังงาน การเงิน เภสัชกรรม และควบคุมรถขนส่ง — รันบน Electron desktop client กับ Node.js API โฮสต์เองบนเครื่องของคุณ ไม่ต้องเช่าคลาวด์ ไม่มีค่ารายเดือน ไม่ส่งข้อมูลธุรกิจออกนอกเครื่อง</p>
+    <p class="meta-line">Next.js 16.3 (Pages Router · Turbopack) · Express 4.22 · PostgreSQL + TimescaleDB · Prisma · Electron · Docker Compose</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#buy">ดูแผนราคาและซื้อ →</a>
+      <a class="btn btn-ghost" href="#install">ดูวิธีติดตั้ง →</a>
+    </div>
+  </section>
+
+  <!-- FOR -->
+  <section id="for">
+    <p class="k-ch">// สำหรับใคร</p>
+    <h2>สร้างมาให้ธุรกิจขนาดเล็กที่ต้องการควบคุมข้อมูลเอง</h2>
+    <p class="sub">ถ้าคุณเบื่อระบบที่เก็บข้อมูลบนคลาวด์ของผู้ให้บริการรายอื่น จ่ายค่ารายเดือนเรื่อย ๆ และย้ายข้อมูลออกยาก Sovereign OS ให้คุณติดตั้งบนเครื่องของคุณเอง ควบคุมทุกอย่างได้เต็มที่</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="tag">ร้านค้า · ร้านอาหาร</div>
+        <h3>ขายหน้าร้าน + สต็อก</h3>
+        <p>POS ออกใบเสร็จ แยก VAT ออกใบกำกับภาษี ตัดสต็อกอัตโนมัติ และส่งข้อมูลให้นักบัญชีได้ทันที</p>
+      </div>
+      <div class="card">
+        <div class="tag">ฟาร์ม · ปศุสัตว์</div>
+        <h3>ทะเบียนสัตว์ · ฟาร์ม</h3>
+        <p>บันทึกพันธุ์สัตว์ การผสม การคลอด การตาย และต้นทุนอาหารสัตว์ รายงานสรุปเป็นงวด</p>
+      </div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="tag">พลังงาน · เภสัชกรรม</div>
+        <h3>วัดการใช้พลังงาน · ควบคุมยา</h3>
+        <p>อ่านค่าเซ็นเซอร์พลังงาน ตั้งเพดานการใช้ และเตือนเมื่อเกินกำหนด จัดการสต็อกยาและวันหมดอายุ</p>
+      </div>
+      <div class="tag">ขนส่ง · Flotte</div>
+        <h3>ควบคุมรถขนส่ง</h3>
+        <p>ทะเบียนรถ ติดตามตำแหน่ง บันทึกการซ่อมบำรุง และค่าเชื้อเพลิงต่อคัน</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSIDE -->
+  <section id="inside">
+    <p class="k-ch">// ข้างในมีอะไร</p>
+    <h2>โมดูลในชุดติดตั้ง</h2>
+    <p class="sub">ทุกโมดูลอยู่ในตัวติดตั้งเดียว เลือกเปิดปิดได้ตามธุรกิจของคุณ</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="tag">โมดูลที่ ๑</div>
+        <h3>Point of Sale</h3>
+        <p>ขายหน้าร้าน ออกใบเสร็จ รับเงินสดและโอน แยก VAT อัตโนมัติ ออกใบกำกับภาษีเต็มรูป</p>
+      </div>
+      <div class="card">
+        <div class="tag">โมดูลที่ ๒</div>
+        <h3>สต็อกสินค้า</h3>
+        <p>รับเข้า ส่งออก ปรับสต็อก ตั้งจุดสั่งซื้อเตือนก่อนของหมด รายงานมูลค่าสต็อกสิ้นงวด</p>
+      </div>
+      <div class="card">
+        <div class="tag">โมดูลที่ ๓</div>
+        <h3>ฟาร์มและปศุสัตว์</h3>
+        <p>ทะเบียนสัตว์ตามบุคลิภาพ บันทึกการผสม คลอด ตาย ต้นทุนอาหาร และรายงานผลผลิต</p>
+      </div>
+      <div class="card">
+        <div class="tag">โมดูลที่ ๔</div>
+        <h3>การเงินและคลัง</h3>
+        <p>สมุดรายวัน สมุดขาย สมุดซื้อ ตัวแปรภาษี ปิดบัญชีสิ้นงวด ส่งต่อนักบัญชีได้ทันที</p>
+      </div>
+      <div class="card">
+        <div class="tag">โมดูลที่ ๕</div>
+        <h3>พลังงานและเภสัชกรรม</h3>
+        <p>วัดค่าการใช้ไฟ/น้ำ ตั้งเพดานแจ้งเตือน จัดการสต็อกยา วันหมดอายุ และคำเตือนการใช้</p>
+      </div>
+      <div class="card">
+        <div class="tag">โมดูลที่ ๖</div>
+        <h3>ควบคุมรถขนส่ง</h3>
+        <p>ทะเบียนพาหนะ ติดตามเส้นทาง บันทึกค่าซ่อมบำรุง เชื้อเพลิง และค่าเสื่อมสภาพต่อคัน</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF -->
+  <section id="proof">
+    <p class="k-ch">// หลักฐาน</p>
+    <h2>ทุกคำอ้างอิงบนหน้านี้ ตรวจสอบจริงได้จากคำสั่งในตัวติดตั้ง</h2>
+    <p class="sub">ไม่มีตัวเลขที่แต่งขึ้น ไม่มีรีวิวปลอม ทุกประโยคอ้างอิงถึงไฟล์หรือคำสั่งที่ส่งมอบมาพร้อมตัวติดตั้ง</p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>สิ่งที่อ้างอิง</th><th>คำสั่งที่รันได้จริง</th><th>ผลลัพธ์ที่คาดหวัง</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ตัวติดตั้งสะอาด ไม่มีข้อมูลลับ</td>
+          <td><code>git grep -nE 'sk_live_|whsec_|ghp_|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY'</code></td>
+          <td>คืนค่าว่าง (ไม่เจอตัวอักษรลับใด ๆ)</td>
+        </tr>
+        <tr>
+          <td>ตัวติดตั้งติดตั้งได้บนเครื่องเปล่า</td>
+          <td><code>npm ci &amp;&amp; npm run verify</code></td>
+          <td>exit code 0 (arch gate + frontend gate + backend build/test + frontend typecheck/build ผ่านทั้งหมด)</td>
+        </tr>
+        <tr>
+          <td>ทดสอบกับฐานข้อมูลจริง</td>
+          <td><code>npm run test:db</code></td>
+          <td>exit code 0 (เชื่อมต่อ PostgreSQL + TimescaleDB จริง)</td>
+        </tr>
+        <tr>
+          <td>ทดสอบ end-to-end ในเบราว์เซอร์จริง</td>
+          <td><code>npm run e2e</code></td>
+          <td>exit code 0 (Playwright ครบทุกเคส)</td>
+        </tr>
+        <tr>
+          <td>เช็คโค้ด TypeScript ของฟรอนต์เอนด์</td>
+          <td><code>npm run test:tools</code> ภายใน <code>npm run verify</code></td>
+          <td>exit code 0 (เครื่องมือ SEO / preflight ผ่าน)</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="sub" style="margin-top:18px">คำสั่งทั้งหมดอยู่ในไฟล์ <code>package.json</code> ของตัวติดตั้ง รันบนเครื่องคุณเองได้ทันทีหลังแตกไฟล์ ZIP</p>
+  </section>
+
+  <!-- INSTALL -->
+  <section id="install">
+    <p class="k-ch">// ติดตั้ง 3 ขั้นตอน</p>
+    <h2>เริ่มใช้งานใน 3 ขั้นตอน</h2>
+    <p class="sub">ตัวติดตั้งมาพร้อม INSTALL.cmd หากเครื่องคุณยังไม่มี Node.js หรือ Docker ตัวติดตั้งจะติดตั้งให้ หรือแจ้งข้อความที่แก้ไขได้ทันที</p>
+    <div class="steps">
+      <div class="step">
+        <div class="num">ขั้นที่ ๑</div>
+        <p>ดาวน์โหลดไฟล์ <code>sovereign-os-&lt;version&gt;.zip</code> จากหน้าร้าน แล้วแตกไฟล์ลงโฟลเดอร์ที่คุณเลือก</p>
+      </div>
+      <div class="step">
+        <div class="num">ขั้นที่ ๒</div>
+        <p>เรียก <code>INSTALL.cmd</code> ตัวติดตั้งจะตรวจว่าเครื่องคุณมี Node.js และ Docker หรือไม่ ถ้ายังไม่มีจะติดตั้งให้ หรือบอกขั้นตอนต่อไปอย่างชัดเจน</p>
+      </div>
+      <div class="step">
+        <div class="num">ขั้นที่ ๓</div>
+        <p>เปิดแอปเดสก์ท็อป Sovereign OS เข้าสู่ระบบ และเริ่มใช้งานโมดูลที่ธุรกิจของคุณต้องการได้ทันที</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:18px">ถอนการติดตั้งล้างสะอาด: ลบบริการ เวิร์กฟローที่ตั้งไว้ และตัวเลือกสั้น (shortcut) โดยไม่ทิ้งเศษไฟล์ไว้บนเครื่อง</p>
+  </section>
+
+  <!-- LICENSE -->
+  <section id="license">
+    <p class="k-ch">// เปรียบเทียบใบอนุญาต</p>
+    <h2>เลือกแผนที่เหมาะกับธุรกิจคุณ</h2>
+    <p class="sub">ทุกแผนได้รับไฟล์ตัวติดตั้ง ZIP และคู่มือการใช้งาน ต่างกันที่จำนวนเครื่องที่ติดตั้งได้ การขายต่อ และระยะเวลาอัปเดต</p>
+    <div class="table-wrap">
+    <table class="compare">
+      <thead>
+        <tr><th>คุณสมบัติ</th><th>Starter</th><th>Pro</th><th>Business</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>จำนวนเครื่องที่ติดตั้งได้</td><td class="yes">1 เครื่อง</td><td class="yes">5 เครื่อง</td><td class="yes">ไม่จำกัดภายในบริษัทเดียว</td></tr>
+        <tr><td>อัปเดตซอฟต์แวร์</td><td class="yes">รวม 12 เดือน</td><td class="yes">รวม 24 เดือน</td><td class="yes">รวมตลอดอายุการใช้งาน</td></tr>
+        <tr><td>ขายต่อซอร์สโค้ดได้หรือไม่</td><td class="no">ไม่ได้</td><td class="no">ไม่ได้</td><td class="no">ไม่ได้</td></tr>
+        <tr><td>ใช้ในเชิงพาณิชย์ได้หรือไม่</td><td class="yes">ได้</td><td class="yes">ได้</td><td class="yes">ได้</td></tr>
+        <tr><td>ซัพพอร์ตผ่านอีเมล</td><td class="yes">ได้ (12 เดือน)</td><td class="yes">ได้ (24 เดือน)</td><td class="yes">ได้ (ไม่จำกัด)</td></tr>
+        <tr><td>รับไฟล์ ZIP ตัวติดตั้ง</td><td class="yes">ได้</td><td class="yes">ได้</td><td class="yes">ได้</td></tr>
+        <tr><td>คำเชิญเข้า private repo (อัปเดตต่อเนื่อง)</td><td class="no">ไม่ได้</td><td class="yes">ได้</td><td class="yes">ได้</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="sub" style="margin-top:18px">ใบอนุญาตเป็นแบบผูกเครื่อง ซื้อหนึ่งครั้งใช้ได้ตลอดชีวิตของเวอร์ชันนั้น ถ้าต้องการเวอร์ชันใหม่กว่าที่อัปเดตครบแล้ว ซื้อใบอนุญาตใหม่หรือต่ออายุได้</p>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <p class="k-ch">// คำถามพบบ่อย</p>
+    <h2>ถามก่อนซื้อ</h2>
+    <div class="faq"><q>อัปเดตซอฟต์แวร์ทำอย่างไร?</q><p style="margin:6px 0 0">หลังซื้อ คุณจะได้รับไฟล์ ZIP เวอร์ชันใหม่ผ่านอีเมลที่ใช้ซื้อ แตกไฟล์ทับโฟลเดอร์เดิมแล้วเรียก INSTALL.cmd อีกครั้ง หากซื้อแผน Pro หรือ Business คุณยังได้คำเชิญเข้า private repo เพื่อดึงโค้ดเวอร์ชันล่าสุดได้เอง</p></div>
+    <div class="faq"><q>คืนเงินได้หรือไม่?</q><p style="margin:6px 0 0">ได้ ภายในระยะเวลาที่กำหนดในหน้าชำระเงิน เมื่อคืนเงินสำเร็จใบอนุญาตจะถูกเพิกถอน และการเข้าถึง private repo (ถ้ามี) จะถูกยกเลิกโดยอัตโนมัติ</p></div>
+    <div class="faq"><q>ต้องมีบัญชี GitHub หรือไม่?</q><p style="margin:6px 0 0">ไม่จำเป็น คุณจะได้รับไฟล์ ZIP ตัวติดตั้งเสมอแม้ไม่มีบัญชี GitHub คำเชิญเข้า repo เป็นสิทธิพิเศษสำหรับแผน Pro และ Business เท่านั้น</p></div>
+    <div class="faq"><q>ต้องต่ออินเทอร์เน็ตตลอดเวลาหรือไม่?</q><p style="margin:6px 0 0">ไม่ต้อง Sovereign OS โฮสต์เองบนเครื่องของคุณ ทำงานออฟไลน์ได้เต็มที่ ต้องใช้อินเทอร์เน็ตเฉพาะตอนดาวน์โหลดตัวติดตั้งและตรวจสอบใบอนุญาตครั้งแรกเท่านั้น</p></div>
+    <div class="faq"><q>ข้อมูลของฉันออกจากเครื่องหรือไม่?</q><p style="margin:6px 0 0">ไม่ Sovereign OS ไม่พึ่งคลาวด์ ฐานข้อมูลและไฟล์ทั้งหมดอยู่บนเครื่องคุณ ไม่มีการส่งข้อมูลธุรกิจไปยังเซิร์ฟเวอร์ภายนอก</p></div>
+    <div class="faq"><q>ใช้ภาษาอะไรสร้าง?</q><p style="margin:6px 0 0">Next.js 16.3 (Pages Router + Turbopack) สำหรับฟรอนต์เอนด์ Express 4.22 สำหรับ API ฝั่งเซิร์ฟเวอร์ PostgreSQL + TimescaleDB สำหรับฐานข้อมูล Prisma สำหรับ ORM และ Electron สำหรับแอปเดสก์ท็อป ไม่มี NestJS ไม่มี Next.js 14 ไม่มี Kubernetes ไม่มีระบบหลายผู้เช่า (multi-tenant) และไม่ต้องพึ่งคลาวด์</p></div>
+    <div class="faq"><q>ทดสอบก่อนซื้อได้หรือไม่?</q><p style="margin:6px 0 0">ตัวติดตั้งมีโหมดทดลองใช้จำกัดเวลา เต็มทุกฟีเจอร์ ใช้ได้จนกว่าหมดเวลาทดลอง หากพอใจค่อยซื้อใบอนุญาตเต็มรูปแบบ</p></div>
+    <div class="faq"><q>ซื้อแล้วได้อะไรบ้าง?</q><p style="margin:6px 0 0">ได้รับไฟล์ ZIP ตัวติดตั้ง คู่มือการใช้งาน (.md) ใบอนุญาต (.txt) และอีเมลยืนยันพร้อมคีย์ใบอนุญาต หากเลือกแผนที่มีคำเชิญเข้าระบบ จะได้รับลิงก์คำเชิญในอีเมลฉบับเดียวกัน</p></div>
+  </section>
+
+  <!-- BUY -->
+  <section id="buy">
+    <div class="cta-box">
+      <h2>พร้อมเริ่มใช้งานแล้วหรือยัง?</h2>
+      <p>ซื้อ Sovereign OS แล้วรับคีย์ใบอนุญาตและลิงก์ดาวน์โหลด ZIP ทันทีทางอีเมล</p>
+      <div class="cta" style="justify-content:center">
+        <a class="btn btn-primary" href="#">ไปหน้าชำระเงิน →</a>
+      </div>
+      <p style="margin-top:14px;font-size:.78rem;color:var(--faint)">ระบบชำระเงินพร้อมใช้งานเมื่อร้านค้าเปิดรับออเดอร์แล้ว กรอกอีเมลด้านล่างเพื่อรับการแจ้งเตือนเมื่อเปิดขาย</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+SOVEREIGN OS · ระบบหลังบ้านธุรกิจ ติดตั้งเอง · ไม่พึ่งคลาวด์ · ไม่มีค่ารายเดือน<br>
+ราคาและข้อกำหนดแสดงบนหน้าชำระเงินเท่านั้น โฮสต์บน GitHub Pages
+</footer>
+</body>
+</html>

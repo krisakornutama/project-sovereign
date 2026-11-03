@@ -12,11 +12,12 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
-  --green:#34d399; --cyan:#22d3ee; --txt:#e5e7eb; --dim:#9ca3af; --faint:#6b7280;
+  --bg:#030712; --panel:rgba(17,24,39,.65); --line:rgba(52,211,153,.22);
+  --green:#34d399; --cyan:#22d3ee; --txt:#f0f4f8; --dim:#a1a1aa; --faint:#71717a;
   --paper:#F2D8D8; --paper-edge:#D9B2B0; --ink:#2B2320; --stamp:#B3352C;
   --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
   --mono:'JetBrains Mono','Noto Sans Thai Looped','Cascadia Code','Courier New',monospace;
+  --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.25);
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased}
@@ -50,11 +51,11 @@ h1 em{font-style:normal;color:var(--green);text-shadow:0 0 24px rgba(52,211,153,
 .lede{color:var(--dim);font-size:1.02rem;max-width:700px;margin:0 0 26px}
 .meta-line{font-family:var(--mono);font-size:.72rem;color:var(--faint);margin:0 0 30px}
 .cta{display:flex;gap:12px;flex-wrap:wrap}
-.btn{display:inline-block;font-weight:600;font-size:.9rem;text-decoration:none;padding:11px 22px;border-radius:9px;transition:box-shadow .15s ease,background .15s ease,border-color .15s ease}
-.btn-primary{background:var(--green);color:#030712}
-.btn-primary:hover{box-shadow:0 0 26px rgba(52,211,153,.4)}
-.btn-ghost{border:1px solid rgba(52,211,153,.4);color:var(--green)}
-.btn-ghost:hover{border-color:var(--green);background:rgba(52,211,153,.08)}
+.btn{display:inline-block;font-weight:600;font-size:.9rem;text-decoration:none;padding:12px 24px;border-radius:9px;transition:all .15s ease;border:1px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.btn-primary{background:linear-gradient(135deg,#34d399 0%,#10b981 100%);color:#030712;border-color:rgba(52,211,153,.4);box-shadow:0 4px 14px rgba(52,211,153,.35)}
+.btn-primary:hover{box-shadow:0 6px 20px rgba(52,211,153,.55);transform:translateY(-1px);border-color:#34d399}
+.btn-ghost{border:1px solid rgba(52,211,153,.45);color:#34d399;background:rgba(52,211,153,.06)}
+.btn-ghost:hover{background:rgba(52,211,153,.15);border-color:#34d399;transform:translateY(-1px)}
 
 /* ── sections ── */
 html{scroll-padding-top:70px}
@@ -66,7 +67,8 @@ h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
 
 /* ── pack cards ── */
 .packgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.pack{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:26px 28px}
+.pack{border:1px solid rgba(52,211,153,.18);border-radius:var(--radius);background:var(--panel);padding:28px 30px;box-shadow:var(--shadow);transition:transform .15s ease, box-shadow .15s ease}
+.pack:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.35), 0 0 0 1px rgba(52,211,153,.25)}
 .pack-kick{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--cyan);margin:0 0 8px}
 .pack h3{font-size:1.18rem;font-weight:600;color:#ecfdf5;margin:0 0 6px}
 .price{font-family:var(--mono);font-size:1.9rem;font-weight:700;color:var(--green);margin:0 0 4px}
@@ -95,10 +97,8 @@ h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
 .contact{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:28px 30px}
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .field label{display:block;font-family:var(--mono);font-size:.66rem;color:var(--faint);margin:0 0 5px;letter-spacing:.06em}
-.field input,.field select,.field textarea{width:100%;font-family:var(--thai);font-size:.88rem;color:#e5e7eb;background:#0b1220;
-  border:1px solid rgba(34,211,153,.3);border-radius:8px;padding:10px 12px}
-.field textarea{min-height:110px;resize:vertical}
-.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:var(--green)}
+.field input,.field select,.field textarea{width:100%;font-family:var(--thai);font-size:.88rem;color:#e5e7eb;background:#0c1220;border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:11px 13px;transition:border-color .15s ease, box-shadow .15s ease}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.15)}
 .contact-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
 .contact-note{font-family:var(--mono);font-size:.64rem;color:var(--faint)}
 .formmsg{display:none;margin-top:12px;font-size:.84rem;border-radius:8px;padding:11px 14px}
