@@ -1,14 +1,13 @@
 # Dockerfile — Project Sovereign static site (Homelab / Privacy Purists friendly)
-# Build stage — not needed for pure static, but kept for future asset pipeline
+# Static HTML/CSS/JS served by nginx. Zero backend, zero database, zero cost.
 FROM nginx:1.27-alpine AS runner
 
-# Security: run nginx as non-root user (nginx user exists in alpine image)
+# nginx user exists in alpine image; run as non-root for security
 USER nginx
 
-# Copy only the static site files into nginx html dir
+# Copy only static site files. .dockerignore keeps node_modules, .git,
+# webhook-service, scraper, etc. out of the image.
 COPY . /usr/share/nginx/html
-# Exclude node_modules / state from being copied if present at build time
-RUN rm -rf /usr/share/nginx/html/node_modules /usr/share/nginx/html/state 2>/dev/null || true
 
 # Expose port 80 inside container
 EXPOSE 80

@@ -5,35 +5,43 @@
 ## ใช้งานบนเครื่องของคุณ
 
 ```bash
-# โคลน repo
-git clone https://github.com/sovereign-origin/project-sovereign.git
+# โคลน repo (remote จริงของโปรเจกต์นี้)
+git clone https://github.com/krisakornutama/project-sovereign.git
 cd project-sovereign
 
 # รัน
-docker-compose up -d
+docker compose up -d
 
 # เปิดเบราว์เซอร์
 # http://localhost:8080
 
 # ดูสถานะ
-docker-compose ps
+docker compose ps
 
 # หยุด
-docker-compose down
+docker compose down
 ```
 
 ## อัปเดตเวอร์ชันใหม่
 
 ```bash
-docker-compose pull
-docker-compose up -d
+docker compose pull
+docker compose up -d
 ```
 
 ## สำหรับผู้พัฒนา (build เองบนเครื่อง)
 
 ```bash
-docker-compose build
-docker-compose up -d
+docker compose build
+docker compose up -d
+```
+
+## สำหรับ agent อีกเครื่องหนึ่ง (มองเห็นผลงานเดียวกัน)
+
+```bash
+git fetch origin
+git checkout feat/docker-homelab
+docker compose up -d
 ```
 
 ## พอร์ต
