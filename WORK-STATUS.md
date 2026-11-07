@@ -72,6 +72,15 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 - **ผลทดสอบจริงผ่าน OpenCode browser (localhost:4200/nfc):** HTTP 200 + 0 console error · capability detection ถูก (desktop ไม่มี NFC → โหมดจำลอง + notice) · บันทึกจำลอง → record ใน IndexedDB ทุกภาษาไทยถูกต้อง (`who: "ทดสอบผ่านเบราว์เซอร์จริง"`, `task: "ตรวจคอก / ปศุสัตว์"`, `via: "sim"`) · ปุ่มเขียนแท็กซ่อนถูกต้อง · ล้างประวัติ (confirm dialog → DB count = 0) ✅
 - **ข้อจำกัดตามธรรมชาติของ API:** "แตะแท็กจริง" ต้อง Android Chrome + แท็ก NFC + เปิดผ่าน https/localhost (Web NFC บังคับ **secure context** — เปิดจาก `file://` หรือ localhost ก็นับเป็น secure context)
 
+### ระดับ 2b — Web Bluetooth Dashboard (ใหม่ — ทำเสร็จ ณ ระดับ browser + ทดสอบ pipeline ผ่าน simulator)
+
+- `sovereignty/public/ble-sensors.html`: Dual-Engine แดชบอร์ดเซนเซอร์ — ของจริง (`requestDevice` → GATT connect → auto-discover preset → readValue + `startNotifications`) + จำลอง (sine: temp 25–35 °C, humidity 40–80 %, battery 80–100 %, bpm 60–90)
+- Preset GATT มาตรฐาน + ESP32: SIG Environmental `0x181A`→`0x2A6E` (sint16 LE ÷100) / `0x2A6F` (uint16 LE ÷100) · Battery `0x180F`→`0x2A19` (uint8 %) · Heart Rate `0x180D`→`0x2A37` (flags bit0 → uint8/uint16) · **Nordic UART Service** `6E400001…`→TX `6E400003…` (ข้อความ/JSON — แสดงแบบ key=value เมื่อเป็น JSON)
+- Parser ล้วน `DataView` (ไม่ดึง library ภายนอก) + hex preview สำหรับฟอร์แมตไม่ตรง + cap IndexedDB 1000 แถว (ลบเก่าอัตโนมัติ)
+- เสิร์ฟ `/ble` จาก mesh node (PAGES map เพิ่มเป็น 3 หน้า)
+- **ผลทดสอบจริงผ่าน OpenCode browser (localhost:4200/ble):** HTTP 200 + **0 console error เต็ม session** · capability detection เที่ยงทุกสถานะ (Chrome เห็น API แต่ Windows radio ปิด → ปุ่ม "เชื่อมต่อของจริง" disable อัตโนมัติ + สถานะบอกสาเหตุชัด) · sim ต่อเนื่อง 32 records/~14 วินาที (4 ต่อ 2s tick) · tiles แสดงสดตรงช่วง spec · หยุดจำลอง (ปุ่มคืนสถานะ) · ล้างผ่าน confirm dialog → DB count = 0 + tiles รีเซ็ต
+- **เหลือสำหรับ "ค่าจริงจากอุปกรณ์":** อุปกรณ์ BLE จริง (ESP32 DIY / เซนเซอร์มาตรฐาน) — เครื่อง dev มี Bluetooth USB Module แต่ Windows radio ปิดอยู่ (บานหน้าต่างปิดเงื่อนไขไม่ตอบผ่านเบราว์เซอร์) — เปิดแล้วกดปุ่มเชื่อมได้ทันที (preset พร้อม) · preset รุ่นเฉพาะ (Xiaomi LYWSD03MMC แบบ pvvx, custom service อื่น) เพิ่มตอนระบุรุ่น
+
 ---
 
 ## 📦 รายการไฟล์ใน branch `feat/docker-homelab` (พร้อมรอ agent ต่อไป)

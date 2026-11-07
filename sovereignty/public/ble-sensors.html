@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sovereign BLE Dashboard — อ่านเซนเซอร์ไร้สายตรง ไม่ผ่าน Cloud Broker</title>
+<meta name="description" content="แดชบอร์ด Web Bluetooth: อ่านอุณหภูมิ ความชื้น แบตเตอรี่ ชีพจร จาก ESP32/เซนเซอร์ BLE ตรงเข้าเบราว์เซอร์ — เก็บในเครื่องเท่านั้น ไม่ต้องมีอินเทอร์เน็ต">
+<meta name="theme-color" content="#030712">
+<style>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.65); --line:rgba(52,211,153,.22);
+  --green:#34d399; --cyan:#22d3ee; --txt:#f0f4f8; --dim:#a1a1aa; --faint:#71717a;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Cascadia Code','Courier New',monospace;
+  --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(22,211,238,.10),transparent 64%)}
+header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px);padding:13px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--cyan)}
+.brand a{color:var(--cyan);text-decoration:none}
+.brand a:hover{color:var(--green)}
+.status{font-family:var(--mono);font-size:.66rem;color:var(--dim)}
+.status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle}
+.ble-ok .dot{background:var(--cyan)}
+.status.no .dot{background:#fbbf24}
+.status.live .dot{background:#f87171}
+main{flex:1;max-width:980px;width:100%;margin:0 auto;padding:18px 20px;display:grid;gap:16px}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:22px 26px;box-shadow:var(--shadow);transition:transform .15s ease, box-shadow .15s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.35), 0 0 0 1px rgba(52,211,153,.25)}
+.card h2{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;color:var(--cyan);margin:0 0 14px;font-weight:600}
+.notice{font-size:.8rem;color:var(--dim);margin:10px 0 0;padding:10px 14px;border:1px solid rgba(251,191,36,.25);border-radius:10px;background:rgba(251,191,36,.06)}
+.notice b{color:#fbbf24}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.tile{border:1px solid rgba(52,211,153,.18);border-radius:10px;padding:14px 16px;background:rgba(3,7,18,.45)}
+.tile .k{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--faint)}
+.tile .v{font-size:1.35rem;font-weight:700;color:#ecfdf5;margin-top:4px;font-variant-numeric:tabular-nums}
+.tile .v small{font-size:.75rem;color:var(--dim);font-weight:400}
+.btn{font-weight:600;font-size:.85rem;border:none;border-radius:10px;padding:11px 18px;background:linear-gradient(135deg,#34d399,#10b981);color:#030712;cursor:pointer;transition:box-shadow .15s ease,transform .15s ease}
+.btn:hover{box-shadow:0 6px 20px rgba(52,211,153,.45);transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.btn-ghost{border:1px solid rgba(52,211,153,.45);color:var(--green);background:rgba(52,211,153,.06)}
+.btn-ghost:hover{background:rgba(52,211,153,.15)}
+.btn-cyan{border:1px solid rgba(34,211,238,.45);color:var(--cyan);background:rgba(34,211,238,.06)}
+.btn-cyan:hover{background:rgba(34,211,238,.15)}
+.btn-danger{border:1px solid rgba(248,113,113,.4);color:#f87171;background:rgba(248,113,113,.06)}
+.btn-danger:hover{background:rgba(248,113,113,.15)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.meta{font-family:var(--mono);font-size:.62rem;color:var(--faint)}
+.log{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:6px}
+.log th{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--cyan);text-align:left;border-bottom:1px solid var(--line);padding:8px 10px}
+.log td{border-bottom:1px solid rgba(52,211,153,.1);padding:9px 10px;color:var(--dim);vertical-align:top}
+.log td.main{color:var(--txt)}
+.tag{font-family:var(--mono);font-size:.56rem;letter-spacing:.06em;border-radius:999px;padding:3px 9px;display:inline-block}
+.tag.ble{border:1px solid rgba(34,211,238,.4);color:var(--cyan)}
+.tag.sim{border:1px solid rgba(251,191,36,.4);color:#fbbf24}
+.empty{color:var(--faint);font-size:.84rem}
+footer{border-top:1px solid var(--line);text-align:center;padding:18px 24px;font-family:var(--mono);font-size:.66rem;color:var(--faint);line-height:2}
+footer a{color:var(--dim);text-decoration:none}
+footer a:hover{color:var(--green)}
+legend{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--faint);padding:0 6px}
+fieldset{border:1px solid rgba(52,211,153,.18);border-radius:10px;padding:10px 14px;margin-top:12px}
+@media (max-width:720px){.card{padding:18px 18px}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand"><a href="lan-messenger.html">SOVEREIGN</a> · BLE DASHBOARD</span>
+  <span class="status" id="status"><span class="dot"></span>กำลังตรวจ Bluetooth…</span>
+</header>
+
+<main>
+  <section class="card" aria-label="อรรถชี้แจงระบบ">
+    <h2>แดชบอร์ดเซนเซอร์ไร้สาย (Web Bluetooth)</h2>
+    <p style="margin:0;font-size:.86rem;color:var(--dim)">
+      เชื่อมต่อตรงกับบอร์ดเซนเซอร์ (ESP32/BLE, อุปกรณ์มาตรฐาน SIG) เพื่ออ่านดิบ ๆ แล้วแสดง live ที่นี้ —
+      <b style="color:var(--txt)">ไม่ผ่าน Cloud Broker ไม่ต้องมี Gateway/อินเทอร์เน็ต</b> ทุกเทคนิคและทุกค่าถูกบันทึกลง
+      IndexedDB ในเบราว์เซอร์ของเครื่องนี้ พร้อมส่งออกเป็น JSON ทุกเมื่อ
+    </p>
+    <fieldset>
+      <legend>PRESET GATT ที่ค้นหาอัตโนมัติเมื่อเชื่อมต่อ</legend>
+      <div class="meta" style="line-height:2">
+        อุณหภูมิ/ความชื้น: <b>0x181A</b> → <b>0x2A6E</b> (sint16 LE ÷100 °C), <b>0x2A6F</b> (uint16 LE ÷100 %) ·
+        แบตเตอรี่: <b>0x180F</b> → <b>0x2A19</b> (uint8 %) · ชีพจร: <b>0x180D</b> → <b>0x2A37</b> (uint8/uint16 bpm) ·
+        ESP32 Custom UART: <b>6E400001…</b> (Nordic NUS) → TX <b>6E400003…</b> (ข้อความ/JSON)
+      </div>
+    </fieldset>
+    <div class="notice" id="notice" hidden></div>
+  </section>
+
+  <section class="card" aria-label="ค่าสดจากเซนเซอร์">
+    <h2>ค่าสด <span id="devName" class="meta"></span></h2>
+    <div class="tiles">
+      <div class="tile"><div class="k">TEMPERATURE</div><div class="v" id="t-temp">--<small> °C</small></div></div>
+      <div class="tile"><div class="k">HUMIDITY</div><div class="v" id="t-humidity">--<small> %</small></div></div>
+      <div class="tile"><div class="k">BATTERY</div><div class="v" id="t-battery">--<small> %</small></div></div>
+      <div class="tile"><div class="k">HEART RATE</div><div class="v" id="t-bpm">--<small> bpm</small></div></div>
+      <div class="tile"><div class="k">UART / TEXT</div><div class="v" id="t-text" style="font-size:.95rem;word-break:break-all">--</div></div>
+    </div>
+  </section>
+
+  <section class="card" aria-label="ปุ่มควบคุม">
+    <h2>เครื่องเชื่อมต่อ / จำลอง</h2>
+    <div class="btnrow">
+      <button class="btn" id="bleBtn" type="button" title="เปิดหน้าต่างเลือกอุปกรณ์ (ต้องมี Bluetooth Adapter + Browser รองรับ)">🔗 เชื่อมต่อของจริง (BLE)</button>
+      <button class="btn-ghost btn" id="stopBtn" type="button" title="ตัดการเชื่อมต่อ GATT แล้วหยุดรับข้อมูล">หยุดเชื่อมต่อ</button>
+      <button class="btn-ghost btn" id="simBtn" type="button" title="แกลเซนเซอร์จำลอง: sine wave อุณหภูมิ 25–35°C ความชื้น 40–80% แบต 80–100% ชีพจร 60–90 เก็บลง IndexedDB">เริ่มจำลองเซนเซอร์</button>
+      <button class="btn-ghost btn" id="simStopBtn" type="button" hidden>หยุดจำลอง</button>
+      <button class="btn-ghost btn" id="exportBtn" type="button">⬇️ ส่งออก JSON</button>
+      <button class="btn-danger btn" id="wipeBtn" type="button">ล้างข้อมูลทั้งหมด</button>
+    </div>
+    <p class="meta" style="margin:12px 0 0">
+      ใช้จริง: กดปุ่มเชื่อม → หน้าต่างเลือกอุปกรณ์จะเด้งขึ้นมา (ผู้ใช้เลือกเอง) → ระบบเดินตามหา preset ข้างบนอัตโนมัติ · จำลอง: บันทึกทุกค่าลงฐานข้อมูลจริงด้วย code path เดียวกัน
+    </p>
+  </section>
+
+  <section class="card" aria-label="รายการ telemetry ที่บันทึก">
+    <h2>บันทึก Telemetry <span id="count" class="meta"></span></h2>
+    <table class="log" id="logTable" hidden>
+      <thead><tr><th>เวลา</th><th>ชนิด</th><th>ค่า</th><th>ที่มา</th></tr></thead>
+      <tbody id="logBody"></tbody>
+    </table>
+    <p class="empty" id="emptyMsg">ยังไม่มีข้อมูล — กด "เริ่มจำลองเซนเซอร์" เพื่อทดสอบ pipeline ทั้งระบบ (บันทึกจริง + แสดงสด) หรือเชื่อมต่ออุปกรณ์ BLE ของจริง</p>
+  </section>
+</main>
+
+<footer>
+  SOVEREIGN BLE DASHBOARD · ส่วนหนึ่งของ Project Sovereign ระดับ 2 · ข้อมูลอยู่บนเครื่องคุณเอง ·
+  <a href="/">แชท LAN</a> · <a href="/nfc">เช็คอิน NFC</a>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const statusEl = $('status'), noticeEl = $('notice'), devEl = $('devName');
+  const bleBtn = $('bleBtn'), stopBtn = $('stopBtn');
+  const simBtn = $('simBtn'), simStopBtn = $('simStopBtn');
+  const exportBtn = $('exportBtn'), wipeBtn = $('wipeBtn');
+  const tableEl = $('logTable'), bodyEl = $('logBody'), emptyEl = $('emptyMsg'), countEl = $('count');
+  const KIND_LABEL = { temp: 'อุณหภูมิ', humidity: 'ความชื้น', battery: 'แบตเตอรี่', bpm: 'ชีพจร', text: 'UART / ข้อความ' };
+
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function setStatus(kind, text){ statusEl.className = 'status ' + kind; statusEl.innerHTML = '<span class="dot"></span>' + esc(text); }
+  function showNotice(html){ noticeEl.innerHTML = html; noticeEl.hidden = false; }
+  function fmtTime(ts){
+    const d = new Date(ts), p = (n) => ('0' + n).slice(-2);
+    return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  }
+
+  // ── IndexedDB (เก็บทุก telemetry event ในเครื่อง — cap 1000 แถว ลบเก่าก่อนอัตโนมัติ) ──
+  let db = null;
+  const DB_NAME = 'sovereign-ble', STORE = 'telemetry', MAX_ROWS = 1000;
+
+  function openDb(){
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const d = req.result;
+        if (!d.objectStoreNames.contains(STORE)) {
+          const s = d.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+          s.createIndex('ts', 'ts');
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  function idbWork(mode, fn){
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, mode);
+      const out = fn(tx.objectStore(STORE));
+      out && (out.onsuccess = () => resolve(out.result));
+      tx.oncomplete = () => resolve(out ? out.result : undefined);
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+  async function addRecord(rec){
+    await idbWork('readwrite', (s) => s.add(rec));
+    const keys = await idbWork('readonly', (s) => s.getAllKeys());
+    if (keys && keys.length > MAX_ROWS) {
+      const cut = await idbWork('readwrite', (s) => { for (const k of keys.slice(0, keys.length - MAX_ROWS)) s.delete(k); });
+      void cut;
+    }
+  }
+  const allRecords = () => idbWork('readonly', (s) => s.getAll()).then(v => v || []);
+  const clearAll = () => idbWork('readwrite', (s) => s.clear());
+
+  // ── UI: tiles + ตาราง ──
+  const last = {}; // kind -> {value, ts}
+  function tile(kind, value){
+    last[kind] = { value, ts: Date.now() };
+    const el = $('t-' + kind);
+    if (!el) return;
+    const small = el.querySelector('small');
+    let txt = '--';
+    if (kind === 'text') txt = String(value).slice(0, 80) || '(ว่าง)';
+    else if (typeof value === 'number') txt = (kind === 'temp' || kind === 'humidity') ? value.toFixed(1) : String(Math.round(value));
+    el.childNodes[0].nodeValue = txt + ' ';
+  }
+
+  function refreshList(){
+    allRecords().then((list) => {
+      list = list.sort((a, b) => b.ts - a.ts).slice(0, 200);
+      if (!list.length) { tableEl.hidden = true; emptyEl.style.display = ''; countEl.textContent = ''; return; }
+      tableEl.hidden = false; emptyEl.style.display = 'none';
+      countEl.textContent = '· แสดงสดสุด ' + list.length + ' รายการ';
+      bodyEl.innerHTML = list.map((r) =>
+        '<tr>' +
+        '<td class="meta">' + fmtTime(r.ts) + '</td>' +
+        '<td>' + esc(KIND_LABEL[r.kind] || r.kind) + '</td>' +
+        '<td class="main">' + esc(r.display) + '<br><span class="meta">' + esc(r.device || '') + '</span></td>' +
+        '<td><span class="tag ' + (r.via === 'ble' ? 'ble">BLE จริง' : 'sim">จำลอง') + '</span></td>' +
+        '</tr>'
+      ).join('');
+    }).catch((e) => setStatus('no', 'อ่านฐานข้อมูลไม่ได้: ' + e.message));
+  }
+
+  // จุดเข้าเดียวของทุกค่า (BLE จริง + จำลอง) — pipeline เดียวกัน
+  async function push(kind, value, unit, device, via, rawHex){
+    const num = (typeof value === 'number');
+    const display = kind === 'text' ? String(value).slice(0, 200) : (num ? (unit ? value.toFixed(kind === 'temp' || kind === 'humidity' ? 1 : 0) + ' ' + unit : String(value)) : String(value));
+    tile(kind, num ? value : String(value));
+    const rec = { ts: Date.now(), kind, kindLabel: KIND_LABEL[kind] || kind, display: display.slice(0, 200), device: String(device).slice(0, 60), via, raw: (rawHex || '').slice(0, 120) };
+    try { await addRecord(rec); refreshList(); }
+    catch (e) { setStatus('no', 'บันทึกไม่ได้: ' + e.message); }
+  }
+
+  // ── โหมดจำลอง (sine wave — ค่าไปเข้า IndexedDB จริงทั้งระบบ) ──
+  let simTimer = null, simStart = 0;
+  function startSim(){
+    if (simTimer) return;
+    simStart = Date.now();
+    simBtn.disabled = true; simStopBtn.hidden = false;
+    setStatus('ble-ok', 'จำลองเซนเซอร์กำลังทำงาน (ค่าบันทึกลงฐานข้อมูลจริง)');
+    const tick = () => {
+      const t = (Date.now() - simStart) / 1000;
+      const wave = (period, phase) => Math.sin(t * 2 * Math.PI / period + phase);
+      push('temp', 30 + 5 * wave(120, 0) + (Math.random() - .5) * .4, '°C', 'จำลองเซนเซอร์ (sine)', 'sim');
+      push('humidity', 60 + 20 * wave(180, Math.PI / 3) + (Math.random() - .5) * .8, '%', 'จำลองเซนเซอร์ (sine)', 'sim');
+      push('battery', 90 + 10 * wave(1200, 0), '%', 'จำลองเซนเซอร์ (sine)', 'sim');
+      push('bpm', 75 + 15 * wave(40, Math.PI / 2) + (Math.random() - .5) * 2, 'bpm', 'จำลองเซนเซอร์ (sine)', 'sim');
+    };
+    tick();
+    simTimer = setInterval(tick, 2000);
+  }
+  function stopSim(){
+    if (!simTimer) return;
+    clearInterval(simTimer); simTimer = null;
+    simBtn.disabled = false; simStopBtn.hidden = true;
+    if (!connected) setStatus('ble-ok', 'หยุดจำลองแล้ว');
+  }
+  simBtn.addEventListener('click', startSim);
+  simStopBtn.addEventListener('click', stopSim);
+
+  // ── BLE จริง: requestDevice → GATT → preset services → notify ──
+  const PRESETS = [
+    { name: 'Environmental', service: 0x181A, chars: [
+      { uuid: 0x2A6E, kind: 'temp', unit: '°C' },
+      { uuid: 0x2A6F, kind: 'humidity', unit: '%' },
+    ]},
+    { name: 'Battery', service: 0x180F, chars: [ { uuid: 0x2A19, kind: 'battery', unit: '%' } ]},
+    { name: 'Heart Rate', service: 0x180D, chars: [ { uuid: 0x2A37, kind: 'bpm', unit: 'bpm' } ]},
+    { name: 'Nordic UART (ESP32)', service: '6e400001-b5a3-f393-e0a9-e50e24dcca9e', chars: [{ uuid: '6e400003-b5a3-f393-e0a9-e50e24dcca9e', kind: 'text', unit: '' }]},
+  ];
+  const OPTIONAL_SERVICES = PRESETS.map((p) => p.service);
+
+  const absVal = (dv) => [...(new Uint8Array(dv.buffer)).slice(0, 8)].map(b => ('0' + b.toString(16)).slice(-2)).join(' ');
+
+  function decodeChar(kind, dv){
+    // ตามสูตรมาตรฐานข้างบน — เลขต้อง LE (little endian) เสมอ
+    switch (kind) {
+      case 'temp':     return dv.getInt16(0, true) / 100.0;             // 0x2A6E: sint16 ÷100 °C
+      case 'humidity': return dv.getUint16(0, true) / 100.0;            // 0x2A6F: uint16 ÷100 %
+      case 'battery':  return dv.getUint8(0);                            // 0x2A19: uint8 %
+      case 'bpm': {                                                     // 0x2A37: flags bit0 เลือก format
+        const flags = dv.getUint8(0);
+        return (flags & 1) ? dv.getUint16(1, true) : dv.getUint8(1);
+      }
+      case 'text': return new TextDecoder().decode(dv).slice(0, 300);
+      default: return null;
+    }
+  }
+
+  let connected = null; // BluetoothDevice
+  function watchChar(ch, kind, unit, name){
+    const handler = (ev) => {
+      const dv = ev.target.value;
+      let v = null;
+      try { v = decodeChar(kind, dv); }
+      catch (e) { void e; }
+      if (v === null) v = '(ข้อมูลฟอร์แมตไม่ตรง) ' + absVal(dv);
+      // NUS/ข้อความ: ถ้าเป็น JSON แสดงสวยขึ้นเล็กน้อย
+      if (kind === 'text' && typeof v === 'string') {
+        try { const j = JSON.parse(v); v = Object.entries(j).slice(0, 6).map(([k2, v2]) => k2 + '=' + v2).join(' '); }
+        catch { /* ข้อความดิบ — ใช้เลย */ }
+      }
+      push(kind, v, unit, name, 'ble', kind === 'text' ? '' : absVal(dv));
+    };
+    ch.addEventListener('characteristicvaluechanged', handler);
+    (async () => {
+      try { const dv = await ch.readValue(); handler({ target: { value: dv } }); }
+      catch { /* อ่านตรงๆ ไม่ได้ — รอ notify เงียบ ๆ ได้ */ }
+    })();
+  }
+
+  async function connectReal(){
+    bleBtn.disabled = true;
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: OPTIONAL_SERVICES,
+      });
+      connected = device;
+      const gatt = await device.gatt.connect();
+      device.addEventListener('gattserverdisconnected', () => {
+        connected = null;
+        stopBtn.disabled = false;
+        setStatus('no', 'อุปกรณ์ตัดการเชื่อมต่อ (เชื่อมใหม่ได้ทันที)');
+      });
+      devEl.textContent = '· อุปกรณ์: ' + (device.name || '(ไม่มีชื่อ)');
+      stopBtn.disabled = false;
+      let found = 0;
+      for (const preset of PRESETS) {
+        try {
+          const svc = await gatt.getPrimaryService(preset.service);
+          for (const c of preset.chars) {
+            try {
+              const ch = await svc.getCharacteristic(c.uuid);
+              watchChar(ch, c.kind, c.unit, device.name || 'BLE ' + preset.name);
+              try { await ch.startNotifications(); } catch { /* มี char ที่ notify ไม่ได้ — ใช้ readValue */ }
+              found++;
+            } catch { /* ตัวนนี้ไม่ได้เสิร์ฟ char นั้น — ข้ามไต่ละกุมแขน */ }
+          }
+        } catch { /* อุปกรณ์นนี้ไม่มี service นี้ — ปกติ */ }
+      }
+      setStatus('ble-ok', 'เชื่อมแล้ว — พบ ' + found + ' ค่าโปรไฟล์ที่ทำงานได้');
+      if (!found) setStatus('no', 'เชื่อมแล้วแต่ไม่เจอโปรไฟล์ใน preset (อุปกรณ์กลางแบบบอร์ดแนว DIY ใช้ service ที่ไม่มีในตาราง — บอกรุ่นได้ต่อเพิ่ม preset)');
+    } catch (e) {
+      const msg = e && e.name === 'NotFoundError' ? 'ผู้ใช้ปิดหน้าต่างเลือกอุปกรณ์ / ไม่พบเครื่องที่ค้นหา' : (e.message || 'unknown');
+      setStatus('no', 'เชื่อมไม่สำเร็จ: ' + msg);
+    } finally {
+      bleBtn.disabled = false;
+    }
+  }
+  bleBtn.addEventListener('click', connectReal);
+
+  function disconnectReal(){
+    try { connected && connected.gatt.disconnect(); } catch {}
+    connected = null;
+    stopBtn.disabled = true;
+    setStatus('ble-ok', 'หยุดเชื่อมแล้ว');
+  }
+  stopBtn.addEventListener('click', disconnectReal);
+
+  // ── Export + wipe (เหมือน NFC — ไฟล์ลงเครื่องเท่านั้น) ──
+  exportBtn.addEventListener('click', async () => {
+    try {
+      const list = await allRecords();
+      const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), count: list.length, telemetry: list }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'), d = new Date(), p = (n) => ('0' + n).slice(-2);
+      a.href = URL.createObjectURL(blob);
+      a.download = 'ble-telemetry-' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + '.json';
+      a.click(); URL.revokeObjectURL(a.href);
+      setStatus('ble-ok', 'ส่งออกแล้ว');
+    } catch (e) { setStatus('no', 'ส่งออกไม่ได้: ' + e.message); }
+  });
+  wipeBtn.addEventListener('click', async () => {
+    if (!confirm('ล้างรายการ telemetry ที่เก็บในเครื่องนี้ทั้งหมด?')) return;
+    await clearAll();
+    bodyEl.innerHTML = ''; tableEl.hidden = true; countEl.textContent = ''; emptyEl.style.display = '';
+    for (const k of ['temp', 'humidity', 'battery', 'bpm', 'text']) {
+      const el = $('t-' + k); if (el) el.childNodes[0].nodeValue = '-- ';
+      delete last[k];
+    }
+    setStatus('ble-ok', 'ล้างข้อมูลแล้ว');
+  });
+
+  // ── Boot: ตรวจ capability จริง (bluetooth + adapter + secure context) ──
+  (async () => {
+    try { db = await openDb(); refreshList(); }
+    catch (e) { setStatus('no', 'IndexedDB ใช้ไม่ได้: ' + e.message); }
+    const nav = navigator.bluetooth;
+    if (!nav) {
+      bleBtn.disabled = true;
+      setStatus('no', 'เบราว์เซอร์นี้ไม่มี Web Bluetooth (ใช้ Chrome/Edge) — โหมดจำลองใช้ได้ครบ');
+      showNotice('<b>โหมดเดสก์ท็อป/ไม่มี BLE:</b> กด "เริ่มจำลองเซนเซอร์" — ค่าจะไปลง IndexedDB จริงผ่าน pipeline เดียวกับ BLE แท้ (แสดงสด + ตาราง + export ทำงานทั้งหมด) ส่วนแท็ก BLE จริงใช้ได้บน Chrome/Edge เมื่อเครื่องมี Bluetooth LE Adapter');
+      return;
+    }
+    if (!window.isSecureContext) {
+      bleBtn.disabled = true;
+      setStatus('no', 'Web Bluetooth ใช้ไม่ได้บน http ไม่ปลอดภัย — เปิดผ่าน localhost / https เท่านั้น');
+      return;
+    }
+    try {
+      const avail = await nav.getAvailability();
+      if (avail) {
+        bleBtn.disabled = false;
+        setStatus('ble-ok', 'พร้อมเชื่อม BLE จริง — กดปุ่มเชื่อมต่อเพื่อเลือกอุปกรณ์');
+      } else {
+        bleBtn.disabled = true;
+        setStatus('no', 'ไม่พบ Bluetooth Adapter ที่ทำงานอยู่ — โหมดจำลองใช้ได้ครบ');
+      }
+    } catch { bleBtn.disabled = false; setStatus('ble-ok', 'กดปุ่มเชื่อมต่อเพื่อลองเลือกอุปกรณ์'); }
+  })();
+})();
+</script>
+</body>
+</html>

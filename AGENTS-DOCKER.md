@@ -37,8 +37,9 @@ Branch: `feat/docker-homelab` (คุณภาพสูงสุดแล้ว 
 |---|---|---|
 | 5a | **ทดสอบ LAN Messenger ในสภาพจริง 2 เครื่อง** | เปิด `sovereignty/server.js` 2 เครื่องบน LAN เดียว → เช็ค `/peers` ว่าเห็นกันทั้งสองฝั่ง → แชทปลายทาง UI (ทดสอบแล้วเครื่องเดียวผ่านครบ — ขาดเครื่องที่ 2 ใน sandbox) |
 | 5b | **Web NFC เช็คอินฟาร์ม — เสร็จแล้ว** (`public/nfc-checkin.html` เสิร์ฟที่ `/nfc`) | ทดสอบผ่านเบราว์เซอร์จริงครบ (IndexedDB ไทยถูก + wipe + export UI) — **เหลือเรียบรอบสมาร์ตโฟนจริง:** Android Chrome + แท็ก NFC + เปิดผ่าน https/localhost แล้วแตะ/เขียนจริง |
-| 5c | **Web Bluetooth แดชบอร์ดเซนเซอร์** (คิวถัดไป — เครื่อง dev มี BT module) | หน้า `public/ble-sensors.html` — คู่ service UUID จริงของเซนเซอร์ที่จะมีอุปกรณ์; ถ้ายังไม่มีอุปกรณ์ ทำเป็นแบบโปรไฟล์ข้อมูลภาพรวม + โหมดจำลองเหมือน NFC |
-| 5d | **ต่อข้อมูลจาก Meshtastic/LoRa เมื่อมีฮาร์ดแวร์** | สูบข้อความจาก mesh node → เด้งเข้า API `/messages` แบบเดียวกับที่มี — **รูปแบบ API คงเดิม ไม่ต้องเขียน endpoint ใหม่** |
+| 5c | **Web Bluetooth แดชบอร์ดเซนเซอร์ — เสร็จแล้ว ณ ระดับ browser** (`public/ble-sensors.html` เสิร์ฟที่ `/ble`) | Dual-Engine SIG presets + Nordic UART + simulator (ทดสอบผ่านเบราว์เซอร์ครบ: 32 records ✓, wipe ✓, capability ✓) — **เหลือ:** อุปกรณ์ BLE จริง (เครื่องมี BT module แต่ Windows radio ปิด — เปิดแล้วใช้ได้ทันที) + preset รุ่นเฉพาะตอนผู้ใช้ระบุรุ่น (เช่น Xiaomi LYWSD03MMC แบบ pvvx) |
+| 5d | **PWA offline เต็ม** (คิวถัดไปตาม README-MESH ระดับ 2) | `sw.js` cache-first ครบ asset ทุกหน้า — ทำให้คู่มือ/เครื่องมือทั้งหมดเปิดได้นอกสัญญาณ |
+| 5e | **ต่อข้อมูลจาก Meshtastic/LoRa เมื่อมีฮาร์ดแวร์** | สูบข้อความจาก mesh node → เด้งเข้า API `/messages` แบบเดียวกับที่มี — **รูปแบบ API คงเดิม ไม่ต้องเขียน endpoint ใหม่** |
 
 ---
 

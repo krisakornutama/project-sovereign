@@ -175,6 +175,7 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 const PAGES = new Map([
   ['/', 'lan-messenger.html'],
   ['/nfc', 'nfc-checkin.html'],
+  ['/ble', 'ble-sensors.html'],
 ]);
 const PAGE_CACHE = new Map(); // pathname -> Buffer | null (loaded once at startup)
 

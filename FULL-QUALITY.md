@@ -64,6 +64,13 @@ Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0
 - **ทดสอบจริงผ่าน OpenCode browser:** 0 console error · บันทึกไทยลง IndexedDB ถูกต้อง (ตรวจจาก `getAll()`) · ปุ่มเขียนแท็กซ่อนอัตโนมัติเมื่อ API ไม่ครบ · confirm dialog ล้างประวัติได้จริง (DB count 0) · 404 whitelist ทำงาน (`/nope` → 404)
 - Web Bluetooth คิวถัดไป — ตรวจแล้วเครื่อง dev นี้มี Bluetooth USB Module (`Get-PnpDevice`)
 
+### ระดับ 6c — Web Bluetooth Dashboard (ทำเสร็จ 100% ณ ระดับ browser + ทดสอบ pipeline ผ่าน simulator)
+
+- `sovereignty/public/ble-sensors.html` เสิร์ฟที่ `/ble` — Dual-Engine: ของจริง (requestDevice → GATT → preset auto-discover → notify) + จำลอง (sine 4 ชนิด) — code path เดียวกันทุกค่าเข้า IndexedDB (cap 1000)
+- Preset ครบ: SIG Environmental (0x181A/0x2A6E+0x2A6F) · Battery (0x180F/0x2A19) · Heart Rate (0x180D/0x2A37) · Nordic UART ESP32 (6E400001… → TX 6E400003…) — parser ล้วน DataView + hex fallback
+- **ทดสอบจริงผ่านเบราว์เซอร์:** 0 console error เต็ม session · capability เที่ยง (radio ปิด → disable + สถานะชี้สาเหตุ) · sim 32 records/~14s · หยุด/ล้าง (confirm → DB 0) · tiles + ตาราง + kindLabel ไทยถูกทุกจุด
+- อุปกรณ์จริง (ESP32/เซนเซอร์) และ preset รุ่นเฉพาะ (Xiaomi pvvx) = ชิ้นที่ต้องฮาร์ดแวร์ — ระบบรับต่อได้ทันทีโดยไม่ต้องแก้โครงสร้าง
+
 ---
 
 ## ตรวจสอบคุณภาพ — รายการตรวจสอบ
@@ -83,6 +90,7 @@ Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0
 | Quality docs | ✅ ครบ | `DOCKER.md`, `AGENTS-DOCKER.md`, `WORK-STATUS.md`, `FULL-QUALITY.md` (ไฟล์นี้) |
 | LAN Messenger (ทดสอบจริง) | ✅ ผ่านครบ | UDP bind + `/health` + `/send` + `/messages` ไทย UTF-8 + `/peers` — ตาม `sovereignty/README-MESH.md` |
 | Web NFC Check-in (ทดสอบจริง) | ✅ ผ่านครบ | `/nfc` 200 + 0 console error + IndexedDB ไทยถูก + wipe confirm — ทดสอบผ่านเบราว์เซอร์จริง |
+| Web BLE Dashboard (ทดสอบจริง) | ✅ ผ่านครบ (pipeline + sim) | `/ble` 200 + 0 error เต็ม session + 32 records ไหลถูกจังหวะ + wipe confirm + radio-off → disable ถูกต้อง; อุปกรณ์ BLE จริง = ชิ้นที่ต้องฮาร์ดแวร์ |
 | Mesh Docker service | ✅ สร้างแล้ว | `sovereignty/Dockerfile` + `docker-compose.yml` service `sovereign-mesh` (รันเมื่อมี Docker/Linux-RPi) |
 | Zero npm dependencies (mesh) | ✅ | `sovereignty/server.js` ใช้ node built-ins เท่านั้น — ไม่เรียก `npm install` |
 

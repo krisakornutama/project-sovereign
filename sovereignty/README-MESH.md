@@ -31,9 +31,10 @@
 
 | ไฟล์ | หน้าที่ |
 |---|---|
-| `server.js` | UDP multicast + HTTP API + เสิร์ฟหน้าแชท — **zero npm dependencies** (built-in เท่านั้น) · `PAGES` map เสิร์ฟ `/` (แชท) + `/nfc` (เช็คอิน) |
+| `server.js` | UDP multicast + HTTP API + เสิร์ฟหน้าแชท — **zero npm dependencies** (built-in เท่านั้น) · `PAGES` map เสิร์ฟ `/` (แชท) + `/nfc` (เช็คอิน) + `/ble` (แดชบอร์ด BLE) |
 | `public/lan-messenger.html` | หน้าแชท dark theme ตามระบบ (IBM Plex Sans Thai Looped + JetBrains Mono) |
 | `public/nfc-checkin.html` | หน้าเช็คอินฟาร์มด้วยแท็ก NFC — IndexedDB local-first, export JSON, โหมดจำลอง |
+| `public/ble-sensors.html` | แดชบอร์ดเซนเซอร์ BLE (SIG preset + Nordic UART) — dual-engine จริง/จำลอง, DataView parser, IndexedDB |
 | `package.json` | `npm start` — ต้อง Node >= 20 |
 | `Dockerfile` | node:22-alpine, USER node (non-root), healthcheck ยิง `/health` |
 
@@ -95,12 +96,12 @@ docker compose up -d
 | เทคโนโลยี | สถานะ | ไฟล์ / รายละเอียด |
 |---|---|---|
 | **Web NFC (เช็คอินฟาร์ม)** | ✅ **ทำแล้ว (ใช้เว็บจริง + ทดสอบ pipe ครบ)** | `public/nfc-checkin.html` เสิร์ฟที่ `/nfc` — แตะแท็กบันทึกใคร/ทำอะไร/เมื่อไร ลง **IndexedDB ในเครื่อง** (ไม่มี network call หนึ่งคำ) · เขียนลงแท็ก (อ่าน/เขียน NDEF text) · ส่งออก JSON · ล้างประวัติ + โหมดจำลองเทียบระดับ code path เดียวกันทั้งระบบ — **ผลทดสอบจริงครบ: โหลด 0 console error, บันทึกภาษาไทยลง IndexedDB ถูกต้อง, ปุ่มเขียนแท็กซ่อนอัตโนมัติเมื่อมี NFC ไม่ได้ทันใช้, confirm dialog ทำงานถูก** — ส่วน "แตะแท็กจริง" ต้องมี: Chrome บน Android + แท็ก NFC + เปิดผ่าน https/localhost (Web NFC ต้องการ secure context) |
+| **Web Bluetooth (BLE เซนเซอร์)** | ✅ **ทำแล้ว (ใช้เว็บจริง + ทดสอบ pipeline ครบ ผ่าน simulator)** | `public/ble-sensors.html` เสิร์ฟที่ `/ble` — Dual-Engine: **ของจริง** = `requestDevice` → GATT → auto-ค้นหา preset → notify/read (SIG 0x181A/0x2A6E+0x2A6F, 0x180F/0x2A19, 0x180D/0x2A37, Nordic NUS 6E400001… TX 6E400003…) · **จำลอง** = sine (temp 25–35 °C / humidity 40–80 % / battery 80–100 % / bpm 60–90) ทุกค่าเข้า IndexedDB (**code path เดียวกันทั้งระบบ** — cap 1000 แถวลบเก่าอัตโนมัติ, bin hex preview, export JSON, wipe + confirm) · **ผลทดสอบจริง (OpenCode browser):** 0 console error เต็ม session · capability detection เที่ยง (Chrome เห็น API แต่ Windows radio ปิด → ปุ่มเชื่อมของจริงถูก disable ถูกต้อง) · sim 32 records/~14s (4 ต่อ 2s tick) · หยุด/ล้าง/kindLabel ไทยถูกต้องทุกจุด · หมายเหตุเครื่อง dev: module BT มีแต่ radio ปิด — เปิดใน Windows แล้วกดเชื่อมได้ทันที เหลือเพียงคู่แข่งอุปกรณ์จริง (ESP32/เซนเซอร์) + preset รุ่นเฉพาะ (Xiaomi pvvx/custom) ตอนบอกรุ่น |
 | **PWA Offline + Service Worker** | ⏳ คิวถัดไป | บนตัวหน้าร้านหลักอยู่แล้ว (`sw.js` + `manifest.webmanifest`) — ปรับ cache-first ครบถวั้นแพ็ knowledge page |
-| **Web Bluetooth (BLE เซนเซอร์)** | ⏳ คิวถัดไป (เครื่อง dev มี Bluetooth USB Module แล้ว) | แดชบอร์ดเซนเซอร์ ESP32/BLE — อ่าน telemetry ตรง ไม่ผ่าน cloud broker |
 
-เส้นทางถัดไป (แนะนำตามลำดับ): 1) **BLE แดชบอร์ด** (คิวแรก — เครื่องมี BT module) 2) PWA offline เต็ม
+เส้นทางถัดไป (แนะนำตามลำดับ): 1) **PWA offline เต็ม** (`sw.js` cache-first) 2) preset เพิ่มเมื่อมีอุปกรณ์จริง (Xiaomi LYWSD03MMC ฟอร์มแวร์ pvvx / เซนเซอร์ DI อื่น)
 
-เพิ่มหน้าเครื่องมือใหม่ที่ `/` ได้ทันที: แก้ `PAGES` map ใน `server.js` (route → ไฟล์ใน `public/`) — สุ่มเสิร์ฟทุกเครื่องบน LAN โดยไม่ต้องแก้อะไรให้ต่อ
+เพิ่มหน้าเครื่องมือใหม่ที่ `/` ได้ทันที: แก้ `PAGES` map ใน `server.js` (route → ไฟล์ใน `public/`) — ปัจจุบันมี `/` (แชท), `/nfc` (เช็คอิน), `/ble` (แดชบอร์ด BLE) — สุดก็เสิร์ฟทุกเครื่องบน LAN โดยไม่ต้องแก้อะไรให้ต่อ
 
 ---
 
