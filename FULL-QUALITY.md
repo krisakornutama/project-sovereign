@@ -79,6 +79,17 @@ Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0
 - **ผลทดสอบจริงผ่านเบราว์เซอร์:** SW registered → activated (scope `http://localhost:4200/`, `controller` ควบคุม, แคชครบ 8 paths, 0 error) · **ปิด node จริง (netstat ยืนยันไม่มี listener บน 4200) แล้วเปิดทุกหน้า:** `/` `/nfc` `/ble` โหลดจากแคช (`transferSize = 0`) + **IndexedDB add/delete ใช้ได้ตอนออฟไลน์** (ทดสอบทั้ง 2 ฐาน `sovereign-nfc` / `sovereign-ble` — record ทดสอบลบคืนสถานะ 0 หลังจบ) + `/nfc`,`/ble` 0 console error · หน้า `/` พบ error เฉพาะ polling ของ API สด (502 เพราะ SW ปล่อยผ่าน network ตาม NEVER set) = รายงาน node ล่มถูกต้อง ไม่ใช่บั๊ก · restart node → polling กลับมาสำเร็จ (0 error) + SW ยังควบคุม
 - ข้อจำกัดตามธรรมชาติ + กฎของ agent: SW registration = secure context เท่านั้น (localhost ✅ / LAN IP http ❌ ต้อง https reverse proxy) · **เพิ่มหน้าใหม่ = sync `PRECACHE` (sw.js) ↔ `PAGES` (server.js) + bump `VERSION` ทุกครั้งที่แก้เนื้อหาหน้า** (cache-first จะยังเสิร์ฟของเก่าถ้าไม่ bump — comment เตือนในหัวไฟล์ sw.js)
 
+### ระดับ 6e — Offline POS /shop — Self-Sovereign Commerce (ทำเสร็จ 100% ณ ระดับ browser + ทดสอบขายออฟไลน์จริง + Reconcile อัตโนมัติ)
+
+- `sovereignty/public/shop.html` เสิร์ฟที่ `/shop` (PAGES map) — หน้าร้านอธิปไตย: แคตตาล็อก · ตะกร้า (อยู่รอดข้าม reload) · สต็อก · บัญชีขาย — ทั้งหมดใน IndexedDB `sovereign-pos` (stores: `catalog`, `cart`, `sales`, `keys`) · seed สินค้า 6 รายการ (ปุ๋ย/เมล็ด/EM/อาหารไก่/บ่อปลา/ค่าช่าง) + เพิ่มสินค้าใหม่ผ่านฟอร์ม
+- ตัดสต็อก **atomic ใน 1 IDB transaction** (cart+catalog+sales) — สต็อกไม่พอ → `abort()` ทั้งรายการ ไม่มี half-done sale
+- **สลิปดิจิทัลลงลายมือชื่อ Ed25519 ในเครื่อง** (`crypto.subtle`): payload canonical JSON (`SVR-RECEIPT` — v/type/id/ts/currency/items/total/customer/**pub**) — **กุญแจสาธารณะฝังในตัวใบเอง** ใครถือใบก็ตรวจได้ตลอดอายุแม้ไม่มี network · คู่กุญแจเกิด+อยู่ใน store `keys` ไม่เคยออกจากเครื่อง · เซ็นแล้วตรวจกลับทันที (`localVerify`)
+- **โหนดรับใบเสร็จ** (`server.js`): `POST /receipts` → ตรวจ Ed25519 ฝั่ง Node (`crypto.createPublicKey` จาก JWK ใน payload + `crypto.verify`) ก่อนลงบัญชี · dedupe ตาม id (ยื่นซ้ำ = `200 {duplicate:true}` เงียบ ๆ — retry-safe ไม่แตะบัญชีเดิม) · persist ลง `data/receipts.jsonl` (append-only + โหลดกลับตอนบูต) · `GET /receipts?since=` อ่านย้อนหลัง · `/health` แจ้งนับ `receipts` · body limit 16KB + cap 5000 ใบ
+- **คิวซิงก์ + Reconcile:** ขายตอน node ตาย → ค้าง "รอซิงก์" · node ฟื้น (`online` event / ตรวจ `/health` ทุก 30s / ปุ่มกดเอง) → flush เองเป็น "เข้าบัญชีโหนด ✓" · ลายเซ็นไม่ผ่าน → "ถูกปฏิเสธ" (400 ไม่รีทราย)
+- **ผลทดสอบจริงผ่านเบราว์เซอร์ (OpenCode browser, localhost:4200/shop):** boot 0 console error + seed 6 + กุญแจ OKP/Ed25519 เกิดในเครื่อง ✓ · ขายใบ 1 ออนไลน์: สต็อก 12→10, สลิป 300฿ ลงชื่อ ✓ ตรวจกลับผ่าน, sync เข้าบัญชีโหนดภายใน ~3.5 วิ ✓ · **ป้องกันการปลอม:** payload บิด total=9999 + id ใหม่ + ลายเซ็นจริง → **400 `unverified signature`** ✓ · ขาด signature → 400 ✓ · ยื่นซ้ำของจริง → duplicate เงียบ บัญชียัง 1 ใบ ✓ · **ปิด node จริง → ขายใบ 2:** หน้าโผล่จากแคช SW (transferSize 0), ขาย 45฿ ตัดสต็อก 15→14 ลงชื่อได้, ค้าง "รอซิงก์" ถูกต้อง ✓ · **restart node → ใบ 2 flush เข้าบัญชีอัตโนมัติ (30s tick ไม่ต้องกดเอง)** + `receipts.jsonl` ครบ 2 แถว + node ตัวใหม่บูตโหลดกลับ "2 entries" ✓
+- **ข้อค้นพบระหว่างทดสอบ (แก้แล้ว):** GET `/receipts` เดิมถูก SW cache-first เก็บทำให้อ่านบัญชีเห็นของเก่า — **แก้: เพิ่ม `/receipts` ลง NEVER set + bump VERSION → v3** — ตรวจซ้ำ: อ่าน 2 ครั้งได้ค่าตรงกันเสมอ + `/receipts` ไม่มีในแคช v3 (`receiptsEverCached: false`) + แคชเก่าถูก purge เหลือ `sovereign-pwa-v3` เดียว
+- เอกสารหลัก: `sovereignty/README-MESH.md` (ส่วน POS + API `/receipts`) — ระดับ 2 ครบ: LAN ✅ NFC ✅ BLE ✅ PWA Offline ✅ **POS ✅** (เหลือเฉพาะฮาร์ดแวร์จริง)
+
 ---
 
 ## ตรวจสอบคุณภาพ — รายการตรวจสอบ
@@ -99,7 +110,8 @@ Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0
 | LAN Messenger (ทดสอบจริง) | ✅ ผ่านครบ | UDP bind + `/health` + `/send` + `/messages` ไทย UTF-8 + `/peers` — ตาม `sovereignty/README-MESH.md` |
 | Web NFC Check-in (ทดสอบจริง) | ✅ ผ่านครบ | `/nfc` 200 + 0 console error + IndexedDB ไทยถูก + wipe confirm — ทดสอบผ่านเบราว์เซอร์จริง |
 | Web BLE Dashboard (ทดสอบจริง) | ✅ ผ่านครบ (pipeline + sim) | `/ble` 200 + 0 error เต็ม session + 32 records ไหลถูกจังหวะ + wipe confirm + radio-off → disable ถูกต้อง; อุปกรณ์ BLE จริง = ชิ้นที่ต้องฮาร์ดแวร์ |
-| PWA Offline (ทดสอบจริง) | ✅ ผ่านครบ | SW activated + แคช 8 paths + **ปิด node จริงแล้วทุกหน้า (`/` `/nfc` `/ble`) โหลดจากแคช** (transferSize=0) + IndexedDB add/delete ออฟไลน์ได้ + restart → polling ฟื้น (0 error) + SW ยังควบคุม; SW = secure context เท่านั้น (localhost) |
+| PWA Offline (ทดสอบจริง) | ✅ ผ่านครบ | SW activated + แคช 8 paths + **ปิด node จริงแล้วทุกหน้า (`/` `/nfc` `/ble`) โหลดจากแคช** (transferSize=0) + IndexedDB add/delete ออฟไลน์ได้ + restart → polling ฟื้น (0 error) + SW ยังควบคุม; SW = secure context เท่านั้น (localhost) — ปัจจุบันแคช = v3 (9 paths + `/shop`) |
+| Offline POS (ทดสอบจริง) | ✅ ผ่านครบ | `/shop` + `/receipts` — ขายแบบ atomic + สลิป Ed25519 ลงชื่อในเครื่อง + ปลอม payload → 400 + ขายตอน node ตายค้างคิว → ฟื้น flush เอง (นับถ้วนทุกข้อยันในหัวข้อ "ระดับ 6e") |
 | Mesh Docker service | ✅ สร้างแล้ว | `sovereignty/Dockerfile` + `docker-compose.yml` service `sovereign-mesh` (รันเมื่อมี Docker/Linux-RPi) |
 | Zero npm dependencies (mesh) | ✅ | `sovereignty/server.js` ใช้ node built-ins เท่านั้น — ไม่เรียก `npm install` |
 
@@ -143,4 +155,4 @@ git push origin feat/docker-homelab
 
 ---
 
-*ตรวจสอบโดย Agent ปัจจุบัน: คุณภาพสูงสุดเท่าที่ทำได้ในขอบเขต `project-sovereign` โดยไม่ละเมิด `AGENTS.md` (ไม่แตะ `sovereign-origin`, ไม่รั่ว secret, ไม่ทำลายข้อมูลจริง) — ครอบคลุมถึงส่วน sovereignty (LAN Messenger ทดสอบผ่านจริง) ณ วันที่ 08/11/2026*
+*ตรวจสอบโดย Agent ปัจจุบัน: คุณภาพสูงสุดเท่าที่ทำได้ในขอบเขต `project-sovereign` โดยไม่ละเมิด `AGENTS.md` (ไม่แตะ `sovereign-origin`, ไม่รั่ว secret, ไม่ทำลายข้อมูลจริง) — ครอบคลุมถึงส่วน sovereignty (ระดับ 2 ครบ: LAN Messenger ✅ NFC ✅ BLE ✅ PWA Offline ✅ Offline POS ✅ — ทดสอบผ่านจริงทั้งหมด) ณ วันที่ 08/11/2026*

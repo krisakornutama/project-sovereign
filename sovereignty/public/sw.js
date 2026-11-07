@@ -6,7 +6,7 @@
 //   • API ที่ต้องการค่าสด (/health /peers /messages /send + ทุก non-GET) ไม่ cache
 //   • Cache versioning: เปลี่ยน VERSION → ลบแคชชุดเก่าอัตโนมัติตอน activate
 
-const VERSION = 'v1';
+const VERSION = 'v3';
 const CACHE_NAME = 'sovereign-pwa-' + VERSION;
 
 // PAGES จาก server.js คือแหล่งข้อมูลเดียวกัน — อย่าลืมเพิ่มหน้าใหม่ให้ตรงกันทั้งสองที่
@@ -14,6 +14,7 @@ const PRECACHE = [
   '/',
   '/nfc',
   '/ble',
+  '/shop',
   '/manifest.json',
   '/sw.js',
   '/icon-192.png',
@@ -22,7 +23,8 @@ const PRECACHE = [
 ];
 
 // API สดของ mesh node — ห้าม cache เด็ดขาด (ค่าต้องปัจจุบันเสมอ)
-const NEVER = new Set(['/health', '/peers', '/messages', '/send']);
+// /receipts (GET) = บัญชีกลางของขาย — ต้องอ่านสดเสมอ ไม่งั้นการทบทวนบัญชีเห็นของเก่า
+const NEVER = new Set(['/health', '/peers', '/messages', '/send', '/receipts']);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

@@ -90,6 +90,17 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 - **ผลทดสอบจริงผ่าน OpenCode browser (localhost:4200):** SW registered → activated (scope `/`, `controlled: true`) + แคช `sovereign-pwa-v1` ครบ 8 paths + 0 console error · **ทดสอบออฟไลน์แบบจริง — ปิดกระบวนการ node ทิ้ง (ยืนยัน netstat: ไม่มี listener บน 4200) แล้วเดินเข้าทุก route:** `/` `/nfc` `/ble` โหลดจากแคช (`transferSize = 0`, brand text ครบ) + **IndexedDB add/delete ทำงานออฟไลน์จริงทั้ง 2 ฐาน** + `/nfc`,`/ble` 0 console error · หน้า `/` พบ 502 จาก polling เฉพาะ API สด (`/messages` `/peers` — SW ปล่อยผ่าน network ตาม NEVER set) = รายงานเซิร์ฟเวอร์ล่มถูกต้องตามดีไซน์ ไม่ใช่บั๊ก · **restart node → `/health` 200 + polling กลับมาสำเร็จ (0 console error) + SW ยังควบคุม** (`transferSize = 0` ของ document ตอน online คือ cache-first ตามดีไซน์ — ของสดมาจาก API ไม่ใช่ตัว document)
 - **ข้อจำกัดตามธรรมชาติของ API:** SW registration บังคับ secure context — localhost ✅ · LAN IP ผ่าน http ❌ (ต้อง https reverse proxy เมื่อใช้จากมือถือจริง)
 
+### ระดับ 2d — Offline POS /shop (ใหม่ — เสร็จ + ทดสอบขายออฟไลน์จริง + Reconcile อัตโนมัติ)
+
+- `sovereignty/public/shop.html` — หน้าร้านอธิปไตย: แคตตาล็อก · ตะกร้า (ติดตากันตาม reload) · สต็อก · บัญชีขาย — ทั้งหมดอยู่ IndexedDB `sovereign-pos` v1 (stores: `catalog`, `cart`, `sales`, `keys`)
+- ตัดสต็อก **atomic ใน single IDB transaction** — ตรวจสอบสต็อกพร้อมกันกับตัด + เพิ่มบัญชี + ล้างตะกร้ารวดเดียว; สต็อกไม่พอ → abort ทั้งรายการ (ไม่มี half-done sale)
+- **สลิปดิจิทัล (Digital Receipt) ลงลายมือชื่อ Ed25519 ในเครื่อง:** payload เป็น canonical JSON `{"v":1,"type":"SVR-RECEIPT",id,ts,currency:"THB",items[],total,customer,pub}` — **กุญแจสาธารณะฝังใน payload ของใบเอง** (ใครถือใบก็ verify ได้ตลอดอายุ แม้ไม่มี network) · คู่กุญแจเกิด+เก็บใน store `keys` (`crypto.subtle.generateKey('Ed25519')` — ไม่เคยออกจากเครื่อง) · เซ็นแล้วตรวจกลับทันที (`localVerify`)
+- **โหนดรับใบเสร็จ [ฝั่งผู้ใช้]:** `POST /receipts` {payload, signature} → **Node ตรวจ Ed25519 ก่อนลงบัญชี** (`crypto.createPublicKey` จาก JWK ใน payload + `crypto.verify`) · dedupe ตาม id — ยื่นซ้ำ = `200 {duplicate:true}` เสมอ (ตรรกะ retry-safe, idempotent) · ลง ledger ไฟล์ `sovereignty/data/receipts.jsonl` (append-only + โหลดกลับตอนบูต) · `GET /receipts?since=` ตรวจสอบย้อนหลัง · `/health` แจ้ง `receipts` นับด้วย
+- **คิวซิงปรับตัว (Reconciliation):** ขายตอนออฟไลน์ → สถานะ "รอซิงก์" · กลับมาออนไลน์ (event `online` / ตรวจ `/health` ทุก 30 วินาที / กดเอง) → flush โพสต์เข้าโหนดทำเครื่องหมาย "เข้าบัญชีโหนด ✓" อัตโนมัติ · network ไปไม่ถึง → ยังอยู่ queued (ลองใหม่เรื่อย ๆ) · ลายเซ็นไม่ผ่าน → "ถูกปฏิเสธ" (ไม่รีเทรย์ฝั่งเว็บ — ตรรกะ 400 ตรึงกัน)
+- **สันสาปแคชที่ค้นพบระหว่างทดสอบ (แก้แล้ว):** `/receipts` ตอนแรกถูก SW แคช-first เก็บ GET แรกไว้ → อ่านบัญชีครั้งถัดไปเห็นของเก่า — **แก้: ใส่ `/receipts` ลง NEVER set ของ sw.js + bump VERSION v3** → ตรวจแล้ว 2 ครั้งติดกันได้ค่าเดียวกัน + `/receipts` ไม่มีในแคช v3 เลย
+- **ผลทดสอบจริงผ่าน OpenCode browser (localhost:4200/shop):** seed 6 สินค้า + กุญแจ Ed25519 เกิดในเครื่อง (OKP/Ed25519 มี private key) · หน้าโหลด 0 console error · ขายใบ 1 (ออนไลน์): สต็อก 12→10 · สลิป 300฿ + ชื่อลูกค้า "ทดสอบสลิปผ่านเบราว์เซอร์" ลงชื่อ Ed25519 ✓ ตรวจกลับผ่าน · sync "เข้าบัญชีโหนด" อัตโนมัติ ✓ (`GET /receipts` เห็นใบจริง, source ::1, ตรวจสอบยันบน ledger) · **การป้องกันข้อมูล (ลบทางเทคนิค):** ยัด payload total=9999 + id ใหม่ + ลายเซ็นจริง → โดน confiรัยส์ 400 `unverified signature` ✓ · ขาด signature → 400 ✓ · ยื่นซ้ำของจริง → `duplicate:true` บัญชียัง 1 ใบ ✓ · **ปิด node จริง → ขายใบ 2 (45฿ ตัดสต็อก 15→14):** หน้าโผล่จากแคช SW v3 (transferSize 0), ตะกร้าสั่งได้, ขาย+ลงชื่อได้ปกติ, สถานะ "รอซิงก์" ถูกต้อง (flush ลอง `/health` แล้วรอเงียบ ๆ) · **restart node → ใบ 2 ถูกฟลัชตั้งอัตโนมัติ (30s tick — ไม่ต้องกดเอง)** + `sovereignty/data/receipts.jsonl` มี 2 แถวครบ (โหลดกลับจากไฟล์ทุกครั้งบูต) + บัญชี GET สด = 2 พร้อม id ตรงกัน
+- **ระดับ 2 ปิดประตูสมบูรณ์:** LAN Messenger ✅ · Web NFC ✅ · Web BLE ✅ · PWA Offline ✅ · **Offline POS ✅** — เหลือเฉพาะฮาร์ดแวร์จริง (NFC แท็ก / อุปกรณ์ BLE / ระดับ 3 วิทยุ)
+
 ---
 
 ## 📦 รายการไฟล์ใน branch `feat/docker-homelab` (พร้อมรอ agent ต่อไป)
@@ -113,6 +124,9 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 | `sovereignty/public/nfc-checkin.html` | หน้าเช็คอิน NFC — IndexedDB local-first (NEW) |
 | `sovereignty/public/ble-sensors.html` | แดชบอร์ดเซนเซอร์ BLE — dual-engine (NEW) |
 | `sovereignty/public/sw.js` + `manifest.json` + `icon-*.png` | PWA offline stack — cache-first, ลงทะเบียนครบ 3 หน้า (NEW) |
+| `sovereignty/public/shop.html` | **Offline POS `/shop`** — แคตตาล็อก+ตะกร้า+สต็อก+บัญชีขาย (IndexedDB) + สลิป Ed25519 + คิวซิงก์ reconcile (NEW) |
+| `sovereignty/server.js` → `/receipts` | บัญชีรับใบเสร็จของโหนด — ตรวจ Ed25519 ก่อนลงบัญชี + dedupe id + persist `data/receipts.jsonl` (NEW) |
+| `sovereignty/data/receipts.jsonl` | บัญชีใบเสร็จจริงของเครื่อง (run-time — `.gitignore` กัน commit, ข้อมูลธุรกิจ) |
 | `sovereignty/Dockerfile` | mesh service container (NEW) |
 | `sovereignty/README-MESH.md` | เอกสารสถาปัตยกรรม "อธิปไตย" 3 ระดับ (NEW) |
 | `docker-compose.yml` | **2 services** — web (nginx 8080) + mesh (4200) |
@@ -149,8 +163,8 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 3. **ตรวจสอบ webhook SQLite** (`webhook-service/store.js` ใช้ `node:sqlite`) — ต้องมี Node >=22.5 และรันเทสต์ `npm test` ใน `webhook-service/`
 4. **ทำขั้นขาย** ($19-39 Pro License Key ผ่าน Lemon Squeezy/Gumroad) — ต้องเพิ่ม checkout link ใน `shop.html` และ `sovereign-os.html` (ไม่ทำในงานนี้ตามคำสั่งคุณ)
 5. **เชื่อม `sovereign-origin`** (สำหรับ verification endpoint) — ต้องขออนุญาตก่อนตาม AGENTS.md ข้อ 1
-6. **ขยาย sovereignty ต่อ** — ระดับ "เบราว์เซอร์" ครบแล้ว: NFC ✅ / BLE ✅ / **PWA Offline ✅** (ทดสอบออฟไลน์จริง — ปิด node แล้วทุกหน้าโหลดจากแคช) — เหลือเฉพาะชิ้นที่ต้องใช้อุปกรณ์จริง: preset เซนเซอร์รุ่นเฉพาะ เมื่อผู้ใช้บอกรุ่น / ระดับ 3 Meshtastic/LoRa ต้องซื้อฮาร์ดแวร์ · ดู `sovereignty/README-MESH.md` · **อย่าลืม:** เพิ่มหน้าใหม่ต้อง sync `PRECACHE` (sw.js) ↔ `PAGES` (server.js) + bump `VERSION` เมื่อแก้เนื้อหา
+6. **ขยาย sovereignty ต่อ** — ระดับ "เบราว์เซอร์" ครบแล้ว: NFC ✅ / BLE ✅ / **PWA Offline ✅** / **Offline POS `/shop` ✅** (ขายออฟไลน์ + สลิป Ed25519 + reconcile อัตโนมัติ — ทดสอบจริงครบ) — เหลือเฉพาะชิ้นที่ต้องใช้อุปกรณ์จริง: preset เซนเซอร์รุ่นเฉพาะ เมื่อผู้ใช้บอกรุ่น / ระดับ 3 Meshtastic/LoRa ต้องซื้อฮาร์ดแวร์ · ดู `sovereignty/README-MESH.md` · **อย่าลืม:** เพิ่มหน้าใหม่ต้อง sync `PRECACHE` (sw.js) ↔ `PAGES` (server.js) + bump `VERSION` เมื่อแก้เนื้อหา **และ** API สดใหม่ (เช่น `/receipts`) ต้องลงใน NEVER set ของ sw.js ด้วย — ไม่งั้นอ่านของจากแคช
 
 ---
 
-*ตรวจสอบคุณภาพโดย Agent ปัจจุบัน: Docker structure ✅ (2 services), SQLite persistence ✅, Security (HMAC + non-root + .dockerignore) ✅, LAN Messenger ทดสอบผ่านจริง ✅, Web NFC ✅, Web BLE ✅, PWA Offline ทดสอบออฟไลน์จริง (ปิด node → ทุกหน้าจากแคช → ฟื้น online) ✅, No secret leak ✅, AGENTS.md compliance ✅, Documentation (DOCKER.md + AGENTS-DOCKER.md + WORK-STATUS.md + FULL-QUALITY.md + sovereignty/README-MESH.md) ✅*
+*ตรวจสอบคุณภาพโดย Agent ปัจจุบัน: Docker structure ✅ (2 services), SQLite persistence ✅, Security (HMAC + non-root + .dockerignore) ✅, LAN Messenger ทดสอบผ่านจริง ✅, Web NFC ✅, Web BLE ✅, PWA Offline ทดสอบออฟไลน์จริง (ปิด node → ทุกหน้าจากแคช → ฟื้น online) ✅, **Offline POS ทดสอบขายออฟไลน์จริง (สลิป Ed25519 + ตัดสต็อก + reconcile คิวเข้า `/receipts` ฟื้นเอง + ปั้กภูมิการปลอมสลิปผ่าน)** ✅, No secret leak ✅, AGENTS.md compliance ✅, Documentation (DOCKER.md + AGENTS-DOCKER.md + WORK-STATUS.md + FULL-QUALITY.md + sovereignty/README-MESH.md) ✅*

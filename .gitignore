@@ -18,3 +18,6 @@ scraper/frontend/dist/
 # เป็นข้อมูลจริงของร้าน (ชื่อ ที่อยู่ เบอร์โทร) ห้ามหลุดขึ้น public เด็ดขาด
 scraper/marketplace-storage/
 scraper/marketplace/marketplace-storage/
+
+# sovereignty: บัญชีรับเงิน POS ของ mesh node (receipts.jsonl) — ข้อมูลธุรกิจของเครื่องจริง
+sovereignty/data/

@@ -12,6 +12,9 @@
 //      shared database.
 //   4. Optional passphrase encryption for message payloads
 //      (AES-256-GCM, key derived via scrypt) — privacy across the wire.
+//   5. Receipts ledger for the POS (online or reconciled from offline
+//      sales) — every entry must carry an Ed25519 signature over its own
+//      payload; the node verifies it before writing to the ledger.
 
 'use strict';
 
@@ -76,6 +79,51 @@ const peers = new Map(); // peerId -> { id, name, host, port, lastSeen }
 const messages = [];     // { seq, from, fromName, text, ts }
 const MAX_HISTORY = 500;
 let seqCounter = 0;
+
+// ── Receipts ledger (sales made by POS pages, online or after offline queue)
+// Append-only and deduped by receipt id: re-posting the same receipt is a
+// no-op, so a device may retry its sync queue as often as it likes.
+// Verification: the signer's public key is INSIDE the receipt payload, so any
+// node (or anyone) holding the receipt can re-verify — offline forever.
+const RECEIPTS_DIR = path.join(__dirname, 'data');
+const RECEIPTS_LOG = path.join(RECEIPTS_DIR, 'receipts.jsonl');
+const receipts = new Map(); // id -> { receivedAt, id, verified, payload, signature, source }
+const MAX_RECEIPTS = 5000;
+
+function loadReceipts() {
+  try {
+    const text = fs.readFileSync(RECEIPTS_LOG, 'utf8');
+    for (const line of text.split('\n')) {
+      const l = line.trim();
+      if (!l) continue;
+      try {
+        const r = JSON.parse(l);
+        if (r && r.id) receipts.set(r.id, r);
+      } catch { /* skip malformed line — never crash on data */ }
+    }
+  } catch { /* first boot — no ledger yet */ }
+}
+
+function appendReceiptLog(entry) {
+  try {
+    fs.mkdirSync(RECEIPTS_DIR, { recursive: true });
+    fs.appendFileSync(RECEIPTS_LOG, JSON.stringify(entry) + '\n');
+  } catch (err) {
+    console.error('receipts ledger append failed (service continues):', err.message);
+  }
+}
+
+function verifyReceiptEd25519(payloadStr, signature, pubJwk) {
+  try {
+    if (!payloadStr || !signature || !pubJwk || pubJwk.kty !== 'OKP' || pubJwk.crv !== 'Ed25519') return false;
+    const pub = crypto.createPublicKey({ key: pubJwk, format: 'jwk' });
+    const data = Buffer.from(payloadStr, 'utf8');
+    const sig = Buffer.from(signature, 'base64url');
+    return crypto.verify(null, data, pub, sig);
+  } catch { return false; }
+}
+
+loadReceipts();
 
 function prunePeers() {
   const now = Date.now();
@@ -176,6 +224,7 @@ const PAGES = new Map([
   ['/', 'lan-messenger.html'],
   ['/nfc', 'nfc-checkin.html'],
   ['/ble', 'ble-sensors.html'],
+  ['/shop', 'shop.html'],
 ]);
 const PAGE_CACHE = new Map(); // pathname -> Buffer | null (loaded once at startup)
 
@@ -232,7 +281,7 @@ const server = http.createServer(async (req, res) => {
   prunePeers();
   try {
     if (u.pathname === '/health') {
-      return json(res, 200, { status: 'ok', peer: { id: PEER_ID, name: PEER_NAME }, peers: peers.size, messages: messages.length, encrypted: Boolean(PASSPHRASE) });
+      return json(res, 200, { status: 'ok', peer: { id: PEER_ID, name: PEER_NAME }, peers: peers.size, messages: messages.length, receipts: receipts.size, encrypted: Boolean(PASSPHRASE) });
     }
 
     if (u.pathname === '/peers' && req.method === 'GET') {
@@ -266,6 +315,46 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { ok: true, seq });
     }
 
+    if (u.pathname === '/receipts' && req.method === 'POST') {
+      const raw = await readBody(req, 16 * 1024);
+      let body;
+      try { body = JSON.parse(raw.toString('utf8')); } catch { return json(res, 400, { error: 'invalid json' }); }
+      const payloadStr = typeof body?.payload === 'string' ? body.payload : '';
+      const signature = typeof body?.signature === 'string' ? body.signature : '';
+      let receiptObj = null;
+      try { receiptObj = JSON.parse(payloadStr); } catch { receiptObj = null; }
+      if (!receiptObj || receiptObj.type !== 'SVR-RECEIPT' || !receiptObj.id ||
+          !Number.isFinite(receiptObj.total) || !Array.isArray(receiptObj.items)) {
+        return json(res, 400, { error: 'receipt malformed' });
+      }
+      const id = String(receiptObj.id).slice(0, 64);
+      // Idempotency: same id already in the ledger → accept quietly (retry-safe)
+      if (receipts.has(id)) {
+        return json(res, 200, { ok: true, id, duplicate: true });
+      }
+      if (!verifyReceiptEd25519(payloadStr, signature, receiptObj.pub)) {
+        return json(res, 400, { error: 'unverified signature', id: undefined });
+      }
+      const entry = { receivedAt: Date.now(), id, payload: payloadStr.slice(0, 16384), signature: signature.slice(0, 200), source: req.socket?.remoteAddress || '' };
+      receipts.set(id, entry);
+      if (receipts.size > MAX_RECEIPTS) {
+        const drop = [...receipts.keys()].slice(0, receipts.size - MAX_RECEIPTS);
+        for (const k of drop) receipts.delete(k);
+      }
+      appendReceiptLog(entry);
+      return json(res, 200, { ok: true, id, duplicate: false });
+    }
+
+    if (u.pathname === '/receipts' && req.method === 'GET') {
+      const since = Number(u.searchParams.get('since') || 0);
+      const list = [...receipts.values()]
+        .filter(r => r.receivedAt > since)
+        .sort((a, b) => a.receivedAt - b.receivedAt)
+        .slice(-200);
+      const cursor = list.length ? list[list.length - 1].receivedAt : since;
+      return json(res, 200, { cursor, count: list.length, receipts: list });
+    }
+
     // Bundled sovereignty tool pages (static, cache disabled)
     if (PAGE_CACHE.has(u.pathname)) {
       const page = PAGE_CACHE.get(u.pathname);
@@ -293,4 +382,5 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`sovereign-mesh: HTTP UI at http://localhost:${PORT}/`);
+  console.log(`sovereign-mesh: receipts ledger loaded (${receipts.size} entries)`);
 });

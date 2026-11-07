@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sovereign POS — หน้าร้านออฟไลน์ ขายได้แม้สัญญาณตาย สลิปลงลายมือชื่อ Ed25519 ในเครื่อง</title>
+<meta name="description" content="POS แบบอธิปไตย: แคตตาล็อก ตะกร้า สต็อก และสลิปลายเซ็น Ed25519 ทั้งหมดอยู่บนเครื่อง (IndexedDB) — ขายออฟไลน์ได้ ซิงก์เข้าบัญชีโหนดเมื่อกลับมาออนไลน์ ไม่พึ่งพา cloud ใด ๆ">
+<meta name="theme-color" content="#030712">
+<link rel="manifest" href="/manifest.json">
+<style>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.65); --line:rgba(52,211,153,.22);
+  --green:#34d399; --cyan:#22d3ee; --txt:#f0f4f8; --dim:#a1a1aa; --faint:#71717a;
+  --amber:#fbbf24; --red:#f87171;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Cascadia Code','Courier New',monospace;
+  --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(22,211,238,.10),transparent 64%)}
+header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px);padding:13px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--cyan)}
+.brand a{color:var(--cyan);text-decoration:none}
+.brand a:hover{color:var(--green)}
+.status{font-family:var(--mono);font-size:.66rem;color:var(--dim);text-align:right}
+.status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle}
+.status.no .dot{background:var(--amber)}
+.status.live .dot{background:var(--cyan)}
+main{flex:1;max-width:1020px;width:100%;margin:0 auto;padding:18px 20px;display:grid;gap:16px}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:22px 26px;box-shadow:var(--shadow);transition:transform .15s ease, box-shadow .15s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.35), 0 0 0 1px rgba(52,211,153,.25)}
+.card h2{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;color:var(--cyan);margin:0 0 14px;font-weight:600}
+.notice{font-size:.8rem;color:var(--dim);margin:10px 0 0;padding:10px 14px;border:1px solid rgba(251,191,36,.25);border-radius:10px;background:rgba(251,191,36,.06)}
+.notice b{color:var(--amber)}
+.meta{font-family:var(--mono);font-size:.62rem;color:var(--faint)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.tilep{border:1px solid rgba(52,211,153,.18);border-radius:10px;padding:14px 16px;background:rgba(3,7,18,.45);display:flex;flex-direction:column;gap:8px}
+.tilep .nm{font-weight:600;color:#ecfdf5;font-size:.92rem}
+.tilep .pr{font-family:var(--mono);color:var(--cyan);font-size:1.05rem;font-variant-numeric:tabular-nums}
+.tilep .st{font-family:var(--mono);font-size:.6rem;color:var(--faint)}
+.tilep .st.low{color:var(--amber)}
+.tilep .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mini{font-family:var(--mono);font-size:.62rem;border-radius:8px;padding:5px 10px;cursor:pointer;border:1px solid rgba(52,211,153,.4);color:var(--green);background:rgba(52,211,153,.06)}
+.mini:hover{background:rgba(52,211,153,.15)}
+.mini.warn{border-color:rgba(251,191,36,.4);color:var(--amber);background:rgba(251,191,36,.06)}
+.mini.warn:hover{background:rgba(251,191,36,.15)}
+.mini.danger{border-color:rgba(248,113,113,.4);color:var(--red);background:rgba(248,113,113,.06)}
+.mini.danger:hover{background:rgba(248,113,113,.15)}
+.btn{font-weight:600;font-size:.85rem;border:none;border-radius:10px;padding:11px 18px;background:linear-gradient(135deg,#34d399,#10b981);color:#030712;cursor:pointer;transition:box-shadow .15s ease,transform .15s ease}
+.btn:hover{box-shadow:0 6px 20px rgba(52,211,153,.45);transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.btn-ghost,.btn-cyan,.btn-danger{font-weight:600;font-size:.85rem;border-radius:10px;padding:10px 16px;cursor:pointer;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.45);color:var(--green)}
+.btn-ghost:hover{background:rgba(52,211,153,.15)}
+.btn-cyan{border-color:rgba(34,211,238,.45);color:var(--cyan);background:rgba(34,211,238,.06)}
+.btn-cyan:hover{background:rgba(34,211,238,.15)}
+.btn-danger{border-color:rgba(248,113,113,.4);color:var(--red);background:rgba(248,113,113,.06)}
+.btn-danger:hover{background:rgba(248,113,113,.15)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+input[type=text],input[type=number]{background:rgba(3,7,18,.6);border:1px solid rgba(52,211,153,.25);border-radius:8px;color:var(--txt);padding:8px 10px;font-family:var(--thai);font-size:.85rem;outline:none}
+input[type=text]:focus,input[type=number]:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(52,211,153,.18)}
+label{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--faint);display:block;margin-bottom:4px}
+.formrow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.formrow > div{display:flex;flex-direction:column}
+table.t{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px}
+.t th{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--cyan);text-align:left;border-bottom:1px solid var(--line);padding:8px 10px}
+.t td{border-bottom:1px solid rgba(52,211,153,.1);padding:9px 10px;color:var(--dim);vertical-align:top}
+.t td.main{color:var(--txt)}
+.tag{font-family:var(--mono);font-size:.56rem;letter-spacing:.06em;border-radius:999px;padding:3px 9px;display:inline-block;white-space:nowrap}
+.tag.sig{border:1px solid rgba(52,211,153,.4);color:var(--green)}
+.tag.sigbad{border:1px solid rgba(248,113,113,.4);color:var(--red)}
+.tag.q{border:1px solid rgba(251,191,36,.4);color:var(--amber)}
+.tag.s{border:1px solid rgba(52,211,153,.4);color:var(--green)}
+.tag.rj{border:1px solid rgba(248,113,113,.4);color:var(--red)}
+.empty{color:var(--faint);font-size:.84rem}
+.total{font-size:1.2rem;font-weight:700;color:#ecfdf5;font-variant-numeric:tabular-nums;margin-top:10px}
+footer{border-top:1px solid var(--line);text-align:center;padding:18px 24px;font-family:var(--mono);font-size:.66rem;color:var(--faint);line-height:2}
+footer a{color:var(--dim);text-decoration:none}
+footer a:hover{color:var(--green)}
+@media (max-width:720px){.card{padding:18px 18px}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand"><a href="lan-messenger.html">SOVEREIGN</a> · OFFLINE POS</span>
+  <span class="status" id="status"><span class="dot"></span>กำลังเปิดฐานข้อมูลเครื่อง…</span>
+</header>
+
+<main>
+  <section class="card" aria-label="อรรถชี้แจงระบบขาย">
+    <h2>หน้าร้านออฟไลน์ (Self-Sovereign Commerce)</h2>
+    <p style="margin:0;font-size:.86rem;color:var(--dim)">
+      แคตตาล็อก · ตะกร้า · สต็อก · ประวัติการขาย ทั้งหมดอยู่ใน <b style="color:var(--txt)">IndexedDB ของเครื่องนี้</b> —
+      <b style="color:var(--txt)">ขายได้แม้เน็ต/โหนดล่มสนิท</b> ทุกใบเสร็จถูกลงลายมือชื่อด้วย <b style="color:var(--txt)">Ed25519</b>
+      (คู่กุญแจเกิดในเครื่อง ไม่เคยออกจากเครื่อง) จากนั้นรอในคิว — เมื่อโหนดกลับมา
+      ระบบจะ <b style="color:var(--txt)">Sync ตาม Batch และส่งอัปเดตเข้าบัญชีโหนดโดยอัตโนมัติ</b>
+      โดยโหนดจะตรวจลายเซ็นทุกใบก่อนลงบัญชี (ใจกลางเลขหน้าบัญชีซ้ำตามกำหนดรหัสสลิป)
+    </p>
+    <div class="notice" id="notice" hidden></div>
+  </section>
+
+  <section class="card" aria-label="แคตตาล็อกสินค้า">
+    <h2>สินค้า / บริการ <span class="meta" id="catMeta"></span></h2>
+    <div class="tiles" id="prodGrid"></div>
+    <div class="formrow" style="margin-top:14px;border-top:1px dashed rgba(52,211,153,.18);padding-top:12px">
+      <div><label>ชื่อสินค้า</label><input type="text" id="npName" size="22" placeholder="เช่น ปุ๋ยอินทรีย์ 5 กก."></div>
+      <div><label>ราคา (฿)</label><input type="number" id="npPrice" min="0" step="0.01" size="7" placeholder="120"></div>
+      <div><label>สต็อก</label><input type="number" id="npStock" min="0" step="1" size="5" placeholder="10"></div>
+      <div><label>หน่วย</label><input type="text" id="npUnit" size="8" placeholder="ถุง"></div>
+      <div><button class="mini" id="npAdd" type="button">+ เพิ่มสินค้า</button></div>
+    </div>
+  </section>
+
+  <section class="card" aria-label="ตะกร้าและชำระเงิน">
+    <h2>ตะกร้า <span class="meta" id="cartMeta"></span></h2>
+    <table class="t" id="cartTable" hidden>
+      <thead><tr><th>สินค้า</th><th>จำนวน</th><th>ราคา/หน่วย</th><th>รวม</th><th></th></tr></thead>
+      <tbody id="cartBody"></tbody>
+    </table>
+    <p class="empty" id="cartEmpty">ตะกร้าว่าง — กด "ส่งตะกร้า" จากสินค้าด้านบน (กรุณาเลือกอย่างน้อย 1 รายการ)</p>
+    <div class="formrow" style="margin-top:12px">
+      <div><label>ลูกค้า (เว้นได้ — บันทึกเชิงเงียบ)</label><input type="text" id="customer" size="20" placeholder="แม่ค้าสวน A"></div>
+      <div class="total"><span id="cartTotal">0.00</span> <span class="meta">฿ (THB)</span></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="checkoutBtn" type="button" title="ตัดสต็อก + ลงบัญชีขาย + ลงลายมือชื่อสลิป ทั้งหมดในเครื่อง">ขายเลย (ตัดสต็อก + สลิป Ed25519)</button>
+      <button class="btn-danger" id="cartClearBtn" type="button">ล้างตะกร้า</button>
+    </div>
+  </section>
+
+  <section class="card" aria-label="บัญชีการขายและคิวซิงก์">
+    <h2>บัญชีขาย + คิวซิงก์ <span class="meta" id="saleMeta"></span></h2>
+    <table class="t" id="saleTable" hidden>
+      <thead><tr><th>เวลา</th><th>สลิป</th><th>รายการ</th><th>ยอด</th><th>ลายเซ็น</th><th>ซิงก์</th></tr></thead>
+      <tbody id="saleBody"></tbody>
+    </table>
+    <p class="empty" id="saleEmpty">ยังไม่มีรายการขาย — ขายหน้าร้านจะบันทึกลงทันที แม้ออฟไลน์ (จะอยู่ในสถานะ "รอซิงก์" จนโหนดกลับมา)</p>
+    <div class="btnrow">
+      <button class="btn-cyan" id="flushBtn" type="button" title="ส่งสลิปที่ค้างเข้าบัญชีโหนดทันที (ปกติทำอัตโนมัติ)">⇪ ส่งคิวเข้าโหนดตอนนี้</button>
+      <button class="mini" id="verifyAllBtn" type="button" title="ตรวจลายเซ็นทุกใบซ้ำด้วยกุญแจสาธารณะในสลิป — พิสูจน์ได้ตลอดอายุไฟล์">ตรวจลายเซ็นทุกใบ</button>
+      <button class="mini" id="exportBtn" type="button">⬇️ ส่งออก JSON</button>
+      <button class="mini danger" id="wipeBtn" type="button">ลบบัญชีเครื่องนี้ (ล้างสำเนาเครื่องยังไม่ล้าบัญชีโหนด)</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  SOVEREIGN OFFLINE POS · ส่วนหนึ่งของ Project Sovereign ระดับ 2 · ข้อมูล/กุญแจ/เงินอยู่บนเครื่องคุณเอง ·
+  <a href="/">แชท LAN</a> · <a href="/nfc">เช็คอิน NFC</a> · <a href="/ble">แดชบอร์ด BLE</a>
+</footer>
+
+<div id="netBadge" hidden style="position:fixed;left:14px;bottom:14px;z-index:50;font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;padding:7px 12px;border-radius:999px;border:1px solid rgba(251,191,36,.4);color:#fbbf24;background:rgba(3,7,18,.85);backdrop-filter:blur(4px)">ออฟไลน์ · ขายได้ต่อ — สลิปอยู่ในคิวเครื่องนี้</div>
+<script>
+(function(){
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const statusEl = $('status'), noticeEl = $('notice');
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  const money = (n) => (Math.round(Number(n || 0) * 100) / 100).toFixed(2);
+  const enc = new TextEncoder();
+
+  function setStatus(kind, text){ statusEl.className = 'status ' + kind; statusEl.innerHTML = '<span class="dot"></span>' + esc(text); }
+  function showNotice(text){ noticeEl.textContent = text; noticeEl.hidden = false; }
+  function fmtTime(ts){ const d = new Date(ts), p = (n) => ('0' + n).slice(-2); return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()); }
+  const randB64u = (n) => { const a = new Uint8Array(n); crypto.getRandomValues(a); return btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+  const bufToB64u = (ab) => btoa(String.fromCharCode(...new Uint8Array(ab))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+
+  // ── IndexedDB (sovereign-pos: catalog + cart + sales + keys) ────────────────
+  const DB_NAME = 'sovereign-pos', VERSION = 1;
+  const MAX_SALES = 500;
+  let db = null;
+
+  function openDb(){
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, VERSION);
+      req.onupgradeneeded = () => {
+        const d = req.result;
+        if (!d.objectStoreNames.contains('catalog')) d.createObjectStore('catalog', { keyPath: 'id' });
+        if (!d.objectStoreNames.contains('cart')) d.createObjectStore('cart', { keyPath: 'id' });
+        if (!d.objectStoreNames.contains('sales')) d.createObjectStore('sales', { keyPath: 'id' });
+        if (!d.objectStoreNames.contains('keys')) d.createObjectStore('keys', { keyPath: 'id' });
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  function tx(stores, mode){ return db.transaction(stores, mode); }
+  const reqToP = (req, fallback) => new Promise((res) => { req.onsuccess = () => res(req.result); req.onerror = () => res(fallback); });
+  const getAll = (store) => reqToP(tx([store], 'readonly').objectStore(store).getAll(), []);
+  const idbPut = (store, val) => new Promise((res, rej) => { const t = tx([store], 'readwrite'); t.objectStore(store).put(val); t.oncomplete = () => res(); t.onerror = () => rej(t.error); });
+
+  // ── กุญแจลงสลิปของอุปกรณ์ (Ed25519 — เกิด+เก็บในเครื่องเท่านั้น) ───────────────
+  let privKey = null, pubJwk = null, keyReady = false;
+  async function ensureDeviceKey(){
+    try {
+      const k = await getAll('keys');
+      const rec = k.find(r => r.id === 'device');
+      if (rec) {
+        privKey = await crypto.subtle.importKey('jwk', rec.privJwk, { name: 'Ed25519' }, false, ['sign']);
+        pubJwk = rec.pubJwk;
+      } else {
+        const kp = await crypto.subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
+        privKey = kp.privateKey;
+        pubJwk = await crypto.subtle.exportKey('jwk', kp.publicKey);
+        const privJwk = await crypto.subtle.exportKey('jwk', kp.privateKey);
+        await idbPut('keys', { id: 'device', pubJwk, privJwk, createdAt: Date.now() });
+      }
+      keyReady = true;
+      return true;
+    } catch (e) {
+      showNotice('เบราว์เซอร์นี้ไม่รองรับ Ed25519 (ต้อง Chrome/Edge ใหม่) — ขายได้ แต่สลิปจะยังไม่มีลายเซ็นจนกว่าจะเปิดด้วยเบราว์เซอร์ที่รองรับ: ' + e.message);
+      return false;
+    }
+  }
+
+  // ── สลิป: canonical payload (JSON key-order ตายตัว) + Ed25519 + ตรวจกลับทันที ──
+  function receiptPayload(sale, pub){
+    return JSON.stringify({
+      v: 1, type: 'SVR-RECEIPT', id: sale.id, ts: sale.ts, currency: 'THB',
+      items: sale.items.map(it => ({ id: it.id, name: it.name, unit: it.unit, qty: it.qty, price: it.price })),
+      total: sale.total, customer: sale.customer || null, pub
+    });
+  }
+  async function signPayload(payloadStr){
+    if (!keyReady) return '';
+    const sig = await crypto.subtle.sign({ name: 'Ed25519' }, privKey, enc.encode(payloadStr));
+    return bufToB64u(sig);
+  }
+  async function b64uVerify(payloadStr, sigB64u, pub){
+    try {
+      const s = sigB64u.replace(/-/g, '+').replace(/_/g, '/');
+      const sig = Uint8Array.from(atob(s + '='.repeat((4 - (s.length % 4)) % 4)), (c) => c.charCodeAt(0));
+      const key = await crypto.subtle.importKey('jwk', pub || JSON.parse(payloadStr).pub, { name: 'Ed25519' }, false, ['verify']);
+      return await crypto.subtle.verify({ name: 'Ed25519' }, key, sig, enc.encode(payloadStr));
+    } catch { return false; }
+  }
+
+  // ── Seed สินค้าเริ่มต้น (ครั้งแรกเท่านั้น — ของจริงใช้ปุ่มแก้ไขต่อได้) ─────────
+  const SEED = [
+    { id: 'SKU-pui5',   name: 'ปุ๋ยอินทรีย์ 5 กก.',  price: 120, unit: 'ถุง', stock: 8 },
+    { id: 'SKU-mel-veg', name: 'เมล็ดผักสวนครัว',   price: 45,  unit: 'ซอง', stock: 15 },
+    { id: 'SKU-em1',    name: 'น้ำหมัก EM 1 ลิตร',  price: 80,  unit: 'ขวด', stock: 10 },
+    { id: 'SKU-ahen5',  name: 'อาหารไก่ 5 กก.',     price: 95,  unit: 'ถุง', stock: 6 },
+    { id: 'SKU-bpla',   name: 'ชุดจัดการบ่อปลา',    price: 60,  unit: 'ชุด', stock: 4 },
+    { id: 'SKU-chang',  name: 'ค่าช่างออกนอกสถานที่ (1 ชม.)', price: 150, unit: 'ชม.', stock: 12 },
+  ];
+  async function seedIfEmpty(){
+    const list = await getAll('catalog');
+    if (list.length) return;
+    await new Promise((res) => { const t = tx(['catalog'], 'readwrite'); SEED.forEach(s => t.objectStore('catalog').put({ ...s, updatedAt: Date.now() })); t.oncomplete = () => res(); t.onerror = () => res(); });
+  }
+
+  // ── Render ───────────────────────────────────────────────────────────────────
+  async function renderCatalog(){
+    const list = (await getAll('catalog')).sort((a, b) => a.name.localeCompare(b.name, 'th'));
+    $('catMeta').textContent = '· ' + list.length + ' รายการ';
+    const grid = $('prodGrid');
+    grid.innerHTML = list.map((p) =>
+      '<div class="tilep" data-id="' + esc(p.id) + '">' +
+        '<div class="nm">' + esc(p.name) + '</div>' +
+        '<div class="pr">' + money(p.price) + ' ฿ / ' + esc(p.unit || 'ชิ้น') + '</div>' +
+        '<div class="st' + (p.stock <= 2 ? ' low' : '') + '">สต็อก: ' + p.stock + '</div>' +
+        '<div class="row">' +
+          '<button class="mini" data-act="add" data-id="' + esc(p.id) + '">ส่งตะกร้า</button>' +
+          '<button class="mini warn" data-act="restock1" data-id="' + esc(p.id) + '">+1</button>' +
+          '<button class="mini warn" data-act="restock5" data-id="' + esc(p.id) + '">+5</button>' +
+          '<button class="mini danger" data-act="del" data-id="' + esc(p.id) + '">✕</button>' +
+        '</div>' +
+      '</div>'
+    ).join('');
+  }
+  function renderStatus(extra){
+    const base = (keyReady ? 'กุญแจ Ed25519 พร้อม' : 'ไม่มีกุญแจ (เบราว์เซอร์เก่า), ขายยังได้ในเครื่อง') + ' · ออนไลน์: ' + (navigator.onLine ? 'ใช่' : 'ไม่');
+    setStatus((keyReady ? '' : 'no') + (navigator.onLine ? '' : ' no'), base + (extra ? ' · ' + extra : ''));
+  }
+
+  // ── ตะกร้า (เก็บใน IndexedDB — ปิดเปิดใหม่ไม่หาย) ──────────────────────────────
+  async function cartChange(id, delta, remove){
+    await new Promise((res) => {
+      const t = tx(['cart'], 'readwrite');
+      const st = t.objectStore('cart');
+      const g = st.get(id);
+      g.onsuccess = () => {
+        const row = g.result;
+        if (remove || !row) { if (row) st.delete(id); }
+        else {
+          const q = row.qty + delta;
+          if (q <= 0) st.delete(id); else st.put({ ...row, qty: q });
+        }
+      };
+      t.oncomplete = () => res();
+      t.onerror = () => res();
+    });
+    await renderCart();
+  }
+  async function cartAdd(id){
+    const list = await getAll('catalog');
+    const p = list.find(x => x.id === id);
+    if (!p) return;
+    await new Promise((res) => {
+      const t = tx(['cart'], 'readwrite');
+      const st = t.objectStore('cart');
+      const g = st.get(id);
+      g.onsuccess = () => { const r = g.result; st.put({ id, name: p.name, unit: p.unit, price: p.price, qty: (r ? r.qty : 0) + 1 }); };
+      t.oncomplete = () => res();
+      t.onerror = () => res();
+    });
+    await renderCart();
+  }
+  async function renderCart(){
+    const rows = await getAll('cart');
+    const table = $('cartTable'), body = $('cartBody'), empty = $('cartEmpty');
+    table.hidden = !rows.length; empty.style.display = rows.length ? 'none' : '';
+    let total = 0;
+    body.innerHTML = rows.map((r) => {
+      total += r.qty * r.price;
+      return '<tr data-id="' + esc(r.id) + '">' +
+        '<td class="main">' + esc(r.name) + '</td>' +
+        '<td><button class="mini" data-act="q-1">−</button> <b style="color:var(--txt)">' + r.qty + '</b> <button class="mini" data-act="q+1">+</button></td>' +
+        '<td>' + money(r.price) + ' / ' + esc(r.unit || 'ชิ้น') + '</td>' +
+        '<td class="main">' + money(r.qty * r.price) + '</td>' +
+        '<td><button class="mini danger" data-act="rm">ลบ</button></td>' +
+      '</tr>';
+    }).join('');
+    $('cartTotal').textContent = money(total);
+    $('cartMeta').textContent = rows.length ? '· ' + rows.reduce((s, r) => s + r.qty, 0) + ' ชิ้น' : '';
+  }
+
+  // ── ขาย: ชำระเงิน 1 transaction ยืดหยุ่นตัดสต็อก + บันทึก + ล้างตะกร้า atomic ──
+  function checkoutSales(customer){
+    return new Promise((resolve) => {
+      const t = tx(['cart', 'catalog', 'sales'], 'readwrite');
+      const cart = t.objectStore('cart'), catalog = t.objectStore('catalog');
+      let result = { ok: false, reason: 'ข้อผิดพลาดที่ไม่รู้จัก' };
+      t.oncomplete = () => resolve(result);
+      t.onerror = () => {}; // อย่าให้ failed tx พ่น unhandled — จุดตัดสินอยู่ที่ resolve ชัด ๆ เสมอ
+      getAllIn(t, 'cart').then((rows) => {
+        if (!rows.length) { result = { ok: false, reason: 'ตะกร้าว่าง' }; resolve(result); t.abort(); return; }
+        const sale = { id: 'POS-' + Date.now().toString(36) + '-' + randB64u(4), ts: Date.now(), customer: customer || null, items: [], total: 0 };
+        const picked = []; // สำเนา "catalog" ต่อแถว — ตัดสต็อกก้อนเดียวท้าย loop (atomic ใน tx เดียวกัน)
+        let i = 0;
+        const next = () => {
+          if (i >= rows.length) {
+            rows.forEach((row, idx) => catalog.put({ ...picked[idx], stock: picked[idx].stock - row.qty, updatedAt: Date.now() }));
+            t.objectStore('sales').add(sale);
+            cart.clear();
+            result = { ok: true, sale };
+            return; // t.oncomplete จะเรียก resolve(result) หลัง writes ทั้งหมดกลดเสร็จจริง
+          }
+          const row = rows[i];
+          const g = catalog.get(row.id);
+          g.onsuccess = () => {
+            const p = g.result;
+            if (!p) { result = { ok: false, reason: 'สินค้า "' + row.name + '" ถูกลบไปแล้ว' }; resolve(result); t.abort(); return; }
+            if (p.stock < row.qty) { result = { ok: false, reason: 'สต็อกไม่พอ: ' + p.name + ' (มี ' + p.stock + ' แต่ขอ ' + row.qty + ')' }; resolve(result); t.abort(); return; }
+            picked[i] = p;
+            sale.items.push({ id: p.id, name: p.name, unit: p.unit, qty: row.qty, price: p.price });
+            sale.total = Math.round((sale.total + row.qty * p.price) * 100) / 100;
+            i++; next();
+          };
+        };
+        next();
+      });
+    });
+  }
+  function getAllIn(t, store){ return new Promise((res) => { const r = t.objectStore(store).getAll(); r.onsuccess = () => res(r.result); r.onerror = () => res([]); }); }
+
+  // ── บัญชีขาย render + คิวซิงก์ ─────────────────────────────────────────────────
+  function sigChip(sale){
+    if (sale.receipt && sale.receipt.localVerify === 'fail') return '<span class="tag sigbad">✗ ตรวจล้มเหลว</span>';
+    if (sale.receipt && sale.receipt.signature) return '<span class="tag sig">✓ Ed25519 · ' + esc(sale.receipt.signature.slice(0, 6)) + '…</span>';
+    return '<span class="tag sigbad">ไม่ลงชื่อ</span>';
+  }
+  function syncChip(sale){
+    const s = sale.sync || { state: 'queued' };
+    if (s.state === 'synced') return '<span class="tag s">เข้าบัญชีโหนด ✓</span>';
+    if (s.state === 'rejected') return '<span class="tag rj" title="' + esc(s.reason || '') + '">ถูกปฏิเสธ</span>';
+    return '<span class="tag q" title="ลองแล้ว ' + (s.attempts || 0) + ' ครั้ง">รอซิงก์</span>';
+  }
+  async function renderSales(msg){
+    const list = (await getAll('sales')).sort((a, b) => b.ts - a.ts).slice(0, 100);
+    const table = $('saleTable'), body = $('saleBody'), empty = $('saleEmpty');
+    table.hidden = !list.length; empty.style.display = list.length ? 'none' : '';
+    const pending = (await getAll('sales')).filter(s => (s.sync || {}).state !== 'synced').length;
+    $('saleMeta').textContent = '· ทั้งหมด ' + list.length + ' ใบ · รอซิงก์ ' + pending + ' ใบ';
+    body.innerHTML = list.map((s) =>
+      '<tr>' +
+        '<td class="meta">' + fmtTime(s.ts) + '</td>' +
+        '<td class="meta">' + esc(s.id) + (s.customer ? '<br>ลูกค้า: ' + esc(s.customer) : '') + '</td>' +
+        '<td class="main">' + s.items.map(it => esc(it.name) + ' ×' + it.qty).join('<br>') + '</td>' +
+        '<td class="main">' + money(s.total) + ' ฿</td>' +
+        '<td>' + sigChip(s) + '</td>' +
+        '<td>' + syncChip(s) + '</td>' +
+      '</tr>'
+    ).join('');
+    renderStatus(msg);
+  }
+
+  // ── ขายจริง flow ──────────────────────────────────────────────────────────────
+  async function checkout(){
+    const customer = $('customer').value.trim().slice(0, 60);
+    const out = await checkoutSales(customer);
+    if (!out.ok) { setStatus('no', out.reason); await renderCart(); return; }
+    const sale = out.sale;
+    // สลิปลงชื่อ + ตรวจกลับทันที (อย่าให้กระดูกออกจากเครื่อง)
+    let payload = null, signature = '', signOk = false;
+    try {
+      payload = receiptPayload(sale, pubJwk);
+      signature = await signPayload(payload);
+      signOk = keyReady && !!signature;
+    } catch (e) { void e; }
+    const rec = { ...sale, receipt: { payload, signature: signOk ? signature : null, localVerify: signOk ? 'ok' : 'none' }, sync: { state: 'queued', attempts: 0, lastTry: 0, reason: '' } };
+    await idbPut('sales', rec);
+    $('cartBody').innerHTML = '';
+    $('customer').value = '';
+    await renderCart();
+    await renderSales(signOk ? 'ขายสำเร็จ — สลิป ' + sale.id + ' ลงชื่อ Ed25519 ✓ (รอซิงก์เข้าโหนด)' : 'ขายสำเร็จ — ยังไม่มีลายเซ็น');
+    // ขายเสร็จลองส่งเข้าโหนดเลย (ถ้าออนไลน์) — ไม่บล็อก UI
+    setTimeout(() => { flushSilent(); }, 1000);
+  }
+
+  // ── Sync engine: ส่งสลิปที่ค้างเข้าโหนด (โหนดตรวจลายเซ็นก่อนลงบัญชี) ─────────────
+  async function flushSilent(){ try { await flushQueue(false); } catch (e) { void e; } }
+
+  async function flushQueue(verbose){
+    if (!navigator.onLine) { if (verbose) setStatus('no', 'ออฟไลน์ — คิวยังอยู่ในเครื่อง (ส่งอัตโนมัติเมื่อกลับมา)'); return 0; }
+    const unsynced = (await getAll('sales')).filter(s => (s.sync || {}).state !== 'synced' && s.receipt && s.receipt.signature);
+    if (!unsynced.length) { if (verbose) renderSales('ไม่มีคิวค้าง — เข้าบัญชีครบแล้ว'); return 0; }
+    // โหนดเป้าหมาย: โหนดของหน้านี้ก่อน แล้ว copy ให้เพื่อนที่ UDP เพิ่งเห็น (best effort)
+    let targets = [];
+    let nodeOk = false;
+    try { const h = await fetch('/health', { cache: 'no-store' }); nodeOk = h.ok; } catch {}
+    if (nodeOk) {
+      targets.push(location.origin);
+      try { const p = await (await fetch('/peers', { cache: 'no-store' })).json();
+        for (const peer of (p.peers || [])) targets.push(location.protocol + '//' + peer.host + ':' + (location.port || '4200') + '/receipts');
+      } catch {}
+    }
+    if (!targets.length) { if (verbose) renderSales('โหนดยังไม่ตอบ — คิว ' + unsynced.length + ' ใบรออยู่ (จะลองอัตโนมัติ)'); return 0; }
+    let okCount = 0;
+    for (const sale of unsynced) {
+      let done = false, denied = false, lastErr = '';
+      for (const base of targets) {
+        try {
+          const r = await fetch(base + '/receipts', { method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ payload: sale.receipt.payload, signature: sale.receipt.signature }) });
+          if (r.ok) { done = true; break; }
+          const j = await r.json().catch(() => ({}));
+          lastErr = (j && j.error) || ('HTTP ' + r.status);
+          if (r.status === 400) { denied = true; break; } // ลายเซ็นไม่ผ่าน — โหนดอื่นก็ปฏิเสธเหมือนกัน
+        } catch { /* target ตัวนี้ล่ม — ลองตัวถัดไป */ }
+      }
+      try {
+        sale.sync = done
+          ? { state: 'synced', attempts: (sale.sync.attempts || 0) + 1, lastTry: Date.now(), reason: '' }
+          : denied
+            ? { state: 'rejected', attempts: (sale.sync.attempts || 0) + 1, lastTry: Date.now(), reason: lastErr }
+            : { state: 'queued', attempts: (sale.sync.attempts || 0) + 1, lastTry: Date.now(), reason: lastErr };
+        await idbPut('sales', sale);
+      } catch {}
+      if (done) okCount++;
+    }
+    if (verbose) renderSales('ส่งสำเร็จ ' + okCount + ' / ' + unsynced.length + ' ใบ');
+    return okCount;
+  }
+
+  // ── ปุ่มระบบ ───────────────────────────────────────────────────────────────────
+  $('prodGrid').addEventListener('click', async (ev) => {
+    const b = ev.target.closest('button'); if (!b) return;
+    const id = b.dataset.id; const act = b.dataset.act;
+    if (act === 'add') return cartAdd(id);
+    if (act === 'rm') { await cartChange(id, 0, true); return; }
+    if (act === 'restock1' || act === 'restock5') return restock(id, act === 'restock5' ? 5 : 1);
+    if (act === 'del') {
+      if (!confirm('ลบสินค้านี้ออกจากแคตตาล็อก? (สลิปที่ขายไปแล้วเก็บสำเนาชื่อ/ราคาของตัวเอง — ประวัติไม่เสีย)')) return;
+      await new Promise((res) => { const t = tx(['catalog', 'cart'], 'readwrite'); t.objectStore('catalog').delete(id); t.objectStore('cart').delete(id); t.oncomplete = () => res(); t.onerror = () => res(); });
+      await renderCatalog(); await renderCart();
+    }
+  });
+  $('cartBody').addEventListener('click', async (ev) => {
+    const b = ev.target.closest('button'); if (!b) return;
+    const id = b.closest('tr').dataset.id;
+    if (b.dataset.act === 'q+1') return cartChange(id, +1);
+    if (b.dataset.act === 'q-1') return cartChange(id, -1);
+    if (b.dataset.act === 'rm') return cartChange(id, 0, true);
+  });
+  $('npAdd').addEventListener('click', async () => {
+    const name = $('npName').value.trim().slice(0, 60), unit = $('npUnit').value.trim().slice(0, 10);
+    const price = Math.max(0, Number($('npPrice').value) || 0), stock = Math.max(0, Math.floor(Number($('npStock').value) || 0));
+    if (!name) { setStatus('no', 'ใส่ชื่อสินค้าก่อน'); return; }
+    await idbPut('catalog', { id: 'SKU-' + randB64u(3), name, unit: unit || 'ชิ้น', price, stock, updatedAt: Date.now() });
+    $('npName').value = ''; $('npPrice').value = ''; $('npStock').value = ''; $('npUnit').value = '';
+    await renderCatalog();
+    renderStatus('เพิ่มสินค้า "' + name + '" แล้ว');
+  });
+  async function restock(id, add){
+    await new Promise((res) => {
+      const t = tx(['catalog'], 'readwrite');
+      const g = t.objectStore('catalog').get(id);
+      g.onsuccess = () => { if (g.result) t.objectStore('catalog').put({ ...g.result, stock: g.result.stock + add, updatedAt: Date.now() }); };
+      t.oncomplete = () => res();
+      t.onerror = () => res();
+    });
+    await renderCatalog();
+  }
+  $('cartClearBtn').addEventListener('click', async () => {
+    if (!confirm('ล้างตะกร้าทั้งหมด?')) return;
+    await new Promise((res) => { const t = tx(['cart'], 'readwrite'); t.objectStore('cart').clear(); t.oncomplete = () => res(); t.onerror = () => res(); });
+    await renderCart();
+  });
+  $('checkoutBtn').addEventListener('click', checkout);
+  $('flushBtn').addEventListener('click', () => flushQueue(true));
+  $('verifyAllBtn').addEventListener('click', async () => {
+    if (!keyReady) { setStatus('no', 'ยังไม่มีกุญแจจาก Import/เขียน — เปิดด้วยเบราว์เซอร์ที่รองรับ Ed25519'); return; }
+    const list = await getAll('sales');
+    let good = 0;
+    for (const s of list) {
+      if (!s.receipt || !s.receipt.payload || !s.receipt.signature) continue;
+      const ok = await b64uVerify(s.receipt.payload, s.receipt.signature, null);
+      s.receipt.localVerify = ok ? 'ok' : 'fail';
+      if (ok) good++;
+      await idbPut('sales', s);
+    }
+    await renderSales('ตรวจลายเซ็น: ผ่าน ' + good + ' / ' + list.length + ' ใบ (ตรวจในเครื่อง — พิสูจน์ได้แม้ออฟไลน์)');
+  });
+  $('exportBtn').addEventListener('click', async () => {
+    const list = (await getAll('sales')).sort((a, b) => b.ts - a.ts);
+    const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), devicePub: pubJwk, sales: list }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'), d = new Date(), p = (n) => ('0' + n).slice(-2);
+    a.href = URL.createObjectURL(blob);
+    a.download = 'sovereign-pos-' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + '.json';
+    a.click(); URL.revokeObjectURL(a.href);
+    renderStatus('ส่งออกแล้ว ' + list.length + ' ใบ (พร้อมกุญแจสาธารณะ — ใครคนใดก็ตรวจลายเซ็นได้)');
+  });
+  $('wipeBtn').addEventListener('click', async () => {
+    if (!confirm('ลบบัญชีขายในเครื่องนี้ทั้งหมด? (บัญชีบนโหนดยังอยู่ — นี่คือการลบสำเนาเครื่องเท่านั้น)')) return;
+    await new Promise((res) => { const t = tx(['sales'], 'readwrite'); t.objectStore('sales').clear(); t.oncomplete = () => res(); t.onerror = () => res(); });
+    await renderSales('ลบบัญชีในเครื่องแล้ว');
+  });
+
+  // ── Boot ──────────────────────────────────────────────────────────────────────
+  (async () => {
+    try { db = await openDb(); }
+    catch (e) { setStatus('no', 'IndexedDB ใช้ไม่ได้: ' + e.message); return; }
+    await seedIfEmpty();
+    await ensureDeviceKey();
+    await renderCatalog();
+    await renderCart();
+    await renderSales();
+    renderStatus('');
+    // ซิงก์อัตโนมัติ tease เบา ๆ ตอนกลับมา: 'online' event + ตรวจ /health ทุก 30 วินาที
+    window.addEventListener('online', () => { flushSilent(); });
+    window.addEventListener('offline', () => renderStatus('ออฟไลน์ — ขายต่อได้ คิวจะส่งเมื่อกลับมา'));
+    setInterval(() => { if (navigator.onLine) flushSilent(); }, 30000);
+    if (navigator.onLine) flushSilent();
+    // ป้ายออฟไลน์
+    var b = $('netBadge');
+    function sync(){ b.hidden = navigator.onLine; }
+    window.addEventListener('online', sync);
+    window.addEventListener('offline', sync);
+    sync();
+  })();
+
+  // PWA: ลงทะเบียน Service Worker (cache-first — POS เปิดได้แม้เซิร์ฟเวอร์/เน็ตหาย)
+  if ('serviceWorker' in navigator && window.isSecureContext) {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  }
+})();
+</script>
+</body>
+</html>

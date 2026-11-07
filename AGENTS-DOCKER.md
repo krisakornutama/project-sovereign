@@ -38,8 +38,9 @@ Branch: `feat/docker-homelab` (คุณภาพสูงสุดแล้ว 
 | 5a | **ทดสอบ LAN Messenger ในสภาพจริง 2 เครื่อง** | เปิด `sovereignty/server.js` 2 เครื่องบน LAN เดียว → เช็ค `/peers` ว่าเห็นกันทั้งสองฝั่ง → แชทปลายทาง UI (ทดสอบแล้วเครื่องเดียวผ่านครบ — ขาดเครื่องที่ 2 ใน sandbox) |
 | 5b | **Web NFC เช็คอินฟาร์ม — เสร็จแล้ว** (`public/nfc-checkin.html` เสิร์ฟที่ `/nfc`) | ทดสอบผ่านเบราว์เซอร์จริงครบ (IndexedDB ไทยถูก + wipe + export UI) — **เหลือเรียบรอบสมาร์ตโฟนจริง:** Android Chrome + แท็ก NFC + เปิดผ่าน https/localhost แล้วแตะ/เขียนจริง |
 | 5c | **Web Bluetooth แดชบอร์ดเซนเซอร์ — เสร็จแล้ว ณ ระดับ browser** (`public/ble-sensors.html` เสิร์ฟที่ `/ble`) | Dual-Engine SIG presets + Nordic UART + simulator (ทดสอบผ่านเบราว์เซอร์ครบ: 32 records ✓, wipe ✓, capability ✓) — **เหลือ:** อุปกรณ์ BLE จริง (เครื่องมี BT module แต่ Windows radio ปิด — เปิดแล้วใช้ได้ทันที) + preset รุ่นเฉพาะตอนผู้ใช้ระบุรุ่น (เช่น Xiaomi LYWSD03MMC แบบ pvvx) |
-| 5d | **PWA offline เต็ม — เสร็จแล้ว** (`public/sw.js` + `manifest.json` + icons เสิร์ฟจาก mesh node, ลงทะเบียนครบ 3 หน้า) | Cache-first precache 8 รายการ + NEVER set สำหรับ API สด + version purge — **ทดสอบจริง: ปิด node แล้วทุกหน้าโหลดจากแคช (transferSize=0, IndexedDB ใช้ได้) + restart กลับ online สำเร็จ; SW ลงทะเบียนได้เฉพาะ localhost/https** |
-| 5e | **ต่อข้อมูลจาก Meshtastic/LoRa เมื่อมีฮาร์ดแวร์** | สูบข้อความจาก mesh node → เด้งเข้า API `/messages` แบบเดียวกับที่มี — **รูปแบบ API คงเดิม ไม่ต้องเขียน endpoint ใหม่** |
+| 5d | **PWA offline เต็ม — เสร็จแล้ว** (`public/sw.js` + `manifest.json` + icons เสิร์ฟจาก mesh node, ลงทะเบียนครบทุกหน้า) | Cache-first precache 9 รายการ ("sovereign-pwa-v3") + NEVER set สำหรับ API สด + version purge — **ทดสอบจริง: ปิด node แล้วทุกหน้าโหลดจากแคช (transferSize=0, IndexedDB ใช้ได้) + restart กลับ online สำเร็จ; SW ลงทะเบียนได้เฉพาะ localhost/https** |
+| 5e | **Offline POS `/shop` — เสร็จแล้ว + ทดสอบครบ** (`public/shop.html` + `POST/GET /receipts` ใน server.js) | แคตตาล็อก/ตะกร้า/สต็อก/บัญชีขายลง IndexedDB · ตัดสต็อก atomic 1 transaction · **สลิปลงลายมือชื่อ Ed25519 ในเครื่อง** (กุญแจสาธารณะฝังในใบ — ตรวจได้ offline ตลอดอายุ) · node ตรวจลายเซ็นก่อนลงบัญชี + dedupe id (retry-safe) + persist `data/receipts.jsonl` · **ทดสอบจริง: ขายออนไลน์ sync เอง ✓ / ปลอม total 9999 → 400 ✓ / ยื่นซ้ำ → duplicate ✓ / ปิด node แล้วขาย → คิวค้าง ✓ / ฟื้น node → flush อัตโนมัติ (30s tick) ใบทั้งหมดเข้าบัญชี + โหลดกลับจากไฟล์ครบ ✓** — หน้าร้านออฟไลน์พร้อมใช้ในฟาร์ม |
+| 5f | **ต่อข้อมูลจาก Meshtastic/LoRa เมื่อมีฮาร์ดแวร์** | สูบข้อความจาก mesh node → เด้งเข้า API `/messages` แบบเดียวกับที่มี — **รูปแบบ API คงเดิม ไม่ต้องเขียน endpoint ใหม่** |
 
 ---
 
@@ -82,8 +83,8 @@ Branch: feat/docker-homelab (ดู commit ล่าสุด)
 Task: 1) Push + Docker test (2 services: web 8080 + mesh 4200)
       → 2) Checkout link (Lemon/Gumroad)
       → 3) License verify endpoint (ต้องขออนุญาต sovereign-origin)
-      → 4) เทสต์ LAN Messenger 2 เครื่อง + อุปกรณ์ BLE/NFC จริงเมื่อมี (sovereignty/README-MESH.md — ระดับ 2 ครบแล้ว: NFC ✅ / BLE ✅ / PWA Offline ✅)
+      → 4) เทสต์ LAN Messenger 2 เครื่อง + อุปกรณ์ BLE/NFC จริงเมื่อมี (sovereignty/README-MESH.md — ระดับ 2 ครบแล้ว: NFC ✅ / BLE ✅ / PWA Offline ✅ / Offline POS `/shop` ✅ สลิป Ed25519 + flush อัตโนมัติ)
 Forbidden: sovereign-origin (read-only), secret keys, .env commit
 ```
 
-> ⚠️ **หมายเหตุ sync สำหรับ agent ต่อไป:** เพิ่มหน้าเครื่องมือใหม่ใน mesh node → แก้ `PAGES` (server.js) **และ** `PRECACHE` (sw.js) ให้ตรงกัน · แก้เนื้อหาหน้าเดิม → bump `VERSION` ใน sw.js (cache-first จะยังเสิร์ฟของเก่าถ้าไม่ bump) — comment เตือนอยู่ในหัวไฟล์ sw.js แล้ว
+> ⚠️ **หมายเหตุ sync สำหรับ agent ต่อไป:** เพิ่มหน้าเครื่องมือใหม่ใน mesh node → แก้ `PAGES` (server.js) **และ** `PRECACHE` (sw.js) ให้ตรงกัน · แก้เนื้อหาหน้าเดิม → bump `VERSION` ใน sw.js (cache-first จะยังเสิร์ฟของเก่าถ้าไม่ bump) — comment เตือนอยู่ในหัวไฟล์ sw.js แล้ว · **API สดใหม่ (เช่น `/receipts`) ต้องเพิ่มลง NEVER set ของ sw.js ด้วย** — ไม่งั้น GET แรกถูกแคชแล้วอ่านของเก่าตลอด (เจอจริงกับ `/receipts` แล้ว แก้ด้วย bump v3) · แก้ sw.js ทุกครั้งต้อง restart mesh node (โหลดครั้งเดียวตอนบูต)
