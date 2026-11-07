@@ -184,6 +184,22 @@ for (const [route, file] of PAGES) {
   PAGE_CACHE.set(route, fs.existsSync(full) ? fs.readFileSync(full) : null);
 }
 
+// Static assets (PWA shell). Content types are explicit — the browser trusts
+// them for Service Worker registration (sw.js must be real JavaScript).
+const STATIC_FILES = new Map([
+  ['/sw.js', ['sw.js', 'application/javascript; charset=utf-8']],
+  ['/manifest.json', ['manifest.json', 'application/json; charset=utf-8']],
+  ['/icon-192.png', ['icon-192.png', 'image/png']],
+  ['/icon-512.png', ['icon-512.png', 'image/png']],
+  ['/icon-512-maskable.png', ['icon-512-maskable.png', 'image/png']],
+]);
+const STATIC_CACHE = new Map(); // pathname -> [Buffer, mime]
+
+for (const [route, [file, mime]] of STATIC_FILES) {
+  const full = path.join(PUBLIC_DIR, file);
+  STATIC_CACHE.set(route, fs.existsSync(full) ? [fs.readFileSync(full), mime] : null);
+}
+
 function json(res, status, body) {
   const data = JSON.stringify(body);
   res.writeHead(status, {
@@ -256,6 +272,15 @@ const server = http.createServer(async (req, res) => {
       if (page) {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
         return res.end(page);
+      }
+    }
+
+    // PWA static assets (manifest, sw, icons)
+    if (STATIC_CACHE.has(u.pathname)) {
+      const asset = STATIC_CACHE.get(u.pathname);
+      if (asset) {
+        res.writeHead(200, { 'Content-Type': asset[1], 'Cache-Control': 'no-store' });
+        return res.end(asset[0]);
       }
     }
 

@@ -71,6 +71,14 @@ Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0
 - **ทดสอบจริงผ่านเบราว์เซอร์:** 0 console error เต็ม session · capability เที่ยง (radio ปิด → disable + สถานะชี้สาเหตุ) · sim 32 records/~14s · หยุด/ล้าง (confirm → DB 0) · tiles + ตาราง + kindLabel ไทยถูกทุกจุด
 - อุปกรณ์จริง (ESP32/เซนเซอร์) และ preset รุ่นเฉพาะ (Xiaomi pvvx) = ชิ้นที่ต้องฮาร์ดแวร์ — ระบบรับต่อได้ทันทีโดยไม่ต้องแก้โครงสร้าง
 
+### ระดับ 6d — PWA Offline Stack (ทำเสร็จ 100% ณ ระดับ browser + ทดสอบออฟไลน์จริง)
+
+- `sovereignty/public/sw.js` — cache-first: precache 8 รายการ (3 หน้า + `manifest.json` + `sw.js` + ไอคอน 3 ไฟล์) · NEVER set (API สด `/health` `/peers` `/messages` `/send` + ทุก non-GET = network ล้วน) · bump `VERSION` → purge แคชเก่าตอน activate · offline fallback: navigation → `/`, อื่น ๆ → 503
+- `sovereignty/public/manifest.json` (Sovereign OS App Hub — standalone, dark, shortcuts 3 หน้า) + `icon-192/512/512-maskable.png` (สร้างด้วย System.Drawing ตาม favicon เว็บหลัก — generator `C:\Users\USER\AppData\Local\Temp\opencode\gen-icons.ps1`) + `<link rel="manifest">` + SW registration + ป้าย offline (`netBadge`) ครบทั้ง 3 หน้า
+- `server.js` เสิร์ฟ PWA shell (`STATIC_FILES` map — บังคับ MIME `application/javascript` สำหรับ sw.js ตามเงื่อนไขบังคับของ Chromium)
+- **ผลทดสอบจริงผ่านเบราว์เซอร์:** SW registered → activated (scope `http://localhost:4200/`, `controller` ควบคุม, แคชครบ 8 paths, 0 error) · **ปิด node จริง (netstat ยืนยันไม่มี listener บน 4200) แล้วเปิดทุกหน้า:** `/` `/nfc` `/ble` โหลดจากแคช (`transferSize = 0`) + **IndexedDB add/delete ใช้ได้ตอนออฟไลน์** (ทดสอบทั้ง 2 ฐาน `sovereign-nfc` / `sovereign-ble` — record ทดสอบลบคืนสถานะ 0 หลังจบ) + `/nfc`,`/ble` 0 console error · หน้า `/` พบ error เฉพาะ polling ของ API สด (502 เพราะ SW ปล่อยผ่าน network ตาม NEVER set) = รายงาน node ล่มถูกต้อง ไม่ใช่บั๊ก · restart node → polling กลับมาสำเร็จ (0 error) + SW ยังควบคุม
+- ข้อจำกัดตามธรรมชาติ + กฎของ agent: SW registration = secure context เท่านั้น (localhost ✅ / LAN IP http ❌ ต้อง https reverse proxy) · **เพิ่มหน้าใหม่ = sync `PRECACHE` (sw.js) ↔ `PAGES` (server.js) + bump `VERSION` ทุกครั้งที่แก้เนื้อหาหน้า** (cache-first จะยังเสิร์ฟของเก่าถ้าไม่ bump — comment เตือนในหัวไฟล์ sw.js)
+
 ---
 
 ## ตรวจสอบคุณภาพ — รายการตรวจสอบ
@@ -91,6 +99,7 @@ Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0
 | LAN Messenger (ทดสอบจริง) | ✅ ผ่านครบ | UDP bind + `/health` + `/send` + `/messages` ไทย UTF-8 + `/peers` — ตาม `sovereignty/README-MESH.md` |
 | Web NFC Check-in (ทดสอบจริง) | ✅ ผ่านครบ | `/nfc` 200 + 0 console error + IndexedDB ไทยถูก + wipe confirm — ทดสอบผ่านเบราว์เซอร์จริง |
 | Web BLE Dashboard (ทดสอบจริง) | ✅ ผ่านครบ (pipeline + sim) | `/ble` 200 + 0 error เต็ม session + 32 records ไหลถูกจังหวะ + wipe confirm + radio-off → disable ถูกต้อง; อุปกรณ์ BLE จริง = ชิ้นที่ต้องฮาร์ดแวร์ |
+| PWA Offline (ทดสอบจริง) | ✅ ผ่านครบ | SW activated + แคช 8 paths + **ปิด node จริงแล้วทุกหน้า (`/` `/nfc` `/ble`) โหลดจากแคช** (transferSize=0) + IndexedDB add/delete ออฟไลน์ได้ + restart → polling ฟื้น (0 error) + SW ยังควบคุม; SW = secure context เท่านั้น (localhost) |
 | Mesh Docker service | ✅ สร้างแล้ว | `sovereignty/Dockerfile` + `docker-compose.yml` service `sovereign-mesh` (รันเมื่อมี Docker/Linux-RPi) |
 | Zero npm dependencies (mesh) | ✅ | `sovereignty/server.js` ใช้ node built-ins เท่านั้น — ไม่เรียก `npm install` |
 

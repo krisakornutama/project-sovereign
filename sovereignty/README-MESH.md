@@ -31,10 +31,12 @@
 
 | ไฟล์ | หน้าที่ |
 |---|---|
-| `server.js` | UDP multicast + HTTP API + เสิร์ฟหน้าแชท — **zero npm dependencies** (built-in เท่านั้น) · `PAGES` map เสิร์ฟ `/` (แชท) + `/nfc` (เช็คอิน) + `/ble` (แดชบอร์ด BLE) |
+| `server.js` | UDP multicast + HTTP API + เสิร์ฟหน้าเครื่องมือ — **zero npm dependencies** (built-in เท่านั้น) · `PAGES` map เสิร์ฟ `/` (แชท) + `/nfc` (เช็คอิน) + `/ble` (แดชบอร์ด BLE) · `STATIC_FILES` เสิร์ฟ PWA shell (`/sw.js`, `/manifest.json`, `/icon-*.png`) โดยบังคับ MIME ถูกต้อง (sw.js ต้องเป็น `application/javascript` ไม่งั้น Chromium ปฏิเสธ SW registration) |
 | `public/lan-messenger.html` | หน้าแชท dark theme ตามระบบ (IBM Plex Sans Thai Looped + JetBrains Mono) |
 | `public/nfc-checkin.html` | หน้าเช็คอินฟาร์มด้วยแท็ก NFC — IndexedDB local-first, export JSON, โหมดจำลอง |
 | `public/ble-sensors.html` | แดชบอร์ดเซนเซอร์ BLE (SIG preset + Nordic UART) — dual-engine จริง/จำลอง, DataView parser, IndexedDB |
+| `public/sw.js` | Service Worker — cache-first precache 8 รายการ · API สด (NEVER set) และทุก non-GET ไม่ cache · bump `VERSION` → ลบแคชชุดเก่าตอน activate (**เพิ่มหน้าใหม่ต้อง sync `PRECACHE` ↔ `PAGES` เสมอ**) |
+| `public/manifest.json` + `public/icon-192.png` / `icon-512.png` / `icon-512-maskable.png` | PWA identity: Sovereign OS App Hub (standalone, dark, shortcuts 3 หน้า) + ไอคอน 3 ขนาด (รูปแบบเดียวกับ favicon เว็บหลัก) |
 | `package.json` | `npm start` — ต้อง Node >= 20 |
 | `Dockerfile` | node:22-alpine, USER node (non-root), healthcheck ยิง `/health` |
 
@@ -89,7 +91,7 @@ docker compose up -d
 
 ---
 
-## ✅ ระดับ 2 — ทำสำเร็จในเบราว์เซอร์ (เริ่มแล้ว — NFC เสร็จ, Next: Bluetooth)
+## ✅ ระดับ 2 — ทำสำเร็จในเบราว์เซอร์ (NFC ✅ · BLE ✅ · PWA Offline ✅)
 
 หลักการ: หน้าเว็บสถิตของเรา (GitHub Pages / เสิร์ฟจาก mesh node) สื่อสารเครื่อง-ต่อ-เครื่องโดยตรงผ่าน API มาตรฐานของเบราว์เซอร์
 
@@ -97,11 +99,12 @@ docker compose up -d
 |---|---|---|
 | **Web NFC (เช็คอินฟาร์ม)** | ✅ **ทำแล้ว (ใช้เว็บจริง + ทดสอบ pipe ครบ)** | `public/nfc-checkin.html` เสิร์ฟที่ `/nfc` — แตะแท็กบันทึกใคร/ทำอะไร/เมื่อไร ลง **IndexedDB ในเครื่อง** (ไม่มี network call หนึ่งคำ) · เขียนลงแท็ก (อ่าน/เขียน NDEF text) · ส่งออก JSON · ล้างประวัติ + โหมดจำลองเทียบระดับ code path เดียวกันทั้งระบบ — **ผลทดสอบจริงครบ: โหลด 0 console error, บันทึกภาษาไทยลง IndexedDB ถูกต้อง, ปุ่มเขียนแท็กซ่อนอัตโนมัติเมื่อมี NFC ไม่ได้ทันใช้, confirm dialog ทำงานถูก** — ส่วน "แตะแท็กจริง" ต้องมี: Chrome บน Android + แท็ก NFC + เปิดผ่าน https/localhost (Web NFC ต้องการ secure context) |
 | **Web Bluetooth (BLE เซนเซอร์)** | ✅ **ทำแล้ว (ใช้เว็บจริง + ทดสอบ pipeline ครบ ผ่าน simulator)** | `public/ble-sensors.html` เสิร์ฟที่ `/ble` — Dual-Engine: **ของจริง** = `requestDevice` → GATT → auto-ค้นหา preset → notify/read (SIG 0x181A/0x2A6E+0x2A6F, 0x180F/0x2A19, 0x180D/0x2A37, Nordic NUS 6E400001… TX 6E400003…) · **จำลอง** = sine (temp 25–35 °C / humidity 40–80 % / battery 80–100 % / bpm 60–90) ทุกค่าเข้า IndexedDB (**code path เดียวกันทั้งระบบ** — cap 1000 แถวลบเก่าอัตโนมัติ, bin hex preview, export JSON, wipe + confirm) · **ผลทดสอบจริง (OpenCode browser):** 0 console error เต็ม session · capability detection เที่ยง (Chrome เห็น API แต่ Windows radio ปิด → ปุ่มเชื่อมของจริงถูก disable ถูกต้อง) · sim 32 records/~14s (4 ต่อ 2s tick) · หยุด/ล้าง/kindLabel ไทยถูกต้องทุกจุด · หมายเหตุเครื่อง dev: module BT มีแต่ radio ปิด — เปิดใน Windows แล้วกดเชื่อมได้ทันที เหลือเพียงคู่แข่งอุปกรณ์จริง (ESP32/เซนเซอร์) + preset รุ่นเฉพาะ (Xiaomi pvvx/custom) ตอนบอกรุ่น |
-| **PWA Offline + Service Worker** | ⏳ คิวถัดไป | บนตัวหน้าร้านหลักอยู่แล้ว (`sw.js` + `manifest.webmanifest`) — ปรับ cache-first ครบถวั้นแพ็ knowledge page |
+| **PWA Offline (Service Worker + Manifest)** | ✅ **ทำแล้ว + ทดสอบออฟไลน์จริง (ปิดเซิร์ฟเวอร์ทิ้ง แล้วเปิดทุกหน้าได้จากแคช)** | `public/sw.js` (cache-first · precache 8 รายการ — 3 หน้า + manifest + sw + icons 3 · NEVER set `/health` `/peers` `/messages` `/send` + ทุก non-GET = network ล้วน เพราะ mesh ต้องสดเสมอ · bump `VERSION` → ลบแคชเก่าตอน activate · offline fallback: navigation ไม่พบ → `/`, อื่น ๆ → 503) + `public/manifest.json` (App Hub standalone dark + shortcuts 3 หน้า) + ไอคอน 3 ขนาด + `<link rel="manifest">` + registration snippet + ป้าย "ออฟไลน์" (`netBadge` ตาม `navigator.onLine`) ฝังครบทั้ง 3 หน้า — **ผลทดสอบจริง (OpenCode browser):** SW registered → activated (scope `http://localhost:4200/`, `controlled: true`) + แคช `sovereign-pwa-v1` ครบ 8 paths + 0 console error · **ปิด node จริง (ยืนยันไม่มี listener บน 4200) แล้วเปิดทุก route:** `/` `/nfc` `/ble` โหลดจากแคช (`transferSize = 0`) + IndexedDB add/delete ทำงานออฟไลน์ + `/nfc`,`/ble` 0 error (หน้า `/` report 502 ตอน polling API สด = ถูกต้องตามดีไซน์ — API สดห้าม cache) · restart node → polling กลับมาสำเร็จ (0 error) + SW ยังควบคุม — **หมายเหตุ:** SW ลงทะเบียนได้เฉพาะ secure context — ผ่าน localhost ✅ / LAN IP ผ่าน http ❌ (ต้อง https reverse proxy เมื่อใช้จากมือถือจริง) |
 
-เส้นทางถัดไป (แนะนำตามลำดับ): 1) **PWA offline เต็ม** (`sw.js` cache-first) 2) preset เพิ่มเมื่อมีอุปกรณ์จริง (Xiaomi LYWSD03MMC ฟอร์มแวร์ pvvx / เซนเซอร์ DI อื่น)
+เส้นทางถัดไป (แนะนำตามลำดับ): 1) preset เซนเซอร์เฉพาะรุ่นเมื่อมีอุปกรณ์จริง (Xiaomi LYWSD03MMC ฟอร์มแวร์ pvvx / ESP32+BME280/DHT22) 2) ระดับ 3 ด้านล่าง (Meshtastic/LoRa — ต้องซื้อฮาร์ดแวร์) · ระดับ 2 สถาปัตยกรรมครบแล้ว: NFC ✅ + BLE ✅ + PWA Offline ✅
 
-เพิ่มหน้าเครื่องมือใหม่ที่ `/` ได้ทันที: แก้ `PAGES` map ใน `server.js` (route → ไฟล์ใน `public/`) — ปัจจุบันมี `/` (แชท), `/nfc` (เช็คอิน), `/ble` (แดชบอร์ด BLE) — สุดก็เสิร์ฟทุกเครื่องบน LAN โดยไม่ต้องแก้อะไรให้ต่อ
+เพิ่มหน้าเครื่องมือใหม่ที่ `/` ได้ทันที: แก้ `PAGES` map ใน `server.js` (route → ไฟล์ใน `public/`) — ปัจจุบันมี `/` (แชท), `/nfc` (เช็คอิน), `/ble` (แดชบอร์ด BLE) — เสิร์ฟทุกเครื่องบน LAN โดยไม่ต้องแก้อะไรให้ต่อ
+⚠️ **กด sync 2 จุดเสมอ:** เพิ่มหน้าใหม่ → แก้ `PAGES` (server.js) **และ** `PRECACHE` (sw.js) ให้ตรงกัน · แก้เนื้อหาหน้าเดิม → bump `VERSION` ใน sw.js ไม่งั้นเบราว์เซอร์ยังเสิร์ฟแคชเก่า (cache-first เสมอ) — comment เตือนอยู่ในหัวไฟล์ sw.js แล้ว
 
 ---
 

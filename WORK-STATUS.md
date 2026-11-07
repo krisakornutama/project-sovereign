@@ -81,6 +81,15 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 - **ผลทดสอบจริงผ่าน OpenCode browser (localhost:4200/ble):** HTTP 200 + **0 console error เต็ม session** · capability detection เที่ยงทุกสถานะ (Chrome เห็น API แต่ Windows radio ปิด → ปุ่ม "เชื่อมต่อของจริง" disable อัตโนมัติ + สถานะบอกสาเหตุชัด) · sim ต่อเนื่อง 32 records/~14 วินาที (4 ต่อ 2s tick) · tiles แสดงสดตรงช่วง spec · หยุดจำลอง (ปุ่มคืนสถานะ) · ล้างผ่าน confirm dialog → DB count = 0 + tiles รีเซ็ต
 - **เหลือสำหรับ "ค่าจริงจากอุปกรณ์":** อุปกรณ์ BLE จริง (ESP32 DIY / เซนเซอร์มาตรฐาน) — เครื่อง dev มี Bluetooth USB Module แต่ Windows radio ปิดอยู่ (บานหน้าต่างปิดเงื่อนไขไม่ตอบผ่านเบราว์เซอร์) — เปิดแล้วกดปุ่มเชื่อมได้ทันที (preset พร้อม) · preset รุ่นเฉพาะ (Xiaomi LYWSD03MMC แบบ pvvx, custom service อื่น) เพิ่มตอนระบุรุ่น
 
+### ระดับ 2c — PWA Offline Stack (ใหม่ — เสร็จ + ทดสอบออฟไลน์จริงแบบปิดเซิร์ฟเวอร์ทิ้ง)
+
+- `sovereignty/public/sw.js`: cache-first — precache 8 รายการ (3 หน้า + `manifest.json` + `sw.js` + ไอคอน 3 ไฟล์) · NEVER set (`/health` `/peers` `/messages` `/send`) + ทุก non-GET = network ล้วน (ค่า mesh ต้องสดเสมอ) · bump `VERSION` → ลบแคชชุดเก่าอัตโนมัติตอน activate · offline fallback: navigation ไม่พบในแคช → กลับ `/`, อื่น ๆ → 503
+- `sovereignty/public/manifest.json`: Sovereign OS App Hub (standalone, dark `#030712`, shortcuts 3 หน้า) + `icon-192/512/512-maskable.png` (สร้างด้วย System.Drawing ตาม favicon เว็บหลัก — generator `C:\Users\USER\AppData\Local\Temp\opencode\gen-icons.ps1`)
+- `server.js` เสิร์ฟ PWA shell: `STATIC_FILES` map บังคับ MIME (sw.js = `application/javascript` — เงื่อนไขบังคับของ Chromium สำหรับ SW registration)
+- ฝัง `<link rel="manifest">` + SW registration snippet + ป้าย "ออฟไลน์" (`netBadge` ตาม `navigator.onLine`) ครบทั้ง 3 หน้า
+- **ผลทดสอบจริงผ่าน OpenCode browser (localhost:4200):** SW registered → activated (scope `/`, `controlled: true`) + แคช `sovereign-pwa-v1` ครบ 8 paths + 0 console error · **ทดสอบออฟไลน์แบบจริง — ปิดกระบวนการ node ทิ้ง (ยืนยัน netstat: ไม่มี listener บน 4200) แล้วเดินเข้าทุก route:** `/` `/nfc` `/ble` โหลดจากแคช (`transferSize = 0`, brand text ครบ) + **IndexedDB add/delete ทำงานออฟไลน์จริงทั้ง 2 ฐาน** + `/nfc`,`/ble` 0 console error · หน้า `/` พบ 502 จาก polling เฉพาะ API สด (`/messages` `/peers` — SW ปล่อยผ่าน network ตาม NEVER set) = รายงานเซิร์ฟเวอร์ล่มถูกต้องตามดีไซน์ ไม่ใช่บั๊ก · **restart node → `/health` 200 + polling กลับมาสำเร็จ (0 console error) + SW ยังควบคุม** (`transferSize = 0` ของ document ตอน online คือ cache-first ตามดีไซน์ — ของสดมาจาก API ไม่ใช่ตัว document)
+- **ข้อจำกัดตามธรรมชาติของ API:** SW registration บังคับ secure context — localhost ✅ · LAN IP ผ่าน http ❌ (ต้อง https reverse proxy เมื่อใช้จากมือถือจริง)
+
 ---
 
 ## 📦 รายการไฟล์ใน branch `feat/docker-homelab` (พร้อมรอ agent ต่อไป)
@@ -101,6 +110,9 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 | `webhook-service/tests/*.test.mjs` | ทดสอบ idempotency + signature (NEW) |
 | `sovereignty/server.js` | LAN Messenger — UDP multicast + HTTP API (NEW) |
 | `sovereignty/public/lan-messenger.html` | หน้าแชท LAN (NEW) |
+| `sovereignty/public/nfc-checkin.html` | หน้าเช็คอิน NFC — IndexedDB local-first (NEW) |
+| `sovereignty/public/ble-sensors.html` | แดชบอร์ดเซนเซอร์ BLE — dual-engine (NEW) |
+| `sovereignty/public/sw.js` + `manifest.json` + `icon-*.png` | PWA offline stack — cache-first, ลงทะเบียนครบ 3 หน้า (NEW) |
 | `sovereignty/Dockerfile` | mesh service container (NEW) |
 | `sovereignty/README-MESH.md` | เอกสารสถาปัตยกรรม "อธิปไตย" 3 ระดับ (NEW) |
 | `docker-compose.yml` | **2 services** — web (nginx 8080) + mesh (4200) |
@@ -137,8 +149,8 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 3. **ตรวจสอบ webhook SQLite** (`webhook-service/store.js` ใช้ `node:sqlite`) — ต้องมี Node >=22.5 และรันเทสต์ `npm test` ใน `webhook-service/`
 4. **ทำขั้นขาย** ($19-39 Pro License Key ผ่าน Lemon Squeezy/Gumroad) — ต้องเพิ่ม checkout link ใน `shop.html` และ `sovereign-os.html` (ไม่ทำในงานนี้ตามคำสั่งคุณ)
 5. **เชื่อม `sovereign-origin`** (สำหรับ verification endpoint) — ต้องขออนุญาตก่อนตาม AGENTS.md ข้อ 1
-6. **ขยาย sovereignty ต่อ** — ดู `sovereignty/README-MESH.md` ระดับ 2: Web Bluetooth (แดชบอร์ดเซนเซอร์) / Web NFC (เช็คอินฟาร์ม) / ปรับ PWA offline เต็ม
+6. **ขยาย sovereignty ต่อ** — ระดับ "เบราว์เซอร์" ครบแล้ว: NFC ✅ / BLE ✅ / **PWA Offline ✅** (ทดสอบออฟไลน์จริง — ปิด node แล้วทุกหน้าโหลดจากแคช) — เหลือเฉพาะชิ้นที่ต้องใช้อุปกรณ์จริง: preset เซนเซอร์รุ่นเฉพาะ เมื่อผู้ใช้บอกรุ่น / ระดับ 3 Meshtastic/LoRa ต้องซื้อฮาร์ดแวร์ · ดู `sovereignty/README-MESH.md` · **อย่าลืม:** เพิ่มหน้าใหม่ต้อง sync `PRECACHE` (sw.js) ↔ `PAGES` (server.js) + bump `VERSION` เมื่อแก้เนื้อหา
 
 ---
 
-*ตรวจสอบคุณภาพโดย Agent ปัจจุบัน: Docker structure ✅ (2 services), SQLite persistence ✅, Security (HMAC + non-root + .dockerignore) ✅, LAN Messenger ทดสอบผ่านจริง ✅, No secret leak ✅, AGENTS.md compliance ✅, Documentation (DOCKER.md + AGENTS-DOCKER.md + WORK-STATUS.md + FULL-QUALITY.md + sovereignty/README-MESH.md) ✅*
+*ตรวจสอบคุณภาพโดย Agent ปัจจุบัน: Docker structure ✅ (2 services), SQLite persistence ✅, Security (HMAC + non-root + .dockerignore) ✅, LAN Messenger ทดสอบผ่านจริง ✅, Web NFC ✅, Web BLE ✅, PWA Offline ทดสอบออฟไลน์จริง (ปิด node → ทุกหน้าจากแคช → ฟื้น online) ✅, No secret leak ✅, AGENTS.md compliance ✅, Documentation (DOCKER.md + AGENTS-DOCKER.md + WORK-STATUS.md + FULL-QUALITY.md + sovereignty/README-MESH.md) ✅*
