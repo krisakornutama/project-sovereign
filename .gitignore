@@ -7,6 +7,13 @@ node_modules/
 scraper/*/node_modules/
 scraper/frontend/dist/
 
+# คีย์ลับ: ห้าม commit ตาม AGENTS.md ข้อ 7 — เก็บเฉพาะไฟล์ตัวอย่าง (.env.example)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
 # marketplace: สำเนาไฟล์ออเดอร์ที่นำเข้า + ตำแหน่งเก็บข้อมูลลูกค้า
 # เป็นข้อมูลจริงของร้าน (ชื่อ ที่อยู่ เบอร์โทร) ห้ามหลุดขึ้น public เด็ดขาด
 scraper/marketplace-storage/

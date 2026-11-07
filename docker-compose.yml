@@ -1,11 +1,14 @@
-# docker-compose.yml — Project Sovereign static site
+# docker-compose.yml — Project Sovereign (2 services: web + LAN mesh)
 # รันได้ทันทีบนเครื่องคุณ (Raspberry Pi, Mini PC, Home Server ฯลฯ)
 #   docker compose up -d
-# แล้วเปิดเบราว์เซอร์ไปที่ http://localhost:8080
+# แล้วเปิดเบราว์เซอร์ไปที่ http://localhost:8080 (เว็บ)
+# และ http://localhost:4200 (แชทบน LAN — เครื่องในครัวเรือนคุยกันได้เอง)
 #
 # ต้นทุน: 0 บาท (ใช้ฮาร์ดแวร์ที่มีอยู่แล้ว · โฮสต์เองที่บ้าน · ไม่ต้องจ่ายค่าเซิร์ฟเวอร์)
+# เป้าหมาย "อธิปไตย": เว็บเสิร์ฟเอง + สื่อสารระหว่างเครื่องโดยไม่ต้องมีอินเทอร์เน็ต
 
 services:
+  # ── เว็บสถิต (คู่มือ/แสดงผลงาน) — nginx อ่านอย่างเดียว ──
   sovereign-web:
     image: ghcr.io/krisakornutama/project-sovereign:latest
     build:
@@ -15,7 +18,6 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"
-    # อ่านอย่างเดียว ป้องกันการเขียนทับไฟล์ใน container
     read_only: true
     tmpfs:
       - /var/cache/nginx
@@ -27,3 +29,21 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
+
+  # ── LAN Messenger — สื่อสารระหว่างเครื่องโดยไม่ใช้อินเทอร์เน็ต ──
+  # network_mode: host จำเป็นเพื่อให้ multicast มองเห็นอุปกรณ์จริงทั้งบ้าน/ฟาร์ม
+  # (Linux เท่านั้น — Raspberry Pi / Mini PC / Home Server ใช้ได้เต็มที่)
+  # ตั้งชื่อเครื่อง: MESH_PEER_NAME · เข้ารหัสทั้งเครือข่าย: MESH_PASSPHRASE
+  sovereign-mesh:
+    build:
+      context: ./sovereignty
+      dockerfile: Dockerfile
+    container_name: sovereign-mesh
+    restart: unless-stopped
+    network_mode: host          # Linux/RPi — เห็นอุปกรณ์ทั้ง LAN จริง
+    environment:
+      MESH_HTTP_PORT: "4200"
+      MESH_PEER_NAME: "${MESH_PEER_NAME:-sovereign-node}"
+      MESH_PASSPHRASE: "${MESH_PASSPHRASE:-}"
+      MESH_MULTI_ADDR: "239.255.42.1"
+      MESH_MULTI_PORT: "41235"

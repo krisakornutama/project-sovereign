@@ -1,8 +1,8 @@
 # FULL-QUALITY — Project Sovereign (ตรวจสอบสูงสุด)
 
-วันที่: 04/11/2026 · Agent ปัจจุบันทำเต็มประสิทธิภาพแล้ว
+วันที่: 08/11/2026 · Agent ปัจจุบันทำเต็มประสิทธิภาพแล้ว
 Repo: `project-sovereign` (ไม่แตะ `sovereign-origin` — ตาม AGENTS.md ข้อ 1)
-Branch: `feat/docker-homelab` (`63ea9ef` — คุณภาพสูงสุด)
+Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0d1164e` (next-agent brief)]
 
 ---
 
@@ -47,6 +47,16 @@ Branch: `feat/docker-homelab` (`63ea9ef` — คุณภาพสูงสุ�
 - CTA box (`cta-box`): gradient border, glow, hover effect
 - Mobile responsive (`@media`) พร้อมแล้วทั้ง 3 หน้า (`index`, `shop`, `sovereign-os`)
 
+### ระดับ 6 — Sovereignty / สื่อสารไม่พึ่งส่วนกลาง (ทำเสร็จ 100% ในระดับ LAN)
+
+- `sovereignty/server.js`: LAN Messenger — UDP multicast `239.255.42.1:41235` (discovery + broadcast) + HTTP API `/health` `/peers` `/messages?since=N` `/send` บนพอร์ต 4200
+- **Zero npm dependencies** (node built-ins: `dgram`, `http`, `crypto`, `fs`) — ไม่มี supply-chain risk
+- Optional encryption `MESH_PASSPHRASE` → AES-256-GCM (scrypt N=16384) — payload ทุกชิ้นบน wire เข้ารหัส
+- `sovereignty/public/lan-messenger.html`: หน้าแชท premium dark theme ตามระบบ + `esc()` กัน XSS
+- `sovereignty/Dockerfile`: node:22-alpine, USER node, healthcheck — พร้อม `docker compose` (service `sovereign-mesh`, `network_mode: host` Linux/RPi)
+- `sovereignty/README-MESH.md`: สถาปัตยกรรม "อธิปไตย" 3 ระดับ — LAN ✅ → เบราว์เซอร์ (BLE/NFC/PWA/WebUSB) → เรดิโอ (LoRa/Meshtastic/SDR ต้องซื้อฮาร์ดแวร์) + สถานการณ์ใช้จริงในฟาร์ม
+- **ผลทดสอบจริง (ผ่านครบ):** UDP bind ✅ · `/health` ✅ · `/send` seq:1 ✅ · `/messages` ไทย UTF-8 ถูกต้อง ✅ · `/peers` ✅ (หลักฐาน: `sovereignty/README-MESH.md` หัวข้อ "ผลทดสอบจริง")
+
 ---
 
 ## ตรวจสอบคุณภาพ — รายการตรวจสอบ
@@ -64,6 +74,9 @@ Branch: `feat/docker-homelab` (`63ea9ef` — คุณภาพสูงสุ�
 | Static site complete | ✅ ครบ 15 หน้า | `index.html` + 14 subpages (`shop`, `sovereign-os`, `demo`, ฯลฯ) |
 | Mobile responsive | ✅ ตรวจแล้ว | `@media (max-width:900px)` และ `(max-width:480px)` ในทุกหน้า |
 | Quality docs | ✅ ครบ | `DOCKER.md`, `AGENTS-DOCKER.md`, `WORK-STATUS.md`, `FULL-QUALITY.md` (ไฟล์นี้) |
+| LAN Messenger (ทดสอบจริง) | ✅ ผ่านครบ | UDP bind + `/health` + `/send` + `/messages` ไทย UTF-8 + `/peers` — ตาม `sovereignty/README-MESH.md` |
+| Mesh Docker service | ✅ สร้างแล้ว | `sovereignty/Dockerfile` + `docker-compose.yml` service `sovereign-mesh` (รันเมื่อมี Docker/Linux-RPi) |
+| Zero npm dependencies (mesh) | ✅ | `sovereignty/server.js` ใช้ node built-ins เท่านั้น — ไม่เรียก `npm install` |
 
 ---
 
@@ -75,13 +88,16 @@ cd project-sovereign
 git fetch origin
 git checkout feat/docker-homelab
 
-# 2. รัน Docker (ตรวจสอบเว็บจริง)
+# 2. รัน Docker (ตรวจสอบเว็บจริง = 2 services)
 docker compose up -d
-# เปิด http://localhost:8080
+# เปิด http://localhost:8080 (เว็บ) + http://localhost:4200 (LAN Messenger)
+# หมายเหตุ: sovereign-mesh ใช้ network_mode: host → Linux/RPi เท่านั้น
+# บน Windows ทดสอบ mesh ด้วย: cd sovereignty && node server.js
 
-# 3. ตรวจสอบ webhook SQLite (รัน server)
+# 3. ตรวจสอบ webhook SQLite (รัน server + เทสต์)
 cd webhook-service
 npm install        # ต้องมี node >=22.5
+npm test           # ทดสอบ idempotency + signature
 node server.js     # ดู console: "DB: webhook-data.sqlite"
 # ทดสอบ webhook (ต้องตั้ง LEMON_SQUEEZY_WEBHOOK_SECRET + GITHUB_TOKEN)
 
@@ -102,4 +118,4 @@ git push origin feat/docker-homelab
 
 ---
 
-*ตรวจสอบโดย Agent ปัจจุบัน: คุณภาพสูงสุดเท่าที่ทำได้ในขอบเขต `project-sovereign` โดยไม่ละเมิด `AGENTS.md` (ไม่แตะ `sovereign-origin`, ไม่รั่ว secret, ไม่ทำลายข้อมูลจริง)*
+*ตรวจสอบโดย Agent ปัจจุบัน: คุณภาพสูงสุดเท่าที่ทำได้ในขอบเขต `project-sovereign` โดยไม่ละเมิด `AGENTS.md` (ไม่แตะ `sovereign-origin`, ไม่รั่ว secret, ไม่ทำลายข้อมูลจริง) — ครอบคลุมถึงส่วน sovereignty (LAN Messenger ทดสอบผ่านจริง) ณ วันที่ 08/11/2026*

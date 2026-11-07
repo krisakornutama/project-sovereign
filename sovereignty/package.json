@@ -1,0 +1,14 @@
+{
+  "name": "sovereign-mesh-lan",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sovereign LAN Messenger — device-to-device chat over local network (no internet required)",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

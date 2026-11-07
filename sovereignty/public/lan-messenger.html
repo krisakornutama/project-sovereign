@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sovereign LAN Messenger — คุยกันบนเครือข่ายในบ้าน ไม่ต้องมีอินเทอร์เน็ต</title>
+<meta name="description" content="แชทระหว่างเครื่องใน LAN เดียวกัน — ไม่ต้องมีอินเทอร์เน็ต ไม่มีเซิร์ฟเวอร์กลาง ข้อมูลอยู่บนเครื่องคุณเอง">
+<meta name="theme-color" content="#030712">
+<style>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.65); --line:rgba(52,211,153,.22);
+  --green:#34d399; --cyan:#22d3ee; --txt:#f0f4f8; --dim:#a1a1aa; --faint:#71717a;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Cascadia Code','Courier New',monospace;
+  --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(22,211,238,.10),transparent 64%)}
+header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px);padding:13px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--cyan)}
+.state{font-family:var(--mono);font-size:.66rem;color:var(--dim)}
+.state .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle}
+.state.down .dot{background:#f87171}
+main{flex:1;max-width:980px;width:100%;margin:0 auto;padding:18px 20px;display:grid;grid-template-columns:1fr 3fr;gap:16px}
+aside{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:16px;box-shadow:var(--shadow)}
+aside h2{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;color:var(--cyan);margin:0 0 12px;font-weight:600}
+aside ul{list-style:none;margin:0;padding:0}
+aside li{font-size:.84rem;color:var(--dim);padding:6px 0;border-bottom:1px solid rgba(52,211,153,.08)}
+aside li:last-child{border-bottom:none}
+aside li b{color:#ecfdf5}
+aside .info{margin-top:14px;font-family:var(--mono);font-size:.62rem;color:var(--faint);line-height:1.9}
+.panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+log{display:block;flex:1;overflow-y:auto;padding:16px 18px;font-size:.88rem}
+.msg{margin-bottom:10px}
+.msg .who{font-family:var(--mono);font-size:.64rem;color:var(--cyan);margin-right:8px}
+.msg .when{font-family:var(--mono);font-size:.6rem;color:var(--faint);margin-right:8px}
+.msg .text{color:var(--txt)}
+.msg.self .who{color:var(--green)}
+form{display:flex;gap:10px;border-top:1px solid var(--line);padding:12px 14px;background:rgba(3,7,18,.6)}
+input[type=text]{flex:1;font-family:var(--thai);font-size:.9rem;color:#e5e7eb;background:#0b1220;border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:11px 13px}
+input[type=text]:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(52,211,153,.15)}
+button{font-weight:600;font-size:.88rem;border:none;border-radius:10px;padding:11px 18px;background:linear-gradient(135deg,#34d399,#10b981);color:#030712;cursor:pointer;transition:box-shadow .15s ease,transform .15s ease}
+button:hover{box-shadow:0 6px 20px rgba(52,211,153,.45);transform:translateY(-1px)}
+button:disabled{opacity:.6;cursor:default;transform:none;box-shadow:none}
+.hint{font-family:var(--mono);font-size:.62rem;color:var(--faint);margin:12px 18px 0}
+.empty{color:var(--faint);font-size:.84rem;padding:18px}
+footer{border-top:1px solid var(--line);text-align:center;padding:18px 24px;font-family:var(--mono);font-size:.66rem;color:var(--faint);line-height:2}
+@media (max-width:820px){
+  main{grid-template-columns:1fr;padding:14px 14px}
+  log{max-height:52vh}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">SOVEREIGN LAN MESSENGER</span>
+  <span class="state" id="state"><span class="dot"></span>เชื่อมต่อ…</span>
+</header>
+
+<main>
+  <aside>
+    <h2>เครื่องบนเครือข่ายเดียวกัน</h2>
+    <ul id="peers"><li>กำลังหาเครื่องอื่น…</li></ul>
+    <div class="info">
+      ข้อมูลอยู่บนเครื่องคุณเอง · ไม่มีเซิร์ฟเวอร์กลาง · ไม่มีอินเทอร์เน็ต<br>
+      ตั้งชื่อเครื่องด้วย <code>MESH_PEER_NAME</code><br>
+      เข้ารหัสทั้งเครือข่ายด้วย <code>MESH_PASSPHRASE</code>
+    </div>
+  </aside>
+
+  <section class="panel" aria-label="บทสนทนาบน LAN">
+    <log id="log"><div class="empty">ยังไม่มีข้อความ — พิมพ์ด้านล่างเพื่อส่งไปทุกเครื่องบน LAN</div></log>
+    <form id="sendForm" autocomplete="off">
+      <input type="text" id="text" placeholder="ข้อความถึงทุกเครื่องบน LAN…" maxlength="2000" aria-label="ข้อความ">
+      <button type="submit" id="sendBtn">ส่ง</button>
+    </form>
+    <div class="hint" id="hint">ระบบถามตอบกับซีเวอร์ในเครื่องนี้ — ถ้าขึ้น “เชื่อมต่อ” นาน แปลว่ายังไม่มีเครื่องอื่นเปิดไว้</div>
+  </section>
+</main>
+
+<footer>
+  SOVEREIGN LAN MESSENGER · ส่วนหนึ่งของ Project Sovereign · สื่อสารระหว่างเครื่องในบ้าน/ฟาร์ม · ไม่พึ่งพาส่วนกลาง
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var log = document.getElementById('log');
+  var peersEl = document.getElementById('peers');
+  var stateEl = document.getElementById('state');
+  var form = document.getElementById('sendForm');
+  var input = document.getElementById('text');
+  var sendBtn = document.getElementById('sendBtn');
+  var cursor = 0;
+  var selfName = null;
+
+  function setState(ok, text){
+    stateEl.className = 'state' + (ok ? '' : ' down');
+    stateEl.innerHTML = '<span class="dot"></span>' + text;
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function timeOf(ts){
+    var d = new Date(ts || Date.now());
+    return ('0'+d.getHours()).slice(-2) + ':' + ('0'+d.getMinutes()).slice(-2);
+  }
+
+  function renderMsgs(list){
+    if (!list.length) return;
+    document.querySelectorAll('.empty').forEach(function(el){ el.remove(); });
+    list.forEach(function(m){
+      var div = document.createElement('div');
+      div.className = 'msg' + (selfName && m.fromName === selfName ? ' self' : '');
+      div.innerHTML = '<span class="who">' + esc(m.fromName || '?') + '</span>' +
+                      '<span class="when">' + timeOf(m.ts) + '</span>' +
+                      '<span class="text">' + esc(m.text) + '</span>';
+      log.appendChild(div);
+    });
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function poll(){
+    try {
+      const r = await fetch('/messages?since=' + cursor, { cache: 'no-store' });
+      if (!r.ok) throw new Error('http ' + r.status);
+      const j = await r.json();
+      cursor = j.cursor || cursor;
+      renderMsgs(j.messages || []);
+      setState(true, 'พร้อมใช้');
+    } catch (e) {
+      setState(false, 'เครื่องส่วนหนึ่งไม่ตอบ — รายการจะกลับมาเมื่อ server ทำงานอีกครั้ง');
+    }
+    setTimeout(poll, 1200);
+  }
+  poll();
+
+  async function refreshPeers(){
+    try {
+      const r = await fetch('/peers', { cache: 'no-store' });
+      const j = await r.json();
+      selfName = (j.self || {}).name || selfName;
+      const list = (j.peers || []);
+      if (!list.length) {
+        peersEl.innerHTML = '<li>ยังไม่มีเครื่องอื่นบน LAN — เปิด server นี้ในอีกเครื่องได้เลย</li>';
+      } else {
+        peersEl.innerHTML = list.map(function(p){
+          return '<li><b>' + esc(p.name) + '</b><br><span style="font-family:var(--mono);font-size:.6rem;color:var(--faint)">' + esc(p.host) + '</span></li>';
+        }).join('');
+      }
+    } catch (e) { /* silent — UI already shows the down state */ }
+    setTimeout(refreshPeers, 3000);
+  }
+  refreshPeers();
+
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var text = input.value.trim();
+    if (!text) return;
+    sendBtn.disabled = true;
+    fetch('/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text })
+    }).then(function(){ input.value = ''; })
+      .catch(function(){ input.value = text; })
+      .finally(function(){ sendBtn.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>

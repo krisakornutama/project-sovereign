@@ -56,7 +56,7 @@ const q = {
   insertEvent: db.prepare('INSERT INTO webhook_events (id, event_name, order_id, github_username, status, result, processed_at) VALUES (?, ?, ?, ?, ?, ?, ?)'),
   insertFailure: db.prepare('INSERT INTO webhook_failures (order_id, event_name, reason, status_code, failed_at) VALUES (?, ?, ?, ?, ?)'),
   insertLicense: db.prepare('INSERT OR IGNORE INTO licenses (order_id, github_username, license_key, tier, created_at) VALUES (?, ?, ?, ?, ?)'),
-  revokeLicense: db.prepare('UPDATE licenses SET revoked_at = datetime("now"), refund_status = ? WHERE order_id = ?'),
+  revokeLicense: db.prepare("UPDATE licenses SET revoked_at = datetime('now'), refund_status = ? WHERE order_id = ?"),
   getLicense: db.prepare('SELECT * FROM licenses WHERE order_id = ?'),
   listFailures: db.prepare('SELECT * FROM webhook_failures ORDER BY failed_at DESC LIMIT ?'),
   clearFailures: db.prepare('DELETE FROM webhook_failures'),

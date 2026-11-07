@@ -51,6 +51,21 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 
 ---
 
+## ✅ ข้อ 5 — Sovereignty / LAN Messenger (ใหม่ — สร้าง + ทดสอบผ่านจริง)
+
+เป้าหมาย: สื่อสารโดยไม่พึ่งพาอินเทอร์เน็ต/ส่วนกลาง (หลัก "อธิปไตย" ของ Sovereign OS)
+
+- `sovereignty/server.js`: UDP multicast discovery (`239.255.42.1:41235`) + HTTP API (`/health` `/peers` `/messages` `/send`) บนพอร์ต 4200 — **zero npm dependencies** (Node built-ins เท่านั้น)
+- `sovereignty/public/lan-messenger.html`: หน้าแชท dark theme ตามระบบ (IBM Plex Sans Thai Looped + JetBrains Mono, responsive)
+- Optional encryption: `MESH_PASSPHRASE` → AES-256-GCM (scrypt N=16384) — payload ออกอากาศเข้ารหัสหมด
+- `sovereignty/Dockerfile`: node:22-alpine, USER node, healthcheck fetch `/health`
+- `docker-compose.yml`: service `sovereign-mesh` (`network_mode: host` — Linux/RPi เท่านั้น เพื่อ multicast เห็นอุปกรณ์จริงทั้ง LAN)
+- `sovereignty/README-MESH.md`: เอกสารสถาปัตยกรรม 3 ระดับ (LAN Messenger ✅ → เบราว์เซอร์ BLE/NFC/PWA → LoRa/Meshtastic/SDR ต้องมีฮาร์ดแวร์) + สถานการณ์ใช้จริงในฟาร์ม
+
+**ผลทดสอบจริง (ผ่านทั้งหมด):** UDP bind ✅ (peer id `74fb71341ac54a61`) · `/health` ✅ · `/send` seq:1 ✅ · `/messages` เก็บไทย UTF-8 ถูกต้อง ✅ ("ทดสอบส่งภาษาไทยผ่าน HTTP ด้วย encoding UTF8 จริง") · `/peers` ✅ — หมายเหตุ: `???` ใน terminal เป็นข้อจำกัดการแสดงผล PowerShell เท่านั้น ผ่านเบราว์เซอร์เห็นไทยถูกเสมอ
+
+---
+
 ## 📦 รายการไฟล์ใน branch `feat/docker-homelab` (พร้อมรอ agent ต่อไป)
 
 | ไฟล์ | หน้าที่ |
@@ -66,6 +81,12 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 | `webhook-service/store.js` | SQLite persistence (NEW) |
 | `webhook-service/package.json` | v1.1.0, module, node >=22.5 |
 | `webhook-service/server.js` | v1.1 — SQLite, license tracking |
+| `webhook-service/tests/*.test.mjs` | ทดสอบ idempotency + signature (NEW) |
+| `sovereignty/server.js` | LAN Messenger — UDP multicast + HTTP API (NEW) |
+| `sovereignty/public/lan-messenger.html` | หน้าแชท LAN (NEW) |
+| `sovereignty/Dockerfile` | mesh service container (NEW) |
+| `sovereignty/README-MESH.md` | เอกสารสถาปัตยกรรม "อธิปไตย" 3 ระดับ (NEW) |
+| `docker-compose.yml` | **2 services** — web (nginx 8080) + mesh (4200) |
 
 ---
 
@@ -93,12 +114,14 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 
 ## 🚀 ต่องานสำหรับ agent ต่อไป
 
-1. **รัน Docker บนเครื่องที่มี Docker** (`docker compose up -d` → `localhost:8080`)
+1. **รัน Docker บนเครื่องที่มี Docker** (`docker compose up -d` → `localhost:8080` + LAN chat `localhost:4200`)
+   - หมายเหตุ: `sovereign-mesh` ใช้ `network_mode: host` — Linux/RPi เท่านั้น (Windows ทดสอบด้วย `node server.js` ในโฟลเดอร์ `sovereignty/`)
 2. **Push branch** (`git push origin feat/docker-homelab` จากเครื่องที่มี `workflow` scope)
-3. **ตรวจสอบ webhook SQLite** (`webhook-service/store.js` ใช้ `node:sqlite`) — ต้องมี Node >=22.5
+3. **ตรวจสอบ webhook SQLite** (`webhook-service/store.js` ใช้ `node:sqlite`) — ต้องมี Node >=22.5 และรันเทสต์ `npm test` ใน `webhook-service/`
 4. **ทำขั้นขาย** ($19-39 Pro License Key ผ่าน Lemon Squeezy/Gumroad) — ต้องเพิ่ม checkout link ใน `shop.html` และ `sovereign-os.html` (ไม่ทำในงานนี้ตามคำสั่งคุณ)
 5. **เชื่อม `sovereign-origin`** (สำหรับ verification endpoint) — ต้องขออนุญาตก่อนตาม AGENTS.md ข้อ 1
+6. **ขยาย sovereignty ต่อ** — ดู `sovereignty/README-MESH.md` ระดับ 2: Web Bluetooth (แดชบอร์ดเซนเซอร์) / Web NFC (เช็คอินฟาร์ม) / ปรับ PWA offline เต็ม
 
 ---
 
-*ตรวจสอบคุณภาพโดย Agent ปัจจุบัน: Docker structure ✅, SQLite persistence ✅, Security (HMAC + non-root + .dockerignore) ✅, No secret leak ✅, AGENTS.md compliance ✅, Documentation (DOCKER.md + AGENTS-DOCKER.md + WORK-STATUS.md) ✅*
+*ตรวจสอบคุณภาพโดย Agent ปัจจุบัน: Docker structure ✅ (2 services), SQLite persistence ✅, Security (HMAC + non-root + .dockerignore) ✅, LAN Messenger ทดสอบผ่านจริง ✅, No secret leak ✅, AGENTS.md compliance ✅, Documentation (DOCKER.md + AGENTS-DOCKER.md + WORK-STATUS.md + FULL-QUALITY.md + sovereignty/README-MESH.md) ✅*
