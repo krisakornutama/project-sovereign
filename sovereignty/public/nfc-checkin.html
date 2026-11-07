@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sovereign NFC Check-in — บันทึกงานฟาร์มแตะแท็ก ไม่ต้องมีอินเทอร์เน็ต</title>
+<meta name="description" content="แตะแท็ก NFC เพื่อบันทึกการเข้าพื้นที่ ย้ายสต็อก ตรวจคอก — เก็บในเครื่องเท่านั้น ไม่มีเซิร์ฟเวอร์กลาง ไม่มีอินเทอร์เน็ต">
+<meta name="theme-color" content="#030712">
+<style>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.65); --line:rgba(52,211,153,.22);
+  --green:#34d399; --cyan:#22d3ee; --txt:#f0f4f8; --dim:#a1a1aa; --faint:#71717a;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Cascadia Code','Courier New',monospace;
+  --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(22,211,238,.10),transparent 64%)}
+header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px);padding:13px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--cyan)}
+.brand a{color:var(--cyan);text-decoration:none}
+.brand a:hover{color:var(--green)}
+.status{font-family:var(--mono);font-size:.66rem;color:var(--dim)}
+.status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle}
+.status.nfc{color:var(--cyan)}
+.status.no .dot{background:#fbbf24}
+main{flex:1;max-width:980px;width:100%;margin:0 auto;padding:18px 20px;display:grid;gap:16px}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:22px 26px;box-shadow:var(--shadow);transition:transform .15s ease, box-shadow .15s ease}
+.card:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.35), 0 0 0 1px rgba(52,211,153,.25)}
+.card h2{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;color:var(--cyan);margin:0 0 14px;font-weight:600}
+.notice{font-size:.8rem;color:var(--dim);margin:10px 0 0;padding:10px 14px;border:1px solid rgba(251,191,36,.25);border-radius:10px;background:rgba(251,191,36,.06)}
+.notice b{color:#fbbf24}
+.formrow{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+.field label{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--dim);margin:0 0 6px}
+.field input,.field select{width:100%;font-family:var(--thai);font-size:.88rem;color:#e5e7eb;background:#0b1220;border:1px solid rgba(52,211,153,.25);border-radius:10px;padding:10px 12px;transition:border-color .15s ease, box-shadow .15s ease}
+.field input:focus,.field select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(52,211,153,.15)}
+.btn{font-weight:600;font-size:.85rem;border:none;border-radius:10px;padding:11px 18px;background:linear-gradient(135deg,#34d399,#10b981);color:#030712;cursor:pointer;transition:box-shadow .15s ease,transform .15s ease}
+.btn:hover{box-shadow:0 6px 20px rgba(52,211,153,.45);transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:default;transform:none;box-shadow:none}
+.btn-ghost{border:1px solid rgba(52,211,153,.45);color:var(--green);background:rgba(52,211,153,.06)}
+.btn-ghost:hover{background:rgba(52,211,153,.15)}
+.btn-danger{border:1px solid rgba(248,113,113,.4);color:#f87171;background:rgba(248,113,113,.06)}
+.btn-danger:hover{background:rgba(248,113,113,.15)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.log{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:6px}
+.log th{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;color:var(--cyan);text-align:left;border-bottom:1px solid var(--line);padding:8px 10px}
+.log td{border-bottom:1px solid rgba(52,211,153,.1);padding:9px 10px;color:var(--dim);vertical-align:top}
+.log td.main{color:var(--txt)}
+.tag{font-family:var(--mono);font-size:.56rem;letter-spacing:.06em;border-radius:999px;padding:3px 9px;display:inline-block}
+.tag.nfc{border:1px solid rgba(52,211,153,.4);color:var(--green)}
+.tag.sim{border:1px solid rgba(251,191,36,.4);color:#fbbf24}
+.empty{color:var(--faint);font-size:.84rem}
+.meta{font-family:var(--mono);font-size:.6rem;color:var(--faint)}
+footer{border-top:1px solid var(--line);text-align:center;padding:18px 24px;font-family:var(--mono);font-size:.66rem;color:var(--faint);line-height:2}
+footer a{color:var(--dim);text-decoration:none}
+footer a:hover{color:var(--green)}
+@media (max-width:720px){.formrow{grid-template-columns:1fr}.card{padding:18px 18px}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand"><a href="lan-messenger.html">SOVEREIGN</a> · NFC CHECK-IN</span>
+  <span class="status" id="status"><span class="dot"></span>กำลังตรวจเบราว์เซอร์…</span>
+</header>
+
+<main>
+  <section class="card" aria-label="สถานะระบบและวิธีใช้">
+    <h2>ระบบบันทึกงานฟาร์มด้วยแท็ก NFC</h2>
+    <p style="margin:0;font-size:.86rem;color:var(--dim)">
+      แตะแท็ก = บันทึก <b style="color:var(--txt)">ใคร</b> ทำ <b style="color:var(--txt)">อะไร</b> ที่ <b style="color:var(--txt)">จุดไหน</b> พร้อมเวลาจริง —
+      ข้อมูลทั้งหมดเก็บในเบราว์เซอร์ของเครื่องนี้เท่านั้น (IndexedDB) <b style="color:var(--txt)">ไม่มีเซิร์ฟเวอร์กลาง ไม่มีอินเทอร์เน็ต</b>
+      และส่งออกเป็นไฟล์ JSON ได้ทุกเมื่อ
+    </p>
+    <div class="notice" id="notice" hidden></div>
+  </section>
+
+  <section class="card" aria-label="ฟอร์มบันทึกและปุ่มทำงาน">
+    <h2>บันทึกรายการ</h2>
+    <div class="formrow">
+      <div class="field">
+        <label for="who">ผู้ทำงาน</label>
+        <input id="who" type="text" maxlength="60" placeholder="เช่น สมบัติ / แม่บ้าน / ฤทธิ์">
+      </div>
+      <div class="field">
+        <label for="task">ชนิดงาน</label>
+        <select id="task">
+          <option>เข้าพื้นที่ทำงาน</option>
+          <option>เช็คเอาต์จากพื้นที่</option>
+          <option>ตรวจคอก / ปศุสัตว์</option>
+          <option>ย้ายสต็อก / ขนย้ายผลผลิต</option>
+          <option>บันทึกอาหาร / ยา</option>
+          <option>ตรวจระบบน้ำ / ไฟ</option>
+          <option>อื่น ๆ</option>
+        </select>
+      </div>
+      <button class="btn btn-ghost" id="simBtn" type="button" title="บันทึกรายการทดสอบลงฐานข้อมูลท้องถิ่น — ใช้ตรวจว่าระบบทำงานครบโดยไม่ต้องมีแท็ก">จำลองแตะแท็ก</button>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="scanBtn" type="button">📡 เริ่มฟังการแตะแท็ก (NFC)</button>
+      <button class="btn btn-ghost" id="writeBtn" type="button">✍️ เขียนลงแท็ก NFC</button>
+      <button class="btn btn-ghost" id="exportBtn" type="button">⬇️ ส่งออก JSON</button>
+      <button class="btn btn-danger" id="wipeBtn" type="button">ล้างประวัติทั้งหมด</button>
+    </div>
+    <p class="meta" style="margin:12px 0 0">
+      ฟังแท็ก: เปิดครั้งเดียวแล้วแตะได้ต่อเนื่องทีละแท็ก · เขียนแท็ก: ต้องกดปุ่มทุกครั้งตามมาตรฐานความปลอดภัยของเบราว์เซอร์
+    </p>
+  </section>
+
+  <section class="card" aria-label="รายการบันทึกทั้งหมด">
+    <h2>ประวัติการเช็คอิน <span id="count" class="meta"></span></h2>
+    <table class="log" id="logTable" hidden>
+      <thead><tr><th>เวลา</th><th>ผู้ทำงาน</th><th>ชนิดงาน</th><th>แหล่งที่มา</th></tr></thead>
+      <tbody id="logBody"></tbody>
+    </table>
+    <p class="empty" id="emptyMsg">ยังไม่มีรายการ — กด "จำลองแตะแท็ก" เพื่อทดสอบ หรือแตะแท็กจริง (ต้องมี Chrome บนมือถือ Android + แท็ก NFC)</p>
+  </section>
+</main>
+
+<footer>
+  SOVEREIGN NFC CHECK-IN · ส่วนหนึ่งของ Project Sovereign ระดับ 2 · ข้อมูลอยู่บนเครื่องคุณเอง · <a href="/">กลับหน้าแชท LAN</a>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const whoEl = $('who'), taskEl = $('task');
+  const scanBtn = $('scanBtn'), writeBtn = $('writeBtn'), simBtn = $('simBtn');
+  const exportBtn = $('exportBtn'), wipeBtn = $('wipeBtn');
+  const statusEl = $('status'), noticeEl = $('notice');
+  const tableEl = $('logTable'), bodyEl = $('logBody'), emptyEl = $('emptyMsg'), countEl = $('count');
+
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function setStatus(kind, text){ statusEl.className = 'status ' + kind; statusEl.innerHTML = '<span class="dot"></span>' + esc(text); }
+  function showNotice(html){ noticeEl.innerHTML = html; noticeEl.hidden = false; }
+
+  // ── IndexedDB (local-first: ไม่มี network call หนึ่งคำทั้งหน้า) ──
+  let db = null;
+  const DB_NAME = 'sovereign-nfc', STORE = 'checkins';
+
+  function openDb(){
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const d = req.result;
+        if (!d.objectStoreNames.contains(STORE)) {
+          const s = d.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+          s.createIndex('ts', 'ts');
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  function addRecord(rec){
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).add(rec).onsuccess = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  function allRecords(){
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  function clearAll(){
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).clear().onsuccess = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  // ── แสดงรายการ ──
+  function fmtTime(ts){
+    const d = new Date(ts);
+    const p = (n) => ('0' + n).slice(-2);
+    return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  async function refreshList(){
+    try {
+      const list = (await allRecords()).sort((a, b) => b.ts - a.ts).slice(0, 200);
+      if (!list.length) { tableEl.hidden = true; emptyEl.style.display = ''; countEl.textContent = ''; return; }
+      tableEl.hidden = false; emptyEl.style.display = 'none';
+      countEl.textContent = '· ' + list.length + ' รายการ';
+      bodyEl.innerHTML = list.map((r) =>
+        '<tr>' +
+        '<td class="meta">' + fmtTime(r.ts) + '</td>' +
+        '<td class="main">' + esc(r.who) + '</td>' +
+        '<td class="main">' + esc(r.task) + '</td>' +
+        '<td><span class="tag ' + (r.via === 'nfc' ? 'nfc">NFC แท็ก' : 'sim">จำลอง') + '</span>' + (r.serial ? '<br><span class="meta">' + esc(r.serial) + '</span>' : '') + '</td>' +
+        '</tr>'
+      ).join('');
+    } catch (e) { setStatus('no', 'อ่านฐานข้อมูลไม่ได้: ' + e.message); }
+  }
+
+  // ── ทำงานร่วมกันทั้ง NFC จริงและโหมดจำลอง (code path เดียวกัน) ──
+  async function record(via, serial){
+    const who = whoEl.value.trim().slice(0, 60) || '(ไม่ระบุชื่อ)';
+    const task = taskEl.value;
+    const rec = { ts: Date.now(), who, task, via, serial: serial ? String(serial).slice(0, 40) : '' };
+    try {
+      await addRecord(rec);
+      await refreshList();
+    } catch (e) { setStatus('no', 'บันทึกไม่ได้: ' + e.message); }
+  }
+
+  let nfcSupported = 'NDEFReader' in window;
+  let reader = null;
+
+  function readNdefMessage(ev){
+    const out = [];
+    const serial = ev.serialNumber || '';
+    for (const record of (ev.message ? ev.message.records : [])) {
+      try {
+        if (record.recordType === 'text') {
+          const t = record.dataToString().slice(0, 300);
+          // Payload ที่เราเขียนเองเป็น JSON — ถ้าเป็น JSON ให้ใช้ who/task จากในนั้น
+          try {
+            const j = JSON.parse(t);
+            out.push({ who: String(j.who ?? t).slice(0, 60), task: String(j.task ?? '').slice(0, 80), serial });
+          } catch { out.push({ who: '(ไม่ระบุชื่อ)', task: t, serial }); }
+        } else if (record.serialNumber) out.push({ who: '(ไม่ระบุชื่อ)', task: 'ข้อมูลประเภทอื่น (' + record.recordType + ')', serial });
+      } catch { /* malformed record — skip รายการนั้น ไม่ให้ loop ทั้งหมดล้ม */ }
+    }
+    if (!out.length && serial) out.push({ who: '(ไม่ระบุชื่อ)', task: 'แตะแท็กเปล่า', serial });
+    return out;
+  }
+
+  async function startScanning(){
+    scanBtn.disabled = true;
+    try {
+      reader = new NDEFReader();
+      reader.addEventListener('reading', (ev) => {
+        const items = readNdefMessage(ev);
+        items.forEach((it) => {
+          whoEl.value = it.who;
+          taskEl.value = taskEl.options.length && [...taskEl.options].some(o => o.value === it.task) ? it.task : 'อื่น ๆ';
+          record('nfc', it.serial);
+        });
+      });
+      await reader.scan();
+      setStatus('nfc', 'กำลังฟังการแตะแท็ก NFC…');
+    } catch (e) {
+      scanBtn.disabled = false;
+      const msg = e && e.name === 'NotAllowedError' ? 'ไม่ได้รับอนุญาตใช้ NFC หรือผู้ใช้ยกเลิก' :
+                  e && e.name === 'NotSupportedError' ? 'อุปกรณ์นี้ไม่มี NFC' : e.message || 'unknown';
+      setStatus('no', 'เริ่มฟังไม่สำเร็จ: ' + msg);
+    }
+  }
+
+  async function writeTag(){
+    writeBtn.disabled = true;
+    try {
+      if (!reader) { reader = new NDEFReader(); }
+      const who = whoEl.value.trim() || '(ไม่ระบุชื่อ)';
+      const payload = JSON.stringify({ who: who.slice(0, 60), task: taskEl.value, ts: Date.now() });
+      await reader.write({ records: [{ recordType: 'text', data: payload }] }, { overwrite: true });
+      setStatus('nfc', 'เขียนลงแท็กสำเร็จ');
+    } catch (e) {
+      const msg = e && e.name === 'NotAllowedError' ? 'ไม่ได้รับอนุญาตหรือผู้ใช้ยกเลิก' : e.message || 'unknown';
+      setStatus('no', 'เขียนไม่สำเร็จ: ' + msg);
+    } finally {
+      writeBtn.disabled = false;
+    }
+  }
+  const hasWrite = nfcSupported && !!NDEFReader.prototype.write;
+  if (!hasWrite) writeBtn.hidden = true;
+
+  // ── Export JSON (ไฟล์ลงเครื่อง — ไม่มี network) ──
+  async function doExport(){
+    try {
+      const list = await allRecords();
+      const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), count: list.length, checkins: list }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      const d = new Date();
+      const p = (n) => ('0' + n).slice(-2);
+      a.href = URL.createObjectURL(blob);
+      a.download = 'nfc-checkins-' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + '.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      setStatus('nfc', 'ส่งออกแล้ว');
+    } catch (e) { setStatus('no', 'ส่งออกไม่ได้: ' + e.message); }
+  }
+
+  async function doWipe(){
+    if (!confirm('ล้างประวัติการเช็คอินที่เก็บในเครื่องนี้ทั้งหมด?')) return;
+    await clearAll(); refreshList(); setStatus('nfc', 'ล้างประวัติแล้ว');
+  }
+
+  simBtn.addEventListener('click', () => record('sim', ''));
+  scanBtn.addEventListener('click', startScanning);
+  writeBtn.addEventListener('click', writeTag);
+  exportBtn.addEventListener('click', doExport);
+  wipeBtn.addEventListener('click', doWipe);
+
+  // ── บูต ──
+  (async () => {
+    try { db = await openDb(); await refreshList(); }
+    catch (e) { setStatus('no', 'IndexedDB ใช้ไม่ได้: ' + e.message); }
+    if (nfcSupported && window.isSecureContext) {
+      setStatus('nfc', 'กด "เริ่มฟัง" เพื่อเปิด NFC (อุปกรณ์ต้องมี NFC จริง)');
+    } else if (nfcSupported) {
+      // Web NFC ต้องการ secure context (https หรือ localhost) — บน http ธรรมดาผ่าน LAN จะถูกบล็อก
+      nfcSupported = false;
+      setStatus('no', 'NFC ใช้ไม่ได้บน http ไม่ปลอดภัย — เปิดหน้านี้จาก localhost / https เท่านั้น');
+    } else {
+      setStatus('no', 'เบราว์เซอร์นี้ไม่มี Web NFC (ใช้ Chrome บน Android) — โหมดจำลองใช้ได้ครบ');
+      showNotice('<b>โหมดเดสก์ท็อป / เบราว์เซอร์ที่ไม่มี NFC:</b> กด "จำลองแตะแท็ก" เพื่อบันทึกรายการทดสอบลงฐานข้อมูลจริง — pipeline เดียวกับ NFC แท้ (NFC ต่างกันแค่แหล่งข้อมูล) ส่วนแท็กจริงใช้ได้บน Chrome บน Android เมื่อเปิดหน้านี้เป็น https / localhost');
+    }
+  })();
+})();
+</script>
+</body>
+</html>

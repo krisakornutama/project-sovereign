@@ -64,6 +64,14 @@ Repo: `https://github.com/krisakornutama/project-sovereign.git`
 
 **ผลทดสอบจริง (ผ่านทั้งหมด):** UDP bind ✅ (peer id `74fb71341ac54a61`) · `/health` ✅ · `/send` seq:1 ✅ · `/messages` เก็บไทย UTF-8 ถูกต้อง ✅ ("ทดสอบส่งภาษาไทยผ่าน HTTP ด้วย encoding UTF8 จริง") · `/peers` ✅ — หมายเหตุ: `???` ใน terminal เป็นข้อจำกัดการแสดงผล PowerShell เท่านั้น ผ่านเบราว์เซอร์เห็นไทยถูกเสมอ
 
+### ระดับ 2 — Web NFC Check-in (ใหม่ — ทำเสร็จ ณ ระดับเบราว์เซอร์ + ทดสอบจริงผ่านเบราว์เซอร์)
+
+- `sovereignty/public/nfc-checkin.html`: แตะแท็ก NFC บันทึก **ใคร/ทำอะไร/เมื่อไร/serial** ลง IndexedDB ในเครื่อง — **ไม่มี network call ใด ๆ ตลอดหน้า** (local-first เต็ม)
+- ฟีเจอร์: อ่าน NDEF (JSON payload ที่เราเขียนเอง + fallback ข้อความดิบ) · เขียนลงแท็ก (ซ่อนอัตโนมัติถ้า browser ไม่รองรับ `write`) · ส่งออก JSON ดาวน์โหลดเข้าเครื่อง · ล้างประวัติ (confirm) · mode จำลองใช้ code path เดียวกับ NFC แท้ (ต่างแค่แหล่งข้อมูล)
+- เสิร์ฟจาก mesh node: `server.js` ขยายเป็น `PAGES` map → `/` (แชท) + `/nfc` (เช็คอิน) — เพิ่มหน้าใหม่ = แก้ map เดียว
+- **ผลทดสอบจริงผ่าน OpenCode browser (localhost:4200/nfc):** HTTP 200 + 0 console error · capability detection ถูก (desktop ไม่มี NFC → โหมดจำลอง + notice) · บันทึกจำลอง → record ใน IndexedDB ทุกภาษาไทยถูกต้อง (`who: "ทดสอบผ่านเบราว์เซอร์จริง"`, `task: "ตรวจคอก / ปศุสัตว์"`, `via: "sim"`) · ปุ่มเขียนแท็กซ่อนถูกต้อง · ล้างประวัติ (confirm dialog → DB count = 0) ✅
+- **ข้อจำกัดตามธรรมชาติของ API:** "แตะแท็กจริง" ต้อง Android Chrome + แท็ก NFC + เปิดผ่าน https/localhost (Web NFC บังคับ **secure context** — เปิดจาก `file://` หรือ localhost ก็นับเป็น secure context)
+
 ---
 
 ## 📦 รายการไฟล์ใน branch `feat/docker-homelab` (พร้อมรอ agent ต่อไป)

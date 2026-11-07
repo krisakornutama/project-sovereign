@@ -31,8 +31,9 @@
 
 | ไฟล์ | หน้าที่ |
 |---|---|
-| `server.js` | UDP multicast + HTTP API + เสิร์ฟหน้าแชท — **zero npm dependencies** (built-in เท่านั้น) |
+| `server.js` | UDP multicast + HTTP API + เสิร์ฟหน้าแชท — **zero npm dependencies** (built-in เท่านั้น) · `PAGES` map เสิร์ฟ `/` (แชท) + `/nfc` (เช็คอิน) |
 | `public/lan-messenger.html` | หน้าแชท dark theme ตามระบบ (IBM Plex Sans Thai Looped + JetBrains Mono) |
+| `public/nfc-checkin.html` | หน้าเช็คอินฟาร์มด้วยแท็ก NFC — IndexedDB local-first, export JSON, โหมดจำลอง |
 | `package.json` | `npm start` — ต้อง Node >= 20 |
 | `Dockerfile` | node:22-alpine, USER node (non-root), healthcheck ยิง `/health` |
 
@@ -87,20 +88,19 @@ docker compose up -d
 
 ---
 
-## 🔜 ระดับ 2 — ทำสำเร็จในเบราว์เซอร์ (เส้นทางถัดไป — ไม่ต้องซื้อฮาร์ดแวร์)
+## ✅ ระดับ 2 — ทำสำเร็จในเบราว์เซอร์ (เริ่มแล้ว — NFC เสร็จ, Next: Bluetooth)
 
-หลักการ: หน้าเว็บสถิตของเรา (GitHub Pages) สามารถสื่อสารเครื่อง-ต่อ-เครื่องโดยตรงผ่าน API มาตรฐานของเบราว์เซอร์
+หลักการ: หน้าเว็บสถิตของเรา (GitHub Pages / เสิร์ฟจาก mesh node) สื่อสารเครื่อง-ต่อ-เครื่องโดยตรงผ่าน API มาตรฐานของเบราว์เซอร์
 
-| เทคโนโลยี | ทำอะไรได้ | ข้อจำกัดจริง |
+| เทคโนโลยี | สถานะ | ไฟล์ / รายละเอียด |
 |---|---|---|
-| **PWA Offline + Service Worker** | เว็บคู่มือ/เทมเพลตเปิดได้แม้ไม่มีเน็ต (มี `sw.js` + `manifest.webmanifest` อยู่แล้ว — ต้องเก็บ asset ครบเป็น cache-first) | ติดตั้งครั้งแรกต้องมีเน็ต 1 ครั้ง |
-| **Web Bluetooth (BLE)** | หน้าแดชบอร์ดอ่านเซนเซอร์/อุปกรณ์ BLE ในฟาร์มโดยตรง (ประตู, น้ำ, อากาศ) | Chrome/Edge เท่านั้น, ต้องคลิกอนุญาตทุก session, ~10m |
-| **Web NFC** | แท็ก NFC อ่าน/เขียนจากมือถือ — ติดที่คอก/บ่อ/สวนเพื่อเช็คอิน + บันทึกงาน | Android + Chrome เท่านั้น |
-| **WebUSB** | เชื่อมอุปกรณ์ USB วัดแบบห้ามพึ่ง driver กลาง | ต้องเปิด permission, ส่วนใหญ่ Chrome |
-| **File System Access** | สำรอง/แลกเปลี่ยนข้อมูลระหว่างเครื่องด้วยไฟล์ USB (sneakernet) | Chrome/Edge |
-| **Web Share / Share Target** | แชร์ข้อมูลระหว่างแอปบนมือถือโดยไม่มีระบบกลาง | มือถือเท่านั้น |
+| **Web NFC (เช็คอินฟาร์ม)** | ✅ **ทำแล้ว (ใช้เว็บจริง + ทดสอบ pipe ครบ)** | `public/nfc-checkin.html` เสิร์ฟที่ `/nfc` — แตะแท็กบันทึกใคร/ทำอะไร/เมื่อไร ลง **IndexedDB ในเครื่อง** (ไม่มี network call หนึ่งคำ) · เขียนลงแท็ก (อ่าน/เขียน NDEF text) · ส่งออก JSON · ล้างประวัติ + โหมดจำลองเทียบระดับ code path เดียวกันทั้งระบบ — **ผลทดสอบจริงครบ: โหลด 0 console error, บันทึกภาษาไทยลง IndexedDB ถูกต้อง, ปุ่มเขียนแท็กซ่อนอัตโนมัติเมื่อมี NFC ไม่ได้ทันใช้, confirm dialog ทำงานถูก** — ส่วน "แตะแท็กจริง" ต้องมี: Chrome บน Android + แท็ก NFC + เปิดผ่าน https/localhost (Web NFC ต้องการ secure context) |
+| **PWA Offline + Service Worker** | ⏳ คิวถัดไป | บนตัวหน้าร้านหลักอยู่แล้ว (`sw.js` + `manifest.webmanifest`) — ปรับ cache-first ครบถวั้นแพ็ knowledge page |
+| **Web Bluetooth (BLE เซนเซอร์)** | ⏳ คิวถัดไป (เครื่อง dev มี Bluetooth USB Module แล้ว) | แดชบอร์ดเซนเซอร์ ESP32/BLE — อ่าน telemetry ตรง ไม่ผ่าน cloud broker |
 
-เส้นทางถัดไป (แนะนำตามลำดับ): 1) ทำ comms fallback ผ่าน BLE 2) NFC เช็คอินฟาร์ม 3) ปรับ PWA ให้ offline เต็ม
+เส้นทางถัดไป (แนะนำตามลำดับ): 1) **BLE แดชบอร์ด** (คิวแรก — เครื่องมี BT module) 2) PWA offline เต็ม
+
+เพิ่มหน้าเครื่องมือใหม่ที่ `/` ได้ทันที: แก้ `PAGES` map ใน `server.js` (route → ไฟล์ใน `public/`) — สุ่มเสิร์ฟทุกเครื่องบน LAN โดยไม่ต้องแก้อะไรให้ต่อ
 
 ---
 

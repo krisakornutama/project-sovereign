@@ -57,6 +57,13 @@ Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0
 - `sovereignty/README-MESH.md`: สถาปัตยกรรม "อธิปไตย" 3 ระดับ — LAN ✅ → เบราว์เซอร์ (BLE/NFC/PWA/WebUSB) → เรดิโอ (LoRa/Meshtastic/SDR ต้องซื้อฮาร์ดแวร์) + สถานการณ์ใช้จริงในฟาร์ม
 - **ผลทดสอบจริง (ผ่านครบ):** UDP bind ✅ · `/health` ✅ · `/send` seq:1 ✅ · `/messages` ไทย UTF-8 ถูกต้อง ✅ · `/peers` ✅ (หลักฐาน: `sovereignty/README-MESH.md` หัวข้อ "ผลทดสอบจริง")
 
+### ระดับ 6b — Web NFC Check-in (ทำเสร็จ 100% ณ ระดับ browser + ทดสอบผ่านเบราว์เซอร์จริง)
+
+- `sovereignty/public/nfc-checkin.html` — แตะ/เขียนแท็ก NFC บันทึกงานฟาร์มลง IndexedDB ในเครื่อง (ไม่มี network call เดินตัน) + ส่งออก JSON + โหมดจำลอง (code path เดียวกับ NFC)
+- `server.js` ขยายเป็น `PAGES` map: `/` แชท + `/nfc` เช็คอิน — เสิร์ฟผ่าน mesh ถึงทุกเครื่องบน LAN
+- **ทดสอบจริงผ่าน OpenCode browser:** 0 console error · บันทึกไทยลง IndexedDB ถูกต้อง (ตรวจจาก `getAll()`) · ปุ่มเขียนแท็กซ่อนอัตโนมัติเมื่อ API ไม่ครบ · confirm dialog ล้างประวัติได้จริง (DB count 0) · 404 whitelist ทำงาน (`/nope` → 404)
+- Web Bluetooth คิวถัดไป — ตรวจแล้วเครื่อง dev นี้มี Bluetooth USB Module (`Get-PnpDevice`)
+
 ---
 
 ## ตรวจสอบคุณภาพ — รายการตรวจสอบ
@@ -75,6 +82,7 @@ Branch: `feat/docker-homelab` [`8cf0dc3` คุณภาพถัดจาก `0
 | Mobile responsive | ✅ ตรวจแล้ว | `@media (max-width:900px)` และ `(max-width:480px)` ในทุกหน้า |
 | Quality docs | ✅ ครบ | `DOCKER.md`, `AGENTS-DOCKER.md`, `WORK-STATUS.md`, `FULL-QUALITY.md` (ไฟล์นี้) |
 | LAN Messenger (ทดสอบจริง) | ✅ ผ่านครบ | UDP bind + `/health` + `/send` + `/messages` ไทย UTF-8 + `/peers` — ตาม `sovereignty/README-MESH.md` |
+| Web NFC Check-in (ทดสอบจริง) | ✅ ผ่านครบ | `/nfc` 200 + 0 console error + IndexedDB ไทยถูก + wipe confirm — ทดสอบผ่านเบราว์เซอร์จริง |
 | Mesh Docker service | ✅ สร้างแล้ว | `sovereignty/Dockerfile` + `docker-compose.yml` service `sovereign-mesh` (รันเมื่อมี Docker/Linux-RPi) |
 | Zero npm dependencies (mesh) | ✅ | `sovereignty/server.js` ใช้ node built-ins เท่านั้น — ไม่เรียก `npm install` |
 

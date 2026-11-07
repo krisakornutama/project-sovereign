@@ -168,8 +168,20 @@ process.on('SIGTERM', gracefulLeave);
 
 // ── HTTP server (API + chat UI) -----------------------------------------------
 const PUBLIC_DIR = path.join(__dirname, 'public');
-const CHAT_HTML = path.join(PUBLIC_DIR, 'lan-messenger.html');
-const CHAT_PAGE = fs.existsSync(CHAT_HTML) ? fs.readFileSync(CHAT_HTML) : null;
+
+// Sovereignty tools — each is a self-contained page (zero external requests).
+// Serving them from the mesh node means every device on the LAN reaches them
+// at http://<mesh-host>:4200/<path> — no internet, no cdn, no cloud.
+const PAGES = new Map([
+  ['/', 'lan-messenger.html'],
+  ['/nfc', 'nfc-checkin.html'],
+]);
+const PAGE_CACHE = new Map(); // pathname -> Buffer | null (loaded once at startup)
+
+for (const [route, file] of PAGES) {
+  const full = path.join(PUBLIC_DIR, file);
+  PAGE_CACHE.set(route, fs.existsSync(full) ? fs.readFileSync(full) : null);
+}
 
 function json(res, status, body) {
   const data = JSON.stringify(body);
@@ -237,10 +249,13 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { ok: true, seq });
     }
 
-    // Chat UI (bundled, static, response cache disabled)
-    if (u.pathname === '/' && CHAT_PAGE) {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-      return res.end(CHAT_PAGE);
+    // Bundled sovereignty tool pages (static, cache disabled)
+    if (PAGE_CACHE.has(u.pathname)) {
+      const page = PAGE_CACHE.get(u.pathname);
+      if (page) {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+        return res.end(page);
+      }
     }
 
     return json(res, 404, { error: 'not found' });

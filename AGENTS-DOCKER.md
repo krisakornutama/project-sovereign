@@ -35,9 +35,10 @@ Branch: `feat/docker-homelab` (คุณภาพสูงสุดแล้ว 
 
 | ข้อ | งาน | รายละเอียด |
 |---|---|---|
-| 5a | **ทดสอบ LAN Messenger ในสภาพจริง 2 เครื่อง** | เปิด `sovereignty/server.js` 2 เครื่องบน LAN เดียว → เช็ค `/peers` ว่าเห็นกันทั้งสองฝั่ง → แชทปลายทาง UI + WebSocket-style polling (ทดสอบแล้วเครื่องเดียวผ่านครบ — ขาดเครื่องที่ 2 ใน sandbox) |
-| 5b | **ขยายสื่อสารเบราว์เซอร์** (ดูแผนใน `sovereignty/README-MESH.md` ระดับ 2) | Web Bluetooth (แดชบอร์ดเซนเซอร์ BLE) → Web NFC (เช็คอินฟาร์ม) → PWA offline เต็ม (`sw.js` cache-first) |
-| 5c | **ต่อข้อมูลจาก Meshtastic/LoRa เมื่อมีฮาร์ดแวร์** | สูบข้อความจาก mesh node → เด้งเข้า API `/messages` แบบเดียวกับที่มี — **รูปแบบ API คงเดิม ไม่ต้องเขียน endpoint ใหม่** |
+| 5a | **ทดสอบ LAN Messenger ในสภาพจริง 2 เครื่อง** | เปิด `sovereignty/server.js` 2 เครื่องบน LAN เดียว → เช็ค `/peers` ว่าเห็นกันทั้งสองฝั่ง → แชทปลายทาง UI (ทดสอบแล้วเครื่องเดียวผ่านครบ — ขาดเครื่องที่ 2 ใน sandbox) |
+| 5b | **Web NFC เช็คอินฟาร์ม — เสร็จแล้ว** (`public/nfc-checkin.html` เสิร์ฟที่ `/nfc`) | ทดสอบผ่านเบราว์เซอร์จริงครบ (IndexedDB ไทยถูก + wipe + export UI) — **เหลือเรียบรอบสมาร์ตโฟนจริง:** Android Chrome + แท็ก NFC + เปิดผ่าน https/localhost แล้วแตะ/เขียนจริง |
+| 5c | **Web Bluetooth แดชบอร์ดเซนเซอร์** (คิวถัดไป — เครื่อง dev มี BT module) | หน้า `public/ble-sensors.html` — คู่ service UUID จริงของเซนเซอร์ที่จะมีอุปกรณ์; ถ้ายังไม่มีอุปกรณ์ ทำเป็นแบบโปรไฟล์ข้อมูลภาพรวม + โหมดจำลองเหมือน NFC |
+| 5d | **ต่อข้อมูลจาก Meshtastic/LoRa เมื่อมีฮาร์ดแวร์** | สูบข้อความจาก mesh node → เด้งเข้า API `/messages` แบบเดียวกับที่มี — **รูปแบบ API คงเดิม ไม่ต้องเขียน endpoint ใหม่** |
 
 ---
 
