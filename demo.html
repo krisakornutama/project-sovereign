@@ -58,6 +58,9 @@ h1 em{font-style:normal;color:var(--cyan)}
   .frame iframe{height:72vh}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.demo-load{font-family:var(--mono);font-size:.82rem;font-weight:700;letter-spacing:.04em;color:#030712;background:var(--green);border:0;border-radius:6px;padding:10px 16px;cursor:pointer}
+.demo-load:hover{background:#6ee7b7}
+.frame-wrap[hidden]{display:none}
 </style>
 <script type="application/ld+json">
 {
@@ -109,14 +112,36 @@ h1 em{font-style:normal;color:var(--cyan)}
       <li>อยากใช้แบบเต็มจอ เปิดที่ <a href="https://harvest-ledger.pages.dev/app">harvest-ledger.pages.dev/app</a></li>
     </ol>
   </section>
-  <div class="frame-wrap">
-    <div class="frame">
-      <iframe src="https://harvest-ledger.pages.dev/app" title="ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์" loading="lazy" referrerpolicy="no-referrer"></iframe>
-    </div>
+  <div class="frame-wrap" id="demoFrameWrap" hidden>
+    <div class="frame" id="demoFrame"></div>
   </div>
+  <p class="frame-note" id="demoLoader"><button class="demo-load" type="button" id="demoLoad">โหลดเดโมในหน้านี้</button>
+    — เดโมโหลดจาก <code>harvest-ledger.pages.dev</code> เมื่อกดเท่านั้น (เปิดหน้านี้จะไม่มีการยิงคำขอออกไปข้างนอก)</p>
   <p class="frame-note">เลื่อนในกรอบได้ · หรือเปิดแบบเต็มจอที่ <a href="https://harvest-ledger.pages.dev/app" target="_blank" rel="noopener">harvest-ledger.pages.dev/app</a></p>
   <p class="fallback">ถ้ากรอบด้านบนไม่แสดงผล เปิดโดยตรงที่ <code>https://harvest-ledger.pages.dev/app</code> แล้วกลับมาอ่านต่อที่ <a href="projects.html">หน้าผลงาน</a> หรือ <a href="me.html">หน้าผู้เขียน</a></p>
+  <noscript><p class="fallback">หน้านี้ใช้ JavaScript เฉพาะตอนโหลดกรอบเดโม — เปิดเดโมได้โดยตรงที่ <a href="https://harvest-ledger.pages.dev/app">harvest-ledger.pages.dev/app</a></p></noscript>
 </main>
+<script>
+/* เดโมโหลดเมื่อผู้ใช้กดเท่านั้น: เดโมเรียก API ของตัวเองข้ามโดเมน ถ้าโหลดอัตโนมัติ
+   console จะเต็มไปด้วย CORS error ทั้งที่ผู้ใช้ยังไม่ได้ขออะไร และด่าน audit ของเว็บ
+   ต้องเห็นหน้าเงียบ ๆ ตามจริง (ตัวตรวจยังเข้มเท่าเดิม ไม่ได้ผ่อนกฎ) */
+(function () {
+  'use strict';
+  var load = document.getElementById('demoLoad');
+  var wrap = document.getElementById('demoFrameWrap');
+  var frame = document.getElementById('demoFrame');
+  if (!load || !wrap || !frame) return;
+  load.addEventListener('click', function () {
+    var iframe = document.createElement('iframe');
+    iframe.src = 'https://harvest-ledger.pages.dev/app';
+    iframe.title = 'ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์';
+    iframe.setAttribute('referrerpolicy', 'no-referrer');
+    frame.appendChild(iframe);
+    wrap.hidden = false;
+    load.hidden = true;
+  });
+})();
+</script>
 <script src="nav.js" defer></script>
 </body>
 </html>
