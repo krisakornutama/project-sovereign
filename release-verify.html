@@ -94,9 +94,13 @@ footer a{color:rgba(216,211,202,.6)}
   <div class="card">
     <p class="label">กุญแจ release (fingerprint)</p>
     <p class="fingerprint" id="fp">1afcc7d951d822a7dfe384d89209aed2</p>
-    <p class="note">ประกาศไว้ที่นี่และในไฟล์ <code>docs/keys/attest-release.pub.pem</code> ของ repository
+    <p class="label">public key (Ed25519, PEM)</p>
+    <pre id="pubkey">-----BEGIN PUBLIC KEY-----
+MCowBQYDK2VwAyEA/T3GybhH+pXie2L4BAn/pIjGfTIUhg5+IDRNH6KK4Hs=
+-----END PUBLIC KEY-----</pre>
+    <p class="note">ไฟล์เดียวกันดาวน์โหลดได้ที่ <a href="attest-release.pub.pem">attest-release.pub.pem</a>
       (ตัว fingerprint คือ SHA-256 ของ public key แบบ SPKI, 32 ตัวอักษรแรก)
-      ถ้าค่าที่เห็นไม่ตรงกับที่อื่นที่คุณเชื่อถือ ให้หยุดทันที</p>
+      ประกาศซ้ำไว้นอก GitHub โดยเจตนา — ถ้าค่าที่นี่ไม่ตรงกับค่าที่อื่นที่คุณเชื่อถือ ให้หยุดทันที</p>
   </div>
 
   <h2>1. โหลดสองไฟล์ที่ต้องใช้ตรวจ</h2>
