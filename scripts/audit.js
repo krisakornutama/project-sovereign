@@ -4,10 +4,6 @@
    Part 2 (browser, needs playwright): zero console/page errors and zero
    horizontal overflow on every page (desktop + mobile), and smoke-checks of
    the interactive widgets. External links are listed, not fetched (CI-safe).
-   Console errors that provably come from an external embedded app (iframe on
-   another origin, เช่น แอปทดลองใช้จริงใน demo.html) ถูกแยกรายงานเป็น INFO ไม่ล้ม
-   deploy — backend ของแอปนอกเหนือการควบคุมของ repo (ล่ม/404 ก็พ่น CORS ในคอนโซล
-   หน้าเรา) แต่ error จากโค้ดของ repo เอง ยังล้มเกณฑ์ตามเดิมทุกกรณี
    Usage: node scripts/audit.js  (serves this folder on 127.0.0.1:4919 itself) */
 'use strict';
 const fs = require('fs');
@@ -81,24 +77,6 @@ async function copyGate() {
   report(st.length === 0, 'copy gate self-test (catches misspelling / Thai-Latin join / dropped การันต์ / raw & / bad spacing)', st.join(', ') || 'all 5 classes caught');
   const r = runCheck(ROOT);
   report(r.ok, `copy gate: ${r.files} files clean (site + README + docs when present)`, r.ok ? '' : `${r.findings} finding(s) listed above`);
-}
-
-/* ───────── part 1.7: เสียงรบกวนจากแอปภายนอกที่ฝังด้วย iframe (แยกชั้น ไม่ล้ม deploy) ─────────
-   demo.html ฝังแอปภายนอก (harvest-ledger.pages.dev) — เมื่อ backend ของแอปนั้น
-   (api.sovereignoriginshop.dpdns.org) ล่ม/ตอบ 404 เบราว์เซอร์พ่น CORS / Failed-to-load
-   ลงคอนโซลของหน้าเรา ทั้งที่โค้ดของ repo ไม่มีส่วนเกี่ยวข้องเลย
-   ตัดสินใจ (ตามปรัชญาเดิมของแฟ้มนี้ "External links are listed, not fetched"):
-   - error ที่แหล่งที่มา/ข้อความชี้ชัดถึง context ภายนอก → รายงาน INFO แยกไว้ โปร่งใส ไม่ซ่อน
-   - error จากโค้ดของ repo เอง (แหล่งที่มา = origin ทดสอบ หรือ pageerror) → ล้ม deploy ตามเดิม */
-const TEST_ORIGIN = 'http://127.0.0.1:4919/';
-const EXTERNAL_APP = /api\.sovereignoriginshop\.dpdns\.org|harvest-ledger\.pages\.dev/;
-function isExternalAppNoise(m) {
-  if (EXTERNAL_APP.test(m.text())) return true;
-  const url = (m.location() && m.location().url) || '';
-  return /^https?:\/\//.test(url) && !url.startsWith(TEST_ORIGIN);
-}
-function logExternal(label, page, texts) {
-  if (texts.length) console.log(`INFO ${label.trim()} ${page}: ${texts.length} console error(s) from external embedded app (outside this repo) — listed, not failed :: ${texts[0].slice(0, 120)}`);
 }
 
 async function main() {
@@ -199,11 +177,8 @@ async function main() {
     for (const page of pages) {
       const ctx = await browser.newContext({ viewport });
       const p = await ctx.newPage();
-      const errs = []; const extErrs = [];
-      p.on('console', (m) => {
-        if (m.type() !== 'error') return;
-        if (isExternalAppNoise(m)) extErrs.push(m.text()); else errs.push(m.text());
-      });
+      const errs = [];
+      p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
       p.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
       await p.goto(`http://127.0.0.1:4919/${page}`, { waitUntil: 'networkidle', timeout: 30000 });
       // รอสัญญาณจริงของฟอนต์ (fonts.ready) แทนหน้าต่างตาย 400ms — CDN มาช้ากว่านั้นคือเรื่องเครือข่าย ไม่ใช่ defect ของหน้า
@@ -211,7 +186,6 @@ async function main() {
       await p.waitForTimeout(150);
       const overflow = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       report(errs.length === 0 && overflow === 0, `${label} ${page}`, `errors=${errs.length} overflow=${overflow}${errs.length ? ' :: ' + errs.join(' | ').slice(0, 160) : ''}`);
-      logExternal(label, page, extErrs);
       const m = await probe(p);
       const at = `${label.trim()} ${page}`;
       for (const why of fontGate(m)) gate.fontFails.push(`${at} ${why}`);
@@ -423,13 +397,7 @@ async function main() {
   for (const page of pages) {
     const errs = [];
     // ตัดเสียงรบกวนจากเครือข่าย (Failed to load resource) — สิ่งที่ต้องเป็นศูนย์คือ JS ที่พัง ไม่ใช่ CDN ที่ล่ม
-    // + แอปภายนอกใน iframe (backend นอก repo ล่ม = CORS พ่นในหน้าเรา) — นอกเกณฑ์ของ repo
-    const onConsole = (m) => {
-      if (m.type() !== 'error') return;
-      if (/Failed to load resource/.test(m.text())) return;
-      if (isExternalAppNoise(m)) return;
-      errs.push(m.text());
-    };
+    const onConsole = (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errs.push(m.text()); };
     const onPageError = (e) => errs.push('pageerror: ' + e.message);
     dp.on('console', onConsole);
     dp.on('pageerror', onPageError);
