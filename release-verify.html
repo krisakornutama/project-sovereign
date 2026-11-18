@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตรวจไฟล์ที่ดาวน์โหลด — กุญแจ release ของ Sovereign OS</title>
+<meta name="description" content="กุญแจสาธารณะ (public key) และ fingerprint ของ release Sovereign OS พร้อมคำสั่งตรวจสั้น ๆ: ตรวจได้ว่าไฟล์ที่ดาวน์โหลดมาเป็นไบต์เดียวกันกับที่ลงนามไว้ โดยไม่ต้องเชื่อ GitHub และไม่ต้องต่อเน็ต">
+<meta name="author" content="กฤษกรณ์ อุตมะ (Krisakorn Utama)">
+<meta name="theme-color" content="#030712">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Crect%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%223%22%20fill%3D%22%2523030712%22%2F%3E%3Ccircle%20cx%3D%227%22%20cy%3D%227%22%20r%3D%223.6%22%20fill%3D%22none%22%20stroke%3D%22%252322d3ee%22%20stroke-width%3D%221.4%22%2F%3E%3Cpath%20d%3D%22M10%2010l3.4%203.4%22%20stroke%3D%22%252334d399%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="canonical" href="https://sovereignoriginshop.dpdns.org/release-verify.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Project Sovereign">
+<meta property="og:locale" content="th_TH">
+<meta property="og:title" content="ตรวจไฟล์ที่ดาวน์โหลด — กุญแจ release ของ Sovereign OS">
+<meta property="og:description" content="กุญแจสาธารณะและ fingerprint ของ release Sovereign OS พร้อมคำสั่งตรวจสั้น ๆ: ตรวจได้ว่าไฟล์ที่ดาวน์โหลดมาเป็นไบต์เดียวกันกับที่ลงนามไว้">
+<meta property="og:url" content="https://sovereignoriginshop.dpdns.org/release-verify.html">
+<meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ตรวจไฟล์ที่ดาวน์โหลด — กุญแจ release ของ Sovereign OS">
+<meta name="twitter:description" content="กุญแจสาธารณะและ fingerprint ของ release Sovereign OS พร้อมคำสั่งตรวจสั้น ๆ">
+<meta name="twitter:image" content="https://sovereignoriginshop.dpdns.org/og.png">
+<style>
+:root{
+  --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
+  --green:#34d399; --cyan:#22d3ee; --txt:#e5e7eb; --dim:#9ca3af; --faint:#6b7280;
+  --leaf:#F3EADB; --stamp:#B3352C;
+  --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','Noto Sans Thai Looped','Cascadia Code','Courier New',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.7;
+  -webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(34,211,238,.10),transparent 64%)}
+::selection{background:rgba(52,211,153,.35);color:#ecfdf5}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+a{color:var(--green)}
+
+header.topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;
+  align-items:center;gap:12px;padding:13px 20px;border-bottom:1px solid var(--line);
+  background:rgba(3,7,18,.9);backdrop-filter:blur(8px);flex-wrap:wrap}
+.wordmark{font-family:var(--mono);font-weight:700;font-size:.74rem;letter-spacing:.16em;
+  color:var(--txt);text-decoration:none;white-space:nowrap}
+.wordmark span{color:var(--stamp)}
+.topbar nav{display:flex;gap:14px;font-family:var(--mono);font-size:.7rem;flex-wrap:wrap}
+.topbar nav a{color:var(--dim);text-decoration:none}
+.topbar nav a:hover{color:var(--txt)}
+.topbar nav a[aria-current="page"]{color:#f3eadb;border-bottom:1px solid var(--stamp)}
+
+main{max-width:760px;margin:0 auto;padding:26px 20px 72px}
+.eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.26em;color:var(--faint);
+  text-transform:uppercase;margin:0 0 10px}
+h1{font-size:clamp(1.45rem,4.6vw,2rem);line-height:1.4;margin:0 0 12px;color:#f1ece2;font-weight:600}
+h2{font-size:1.02rem;margin:34px 0 10px;color:#f1ece2;font-weight:600}
+p{margin:0 0 12px}
+.lede{color:rgba(229,231,235,.8);margin-bottom:22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:18px;margin:0 0 22px}
+.card h2{margin-top:0}
+.label{font-family:var(--mono);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 6px}
+.value{font-family:var(--mono);font-size:clamp(.82rem,3.4vw,1.02rem);font-weight:700;color:#f1ece2;
+  background:rgba(0,0,0,.4);border:1px solid rgba(52,211,153,.22);border-radius:6px;
+  padding:10px 12px;word-break:break-all;white-space:pre-wrap;margin:0 0 10px}
+pre{font-family:var(--mono);font-size:.76rem;line-height:1.6;background:rgba(0,0,0,.5);
+  border:1px solid rgba(52,211,153,.16);border-radius:6px;padding:12px 14px;margin:0 0 10px;
+  white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;color:#e5e7eb}
+code{font-family:var(--mono);font-size:.86em;color:#a9f0e1;word-break:break-word}
+ol,ul{margin:0 0 12px;padding-left:22px}
+li{margin:0 0 9px}
+.note{font-size:.86rem;color:var(--dim);margin:0 0 10px}
+.warn{font-size:.86rem;color:#f3c9a0;margin:0 0 10px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px 50px;
+  font-size:.78rem;color:var(--faint);text-align:center}
+footer a{color:var(--dim)}
+@media (max-width:520px){pre{font-size:.72rem}main{padding:22px 16px 60px}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="wordmark" href="index.html">PROJECT<span> SOVEREIGN</span></a>
+  <nav aria-label="เมนูหลัก">
+    <a href="index.html">ภาพรวม</a>
+    <a href="projects.html">ผลงาน</a>
+    <a href="me.html">ผู้เขียน</a>
+    <a href="release-verify.html" aria-current="page">ตรวจ release</a>
+  </nav>
+</header>
+
+<main>
+  <p class="eyebrow">release verification</p>
+  <h1>ตรวจว่าไฟล์ที่คุณดาวน์โหลดคือไบต์ที่เราลงนามไว้</h1>
+  <p class="lede">ทุก release ของ Sovereign OS แนบเอกสาร <code>sovereign-attest.json</code> ที่เซ็นด้วยกุญแจ
+    Ed25519 ไว้ด้วย หน้านี้ประกาศ <strong>กุญแจสาธารณะ</strong> และ <strong>fingerprint</strong> ของกุญแจนั้น
+    ไว้บนเว็บนี้ ซึ่งเป็นคนละช่องทางกับ repository — ถ้าบัญชี GitHub ถูกยึด ผู้โจมตีจะแก้ไฟล์ได้
+    แต่แก้ fingerprint ที่ประกาศไว้ที่นี่ไม่ได้พร้อมกัน</p>
+
+  <div class="card">
+    <h2>กุญแจ release ที่ใช้ตรวจ</h2>
+    <p class="label">fingerprint (32 hex แรกของ SHA-256 ของ SPKI)</p>
+    <p class="value" id="key-fingerprint">1afcc7d951d822a7dfe384d89209aed2</p>
+    <p class="label">public key (Ed25519, PEM)</p>
+    <pre id="public-key">-----BEGIN PUBLIC KEY-----
+MCowBQYDK2VwAyEA/T3GybhH+pXie2L4BAn/pIjGfTIUhg5+IDRNH6KK4Hs=
+-----END PUBLIC KEY-----</pre>
+    <p class="note">ไฟล์เดียวกันนี้ดาวน์โหลดได้ที่
+      <a href="attest-release.pub.pem">attest-release.pub.pem</a> —
+      ถ้าค่าที่คุณเห็นไม่ตรงกับที่อื่นที่คุณเชื่อถือ ให้หยุดทันที</p>
+  </div>
+
+  <h2>วิธีตรวจ (3 ขั้น)</h2>
+  <ol>
+    <li><strong>โหลดเอกสารใบรับรอง</strong> — <code>sovereign-attest.json</code> จากหน้า Release
+      เดียวกับไฟล์ที่คุณดาวน์โหลด</li>
+    <li><strong>โหลดตัวตรวจ</strong> — สองไฟล์ ไม่มี dependency:
+<pre>curl -fsSL --create-dirs -o verifier/tools/attest-release.mjs \
+  https://raw.githubusercontent.com/krisakornutama/sovereign-origin/main/tools/attest-release.mjs
+curl -fsSL --create-dirs -o verifier/tools/attest/document.mjs \
+  https://raw.githubusercontent.com/krisakornutama/sovereign-origin/main/tools/attest/document.mjs</pre>
+    </li>
+    <li><strong>วางไฟล์ไว้ในโฟลเดอร์เดียวแล้วรัน</strong> — ต้องมี Node 20 ขึ้นไป:
+<pre>sov-attest/
+  Sovereign-OS-…-portable.exe
+  Sovereign-OS-…-win-x64.zip
+  sovereign-attest.json
+
+node verifier/tools/attest-release.mjs --verify sov-attest/sovereign-attest.json \
+  --fingerprint=1afcc7d951d822a7dfe384d89209aed2 --dir=sov-attest</pre>
+    </li>
+  </ol>
+  <p class="note">คำสั่งนี้ตรวจสามชั้น: ลายเซ็นของทุกใบรับรอง, การต่อ chain ของแต่ละไฟล์
+    และแฮชของไบต์จริงในโฟลเดอร์ (ขนาดและ sha256) — ไม่มีการต่อเน็ตระหว่างตรวจ</p>
+
+  <h2>อ่านผลลัพธ์อย่างไร</h2>
+  <ul>
+    <li><strong>ผ่าน</strong> — ไฟล์ที่คุณถืออยู่คือไบต์เดียวกับที่เซ็นไว้ และลายเซ็นมาจากกุญแจด้านบน</li>
+    <li><strong>ไม่ผ่าน</strong> — อย่าติดตั้ง ให้ลบไฟล์แล้วดาวน์โหลดใหม่ ถ้ายังไม่ผ่านอีก
+      แปลว่าช่องทางดาวน์โหลดถูกแก้ ให้แจ้งผู้พัฒนา</li>
+    <li><strong>ไฟล์ที่ไม่ได้ถูกเซ็น</strong> — ตัวตรวจจะบอกแยก เช่นไฟล์ที่คุณเพิ่มเอง
+      ไม่ทำให้ผลรวมไม่ผ่าน แต่ควรรู้ว่ามันไม่ได้อยู่ในใบรับรอง</li>
+  </ul>
+
+  <p class="warn">อย่าใช้ <code>SHA256SUMS.txt</code> เป็นหลักฐานแทน — ไฟล์นั้นมากับที่เดียวกับไฟล์ติดตั้ง
+    ใครแก้ช่องทางดาวน์โหลดได้ก็แก้ทั้งคู่พร้อมกันได้ fingerprint ข้างบนคือสิ่งที่ต้องมาจากช่องทางอื่น</p>
+
+  <h2>ถ้าบิลด์ถูกเพิกถอน</h2>
+  <p>ผู้พัฒนาลงนามเพิกถอนบิลด์ที่พบปัญหาได้ และระบุวันที่มีผลได้ (เพิกถอนเฉพาะของที่ปล่อยก่อนวันนั้น
+    ไม่เหวี่ยงทั้งประวัติ) ตัวตรวจจะปฏิเสธบิลด์ที่ถูกเพิกถอนให้เอง — อย่าใช้ <code>--allow-revoked</code>
+    เว้นแต่คุณตั้งใจดูหลักฐานของบิลด์ที่ถูกถอนจริง ๆ</p>
+
+  <p class="note">รายละเอียดทั้งหมด (การหมุนกุญแจ การเพิกถอน และข้อจำกัดที่ยังเหลือ) อยู่ใน
+    <a href="https://github.com/krisakornutama/sovereign-origin/blob/main/docs/SOVEREIGN-ATTEST.md">docs/SOVEREIGN-ATTEST.md</a>
+    และหน้า fingerprint ที่ repository หลัก:
+    <a href="https://krisakornutama.github.io/sovereign-origin/release-verify.html">krisakornutama.github.io/sovereign-origin/release-verify.html</a></p>
+</main>
+
+<footer>
+  หน้านี้เป็นช่องทางที่สองนอก GitHub โดยเจตนา — fingerprint ที่ประกาศซ้ำในช่องทางที่แยกจากที่เก็บโค้ด
+  ทำให้การยึดบัญชีเดียวไม่พอจะปลอมทั้งไฟล์และกุญแจ ·
+  <a href="index.html">กลับหน้าภาพรวม</a>
+</footer>
+
+</body>
+</html>
