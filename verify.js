@@ -4,10 +4,21 @@
 //   Ed25519 = WebCrypto · ML-DSA-44/SLH-DSA = @noble/post-quantum (context "sovereign-pq-receipt/v1")
 import { sha256 } from '@noble/hashes/sha2.js';
 import { ml_dsa44 } from '@noble/post-quantum/ml-dsa.js';
-import { slh_dsa_shake_128s } from '@noble/post-quantum/slh-dsa.js';
+import { slh_dsa_shake_128f, slh_dsa_shake_128s } from '@noble/post-quantum/slh-dsa.js';
 
 const ALG_PROFILE = 'sovereign.ed25519+ml_dsa44.v1';
-const ALG_PROFILE_SLH = 'sovereign.ed25519+ml_dsa44+slh_dsa128s.v1';
+const ALG_PROFILE_SLH = 'sovereign.ed25519+ml_dsa44+slh_dsa128s.v1';      // สามชั้นรุ่นกระชับ (v1.4)
+const ALG_PROFILE_SLH_FAST = 'sovereign.ed25519+ml_dsa44+slh_dsa128f.v1'; // สามชั้นรุ่นเร็ว (v2.4 · Q-05)
+
+// ชั้น SLH ตามรุ่นที่ใบประกาศเอง — ผู้ตรวจไม่มีโปรไฟล์ตายตัว (พอร์ตจาก src/identity.js ฝั่งไลบรารี)
+const SLH_VARIANTS = {
+  slh_dsa128s: { keyField: 'slh_dsa128s', profile: ALG_PROFILE_SLH, impl: slh_dsa_shake_128s, label: 'SLH-DSA-128s' },
+  slh_dsa128f: { keyField: 'slh_dsa128f', profile: ALG_PROFILE_SLH_FAST, impl: slh_dsa_shake_128f, label: 'SLH-DSA-128f' },
+};
+function slhVariantForProfile(profile) {
+  for (const v of Object.values(SLH_VARIANTS)) if (v.profile === profile) return v;
+  return null;
+}
 const PQ_CONTEXT = new TextEncoder().encode('sovereign-pq-receipt/v1');
 const ACCOUNTING_FORMAT = 'sovereign.accounting-ledger.v1';
 const ACCOUNTING_VERSION = 1;
@@ -33,11 +44,11 @@ function coreBytes(e) {
 
 // ตรวจใบเสร็จ 1 ใบ — ผลรูปเดียวกับ verifyReceipt ของไลบรารี (ทุกชั้นของโปรไฟล์ต้องผ่าน)
 async function verifyReceipt(e) {
-  const out = { valid: false, ed25519: null, ml_dsa44: null, slh_dsa128s: null, problems: [] };
+  const out = { valid: false, ed25519: null, ml_dsa44: null, slh_dsa128s: null, slh_dsa128f: null, slh_layer: null, problems: [] };
   if (!e || typeof e !== 'object') { out.problems.push('ไม่ใช่ object'); return out; }
   if (!e.id || !e.issued_at || e.payload === undefined) { out.problems.push('แกนของใบเสร็จขาด (id/issued_at/payload)'); return out; }
-  const triple = e.alg_profile === ALG_PROFILE_SLH;
-  if (e.alg_profile && e.alg_profile !== ALG_PROFILE && !triple) out.problems.push('alg_profile ไม่ตรงระบบนี้ (' + e.alg_profile + ')');
+  const slhVariant = e.alg_profile ? slhVariantForProfile(e.alg_profile) : null;
+  if (e.alg_profile && e.alg_profile !== ALG_PROFILE && !slhVariant) out.problems.push('alg_profile ไม่ตรงระบบนี้ (' + e.alg_profile + ')');
 
   const bytes = coreBytes(e);
   const sigs = e.signatures || {};
@@ -72,24 +83,27 @@ async function verifyReceipt(e) {
     } catch (err) { out.problems.push('ML-DSA ตรวจไม่สำเร็จ: ' + err.message); }
   }
 
-  // 3) SLH-DSA-128s (FIPS 205) — เฉพาะโปรไฟล์สามชั้น (ขาด = ใบไม่สมบูรณ์)
-  if (triple) {
-    if (!sigs.slh_dsa128s?.pk_b64 || !sigs.slh_dsa128s?.sig_b64) {
-      out.problems.push('ไม่มีลายเซ็น SLH-DSA-128s');
+  // 3) SLH-DSA (FIPS 205) — เฉพาะโปรไฟล์สามชั้น · รุ่น (128s/128f) อ่านจาก alg_profile ในใบเอง
+  //    ขาด = ใบไม่สมบูรณ์ · แปะลายเซ็นข้ามรุ่น (ใบ 128f มี sig 128s) = "ไม่มีลายเซ็น" ทันที
+  if (slhVariant) {
+    const sig = sigs[slhVariant.keyField];
+    out.slh_layer = slhVariant.keyField;
+    if (!sig?.pk_b64 || !sig?.sig_b64) {
+      out.problems.push('ไม่มีลายเซ็น ' + slhVariant.label);
     } else {
       try {
-        const pk = b64ToBytes(sigs.slh_dsa128s.pk_b64);
-        if (pk.length !== slh_dsa_shake_128s.lengths.publicKey) {
-          out.problems.push('SLH-DSA pk ความยาว ' + pk.length + ' ≠ ' + slh_dsa_shake_128s.lengths.publicKey);
+        const pk = b64ToBytes(sig.pk_b64);
+        if (pk.length !== slhVariant.impl.lengths.publicKey) {
+          out.problems.push(slhVariant.label + ' pk ความยาว ' + pk.length + ' ≠ ' + slhVariant.impl.lengths.publicKey);
         } else {
-          out.slh_dsa128s = slh_dsa_shake_128s.verify(b64ToBytes(sigs.slh_dsa128s.sig_b64), bytes, pk, { context: PQ_CONTEXT });
-          if (!out.slh_dsa128s) out.problems.push('ลายเซ็น SLH-DSA-128s ไม่ตรงข้อมูล');
+          out[slhVariant.keyField] = slhVariant.impl.verify(b64ToBytes(sig.sig_b64), bytes, pk, { context: PQ_CONTEXT });
+          if (!out[slhVariant.keyField]) out.problems.push('ลายเซ็น ' + slhVariant.label + ' ไม่ตรงข้อมูล');
         }
-      } catch (err) { out.problems.push('SLH-DSA ตรวจไม่สำเร็จ: ' + err.message); }
+      } catch (err) { out.problems.push(slhVariant.label + ' ตรวจไม่สำเร็จ: ' + err.message); }
     }
   }
 
-  out.valid = out.ed25519 === true && out.ml_dsa44 === true && (triple ? out.slh_dsa128s === true : true);
+  out.valid = out.ed25519 === true && out.ml_dsa44 === true && (slhVariant ? out[slhVariant.keyField] === true : true);
   return out;
 }
 
@@ -171,17 +185,20 @@ function badge(ok, label) {
   return '<span class="badge na">– ' + label + '</span>';
 }
 function problemsList(p) { return p.length ? '<ul class="problems">' + p.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' : ''; }
-function lanes(out, triple) {
+function lanes(out) {
   const parts = [
     '<span class="layer ' + (out.ed25519 ? 'ok' : 'bad') + '">Ed25519 ' + (out.ed25519 ? '✓' : '✗') + '</span>',
     '<span class="layer ' + (out.ml_dsa44 ? 'ok' : 'bad') + '">ML-DSA-44 ' + (out.ml_dsa44 ? '✓' : '✗') + '</span>',
   ];
-  if (triple) parts.push('<span class="layer ' + (out.slh_dsa128s ? 'ok' : 'bad') + '">SLH-DSA-128s ' + (out.slh_dsa128s ? '✓' : '✗') + '</span>');
+  const v = out.slh_layer ? SLH_VARIANTS[out.slh_layer] : null;
+  if (v) {
+    const ok = out[v.keyField] === true;
+    parts.push('<span class="layer ' + (ok ? 'ok' : 'bad') + '">' + v.label + ' ' + (ok ? '✓' : '✗') + '</span>');
+  }
   return '<div class="lane">' + parts.join('') + '</div>';
 }
 
 function cardReceipt(e, index) {
-  const triple = e && e.alg_profile === ALG_PROFILE_SLH;
   const wrap = document.createElement('div');
   wrap.className = 'card';
   wrap.innerHTML = '<h2>ใบเสร็จ' + (index ? ' #' + index : '') + ' <span id="st' + index + '"></span></h2>';
@@ -196,7 +213,7 @@ function cardReceipt(e, index) {
       ['ยอด (payload.total_thb)', typeof e.payload?.total_thb === 'number' ? '฿' + e.payload.total_thb.toFixed(2) : '<span class="small">ไม่มียอด</span>'],
       ['sha256(canonical ใบ)', sha256HexOf(enc.encode(canonical(e)))],
     ].map(([k, v]) => '<div class="row"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>').join('');
-    wrap.innerHTML += rows + lanes(out, triple) + problemsList(out.problems) + details(e);
+    wrap.innerHTML += rows + lanes(out) + problemsList(out.problems) + details(e);
   });
 }
 
@@ -263,14 +280,13 @@ async function handleAccounting(name, text) {
 }
 
 async function cardReceiptInto(card, doc, n) {
-  const triple = doc.receipt && doc.receipt.alg_profile === ALG_PROFILE_SLH;
   const out = await verifyReceipt(doc.receipt);
   const shaOk = !doc.receipt_sha256 || doc.receipt_sha256 === sha256HexOf(enc.encode(canonical(doc.receipt)));
   card.innerHTML = '<h2>เอกสาร #' + n + ' · ' + esc(doc.receipt_id || '') + ' ' + badge(out.valid, out.valid ? 'ผ่าน' : 'ไม่ผ่าน') + (shaOk ? '' : ' <span class="badge bad">✗ receipt_sha256</span>') + '</h2>' +
     '<div class="row"><span class="k">seq / เวลาออก</span><span class="v">' + esc(String(doc.seq ?? '—')) + ' · ' + esc(doc.issued_at ? fmtWhen(doc.issued_at) : '—') + '</span></div>' +
     '<div class="row"><span class="k">ยอด</span><span class="v">' + (typeof doc.receipt?.payload?.total_thb === 'number' ? '฿' + doc.receipt.payload.total_thb.toFixed(2) : '<span class="small">ไม่มียอด</span>') + '</span></div>' +
     '<div class="row"><span class="k">receipt_sha256</span><span class="v">' + esc(String(doc.receipt_sha256 || '—')) + '</span></div>' +
-    lanes(out, triple) + problemsList(out.problems) + details(doc.receipt);
+    lanes(out) + problemsList(out.problems) + details(doc.receipt);
   return out;
 }
 

@@ -142,7 +142,8 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
   2. bytes ที่ถูกเซ็น = canonical JSON ของแกน (เรียงคีย์ · ไม่มีช่องว่าง)
   3. Ed25519      — ตรวจด้วย WebCrypto ของเบราว์เซอร์ (กุญแจสาธารณะฝังในใบ)
   4. ML-DSA-44    — ตรวจด้วย @noble/post-quantum (context "sovereign-pq-receipt/v1")
-  5. SLH-DSA-128s — โปรไฟล์สามชั้นเท่านั้น · ต้องมีและผ่านด้วย (ขาด = ใบไม่สมบูรณ์)
+  5. SLH-DSA      — โปรไฟล์สามชั้นเท่านั้น · รุ่นอ่านจาก alg_profile ในใบ (128s หรือ 128f ตาม FIPS 205)
+     · ต้องมีลายเซ็นของรุ่นที่ใบประกาศและผ่านด้วย (ขาด/แปะลายเซ็นข้ามรุ่น = ใบไม่สมบูรณ์)
   ผ่าน = ทุกชั้นของโปรไฟล์จริงในใบ — ขาด/แก้ payload ตำแหน่งเดียว = ปฏิเสธ
 
 แฟ้มเอกสารบัญชี (.jsonl · sovereign.accounting-ledger.v1)
