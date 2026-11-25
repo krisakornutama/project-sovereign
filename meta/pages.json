@@ -1,0 +1,332 @@
+{
+  "defaultOgImage": "https://sovereignoriginshop.dpdns.org/og.png",
+  "defaultTwitterImage": "https://sovereignoriginshop.dpdns.org/og.png",
+  "pages": {
+    "index.html": {
+      "title": "Project Sovereign — ระบบหลังบ้านร้านค้า ขาย รับเงิน บัญชีพร้อมส่งนักบัญชี",
+      "description": "ระบบหลังบ้านสำหรับร้านค้า ร้านอาหาร และฟาร์มปศุสัตว์: ขาย รับเงิน PromptPay แยก VAT ออกใบกำกับ ลงบัญชี และจัดรูปแบบข้อมูลให้พร้อมส่งต่อนักบัญชี/สรรพากร — self-hosted ทั้งหมด ฟรี",
+      "author": "กฤษกรณ์ อุตมะ (Krisakorn Utama)",
+      "canonical": "https://sovereignoriginshop.dpdns.org/",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true,
+      "jsonLd": {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": "https://sovereignoriginshop.dpdns.org/me.html#person",
+        "name": "กฤษกรณ์ อุตมะ",
+        "alternateName": "Krisakorn Utama",
+        "jobTitle": "Freelance Writer & Developer",
+        "url": "https://sovereignoriginshop.dpdns.org/me.html",
+        "sameAs": [
+          "https://github.com/krisakornutama",
+          "https://www.youtube.com/@Krisakorn_Utama",
+          "https://novel.dek-d.com/oweenhoper/profile/writer/",
+          "https://www.linkedin.com/in/krisakorn-utama-69b7a7226/",
+          "https://web.facebook.com/MSGWriter",
+          "https://www.mebmarket.com/?store=publisher&action=home_page&publisher_id=3576000&publisher_name=",
+          "https://sovereignoriginshop.dpdns.org/"
+        ]
+      }
+    },
+    "me.html": {
+      "title": "กฤษกรณ์ อุตมะ (Krisakorn Utama) คือใคร — รวมทุกช่องทางผลงาน",
+      "description": "นายกฤษกรณ์ อุตมะ (Krisakorn Utama) — นักเขียนอิสระและนักพัฒนา: หนังสือบน MEB Market, โค้ดและระบบบ้านอัจฉริยะบน GitHub (krisakornutama), เว็บโชว์ผลงาน Project Sovereign — รวมทุกช่องทางไว้ที่เดียว",
+      "canonical": "https://sovereignoriginshop.dpdns.org/me.html",
+      "ogType": "profile",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true,
+      "jsonLd": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://sovereignoriginshop.dpdns.org/me.html#person",
+            "name": "กฤษกรณ์ อุตมะ",
+            "alternateName": "Krisakorn Utama",
+            "jobTitle": "Freelance Writer & Developer",
+            "description": "นักเขียนอิสระและนักพัฒนา — หนังสือบน MEB Market, ระบบบ้านอัจฉริยะ self-hosted บน GitHub, เว็บโชว์ผลงาน Project Sovereign",
+            "url": "https://sovereignoriginshop.dpdns.org/me.html",
+            "sameAs": [
+              "https://github.com/krisakornutama",
+              "https://www.youtube.com/@Krisakorn_Utama",
+              "https://novel.dek-d.com/oweenhoper/profile/writer/",
+              "https://www.linkedin.com/in/krisakorn-utama-69b7a7226/",
+              "https://web.facebook.com/MSGWriter",
+              "https://www.mebmarket.com/?store=publisher&action=home_page&publisher_id=3576000&publisher_name=",
+              "https://sovereignoriginshop.dpdns.org/",
+              "https://fastwork.co/user/krisakorn46",
+              "https://harvest-ledger.pages.dev/"
+            ]
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "Project Sovereign",
+            "description": "ระบบหลังบ้าน self-hosted ทั้งบ้าน: ขายหน้าร้าน บัญชี ภาษีไทย ฟาร์ม ปศุสัตว์ IoT และเครื่องมือสอนลูก",
+            "url": "https://sovereignoriginshop.dpdns.org/",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            }
+          },
+          {
+            "@type": "CreativeWork",
+            "name": "Project Sovereign — เว็บโชว์ผลงาน",
+            "description": "เว็บ static หลายหน้า แสดงระบบทั้งหมดที่สร้างเอง โฮสต์ฟรีบน GitHub Pages",
+            "url": "https://github.com/krisakornutama/project-sovereign",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "Harvest Ledger",
+            "description": "แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe Checkout + webhook) — Node.js + React",
+            "url": "https://harvest-ledger.pages.dev/",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            }
+          },
+          {
+            "@type": "CreativeWork",
+            "name": "ผลงานเขียน — หนังสือบน MEB Market",
+            "description": "หนังสือที่ลงพิมพ์บน MEB Market (ดูรายชื่อเล่มที่หน้า publisher)",
+            "url": "https://www.mebmarket.com/?store=publisher&action=home_page&publisher_id=3576000&publisher_name=",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            }
+          }
+        ]
+      }
+    },
+    "books.html": {
+      "title": "คลังหนังสือ — Project Sovereign",
+      "description": "คลังเก็บหนังสือของนักเขียน: หนังสือที่ลงพิมพ์พร้อมลิงก์อ่านต่อ และชั้นหนังสือที่อ่าน — ค้นหา กรองชั้น/หมวด/ผู้เขียน/ปี เรียงตามปี สั่งลำดับเองได้ ข้อมูลอยู่ในไฟล์เดียว โฮสต์ฟรี",
+      "canonical": "https://sovereignoriginshop.dpdns.org/books.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true,
+      "jsonLd": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "CollectionPage",
+            "@id": "https://sovereignoriginshop.dpdns.org/books.html",
+            "name": "คลังหนังสือ — ผลงานที่ลงพิมพ์ของ กฤษกรณ์ อุตมะ",
+            "about": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            }
+          },
+          {
+            "@type": "Book",
+            "name": "36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "เข้าใจตรงกันนะ"
+            },
+            "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=374776",
+            "image": "https://sovereignoriginshop.dpdns.org/assets/books/374776.jpg",
+            "inLanguage": "th"
+          },
+          {
+            "@type": "Book",
+            "name": "36ชีวประวัติบุคคลสำคัญที่มีอิทธิพลต่อโลก เล่ม2",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "เข้าใจตรงกันนะ"
+            },
+            "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=375078",
+            "image": "https://sovereignoriginshop.dpdns.org/assets/books/375078.jpg",
+            "inLanguage": "th"
+          },
+          {
+            "@type": "Book",
+            "name": "เราโตมาเพื่อเชื่อหรือเพื่อคิด",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "เข้าใจตรงกันนะ"
+            },
+            "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=365428",
+            "image": "https://sovereignoriginshop.dpdns.org/assets/books/365428.jpg",
+            "inLanguage": "th"
+          },
+          {
+            "@type": "Book",
+            "name": "เราโตมาเพื่อเชื่อหรือเพื่อคิด 2",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "เข้าใจตรงกันนะ"
+            },
+            "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=370262",
+            "image": "https://sovereignoriginshop.dpdns.org/assets/books/370262.jpg",
+            "inLanguage": "th"
+          },
+          {
+            "@type": "Book",
+            "name": "มุ่งสู่จักรวรรดิ์ เล่ม 2",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "เข้าใจตรงกันนะ"
+            },
+            "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=222303",
+            "image": "https://sovereignoriginshop.dpdns.org/assets/books/222303.jpg",
+            "inLanguage": "th"
+          },
+          {
+            "@type": "Book",
+            "name": "เมื่ออำนาจ ศีลธรรม และความโกรธพบกัน",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "เข้าใจตรงกันนะ"
+            },
+            "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=401289",
+            "image": "https://sovereignoriginshop.dpdns.org/assets/books/401289.jpg",
+            "inLanguage": "th"
+          },
+          {
+            "@type": "Book",
+            "name": "The Nighttime Forest Orchestra",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "เข้าใจตรงกันนะ"
+            },
+            "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=236380",
+            "image": "https://sovereignoriginshop.dpdns.org/assets/books/236380.jpg",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "Book",
+            "name": "The world of bed Dream",
+            "author": {
+              "@id": "https://sovereignoriginshop.dpdns.org/me.html#person"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "เข้าใจตรงกันนะ"
+            },
+            "url": "https://www.mebmarket.com/index.php?action=BookDetails&book_id=236334",
+            "image": "https://sovereignoriginshop.dpdns.org/assets/books/236334.jpg",
+            "inLanguage": "en"
+          }
+        ]
+      }
+    },
+    "shop.html": {
+      "title": "ร้านค้า — ชุดเทมเพลต บัญชี ภาษี สต็อก (พร้อมส่ง)",
+      "description": "หน้าร้านค้าของ Project Sovereign: ชุดเทมเพลตบัญชี ภาษี สต็อกสำหรับร้านเล็ก ราคา 1,500 บาท — พร้อมส่งจริงแล้ว ไม่ต้องติดตั้งอะไร (Sovereign Starter Pack ยังไม่เปิดขาย) — ราคาตายตัว ไม่มีชั่วโมงแอบแฝง รับแจ้งซื้อและจองก่อนจ่าย",
+      "canonical": "https://sovereignoriginshop.dpdns.org/shop.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "water.html": {
+      "title": "ชัยภูมิน้ำ — Project Sovereign",
+      "description": "แนวคิดจัดการน้ำและพื้นที่เพาะปลูกแบบวางแผน: The Pioneer (เปิดหัวน้ำ), ค่ายกล 8 ทิศ (จัดวางราง-บ่อ-แปลงแบบกลยุทธ์จูกัดเหลียง) และ The Patriarch (ธรรมาภิบาลน้ำ) — วางรางตรงไหน ขุดบ่อจุดไหน ทำดินให้ชุ่มชื้นอย่างไร รวมเป็นชัยภูมิเกษตรหนึ่งเดียว",
+      "canonical": "https://sovereignoriginshop.dpdns.org/water.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "farm.html": {
+      "title": "เกษตร & สมุนไพร — Project Sovereign",
+      "description": "โมดูลเกษตรและสมุนไพรใน Project Sovereign: แผนผังแปลงที่ระบบวาดให้ ค่าดินรายแปลง เก็บเกี่ยวบันทึกจริง ฐานสมุนไพรไทยพร้อมข้อห้าม-ข้อควรระวัง และวงจรเศษวัสดุ→ปุ๋ยหมัก→ใส่แปลง ครบในระบบเดียว",
+      "canonical": "https://sovereignoriginshop.dpdns.org/farm.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "livestock.html": {
+      "title": "ปศุสัตว์ — Project Sovereign",
+      "description": "โมดูลปศุสัตว์ใน Project Sovereign: ทะเบียนฝูง สุขภาพ+วัคซีน ผลผลิตรายวัน ต้นทุน-กำไรต่อรอบการเลี้ยง อากาศโรงเรือน กักโรค และกล้อง AI ตรวจกลุ่มสัตว์ — 11 โมดูลจริงในระบบ พร้อมเครื่องคำนวณกำไรต่อรอบ",
+      "canonical": "https://sovereignoriginshop.dpdns.org/livestock.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "fishery.html": {
+      "title": "การประมง — Project Sovereign",
+      "description": "ชิ้นงานการประมง (เลี้ยงปลา/กุ้ง) ใน Project Sovereign: แนวคิดบ่อเลี้ยงตามรอบ ตรวจคุณภาพน้ำจากเซ็นเซอร์ IoT ที่มีอยู่จริง บันทึกผลผลิตรายวัน และกำไรต่อรอบการเพาะเลี้ยง — รากโครงสร้างพร้อม ออกแบบไว้แล้ว รอสร้างโมดูลเฉพาะ",
+      "canonical": "https://sovereignoriginshop.dpdns.org/fishery.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "iot.html": {
+      "title": "บ้าน IoT — Project Sovereign",
+      "description": "โมดูลบ้าน IoT ใน Project Sovereign: อุปกรณ์ ESP32 ทั้งบ้าน รีเลย์ควบคุมจริง กฎอัตโนมัติถ้า-แล้ว เซ็นเซอร์วัดทุกจุด พลังงาน อัปเดตเฟิร์มแวร์ OTA และเฝ้าโครงสร้างพื้นฐาน — จากกฎหนึ่งข้อถึงการลงมือจริง ภายในไม่กี่วินาที",
+      "canonical": "https://sovereignoriginshop.dpdns.org/iot.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "education.html": {
+      "title": "AI สอนลูก — Project Sovereign",
+      "description": "โมดูลการเรียนการสอนใน Project Sovereign: AI สร้างบทเรียนจากคลังความรู้ของครอบครัว (RAG + Ollama, offline 100%) พร้อมหลักสูตร แบบทดสอบ รายงานประจำสัปดาห์ และโรงเรียนการเงินจริง — งานบ้าน กระปุกออมสิน เงินค่าขนม หุ้นจำลอง คูปอง",
+      "canonical": "https://sovereignoriginshop.dpdns.org/education.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "guardmini.html": {
+      "title": "SovereignGuardMini — เฝ้าตู้แช่/ห้องเย็นแบบไม่เจาะตู้ · Project Sovereign",
+      "description": "กล่องเฝ้าระวังอุณหภูมิ/ไฟฟ้าสำหรับร้านอาหารและร้านค้า: ติดตั้งด้วยแท่นแม่เหล็กไม่เจาะตู้ ไม่ตัดสายไฟเดิม ตั้งค่าแจ้งเตือน Telegram ใน 3 นาที ข้อมูลอยู่ในร้าน 100% ไม่มีค่าบริการรายเดือน รับประกัน 1 ปี เสียเปลี่ยนกล่องใหม่ทันที",
+      "author": "กฤษกรณ์ อุตมะ (Krisakorn Utama)",
+      "canonical": "https://sovereignoriginshop.dpdns.org/guardmini.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "en.html": {
+      "title": "Project Sovereign — ระบบหลังบ้านร้านค้า ขาย รับเงิน บัญชีพร้อมส่งนักบัญชี",
+      "description": "Backend system for shops, restaurants and livestock farms: sell, receive PromptPay, issue tax invoices, do bookkeeping, and prepare data to hand over to an accountant — self-hosted, free",
+      "canonical": "https://sovereignoriginshop.dpdns.org/en.html",
+      "ogType": "website",
+      "ogLocale": "en_US",
+      "hasTwitterCard": true
+    },
+    "demo.html": {
+      "title": "Demo — Project Sovereign",
+      "description": "Live trial page for Project Sovereign — test the system before buying",
+      "canonical": "https://sovereignoriginshop.dpdns.org/demo.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "search.html": {
+      "title": "ค้นหา — Project Sovereign",
+      "description": "ค้นหาทั้งเว็บจากช่องเดียว — ค้นหาหน้า เนื้อหา และโมดูลใน Project Sovereign",
+      "canonical": "https://sovereignoriginshop.dpdns.org/search.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    },
+    "projects.html": {
+      "title": "งานแต่ละชิ้น — Project Sovereign",
+      "description": "ผลงานทีละชิ้นของ Project Sovereign: ระบบหลังบ้านธุรกิจคิดภาษีไทยเอง, โรงเรียนในบ้าน AI สอนลูก, ระบบนิเวศบ้าน IoT, ตลาดอัจฉริยะ — แต่ละชิ้นเล่าแนวคิด สิ่งที่มีจริงวันนี้ และสิ่งที่ต้องการเพื่อร่วมมือกันทำให้ใช้งานจริงระดับมืออาชีพ",
+      "canonical": "https://sovereignoriginshop.dpdns.org/projects.html",
+      "ogType": "website",
+      "ogLocale": "th_TH",
+      "hasTwitterCard": true
+    }
+  }
+}

@@ -3,76 +3,124 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ทดลองใช้จริง — Harvest Ledger แดชบอร์ดดึงคอนเทนต์</title>
-<meta name="description" content="ทดลองใช้ Harvest Ledger แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) ได้โดยตรงจากหน้านี้ — ลองฟรี 3 ครั้งแรก ไม่ต้องสมัครสมาชิก">
+<title>Demo — Project Sovereign</title>
+<meta name="description" content="Live trial page for Project Sovereign — test the system before buying">
 <meta name="theme-color" content="#030712">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Ccircle cx='7' cy='7' r='3.6' fill='none' stroke='%2322d3ee' stroke-width='1.4'/%3E%3Cpath d='M10 10l3.4 3.4' stroke='%2334d399' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Crect%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%223%22%20fill%3D%22%2523030712%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%223%22%20width%3D%228%22%20height%3D%2210%22%20rx%3D%221%22%20fill%3D%22%2523F2D8D8%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%223%22%20width%3D%221.2%22%20height%3D%2210%22%20fill%3D%22%2523B3352C%22%2F%3E%3C%2Fsvg%3E"
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="canonical" href="https://sovereignoriginshop.dpdns.org/demo.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Sovereign">
 <meta property="og:locale" content="th_TH">
-<meta property="og:title" content="ทดลองใช้จริง — Harvest Ledger แดชบอร์ดดึงคอนเทนต์">
-<meta property="og:description" content="แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท (Stripe) — ลองฟรี 3 ครั้งแรก ไม่ต้องสมัครสมาชิก">
+<meta property="og:title" content="Demo — Project Sovereign">
+<meta property="og:description" content="Live trial page for Project Sovereign — test the system before buying">
 <meta property="og:url" content="https://sovereignoriginshop.dpdns.org/demo.html">
 <meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="twitter:title" content="Demo — Project Sovereign">
+<meta name="twitter:description" content="Live trial page for Project Sovereign — test the system before buying">
+<meta name="twitter:image" content="https://sovereignoriginshop.dpdns.org/og.png">
 <style>
+/* shared.css */
 :root{
   --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
   --green:#34d399; --cyan:#22d3ee; --txt:#e5e7eb; --dim:#9ca3af; --faint:#6b7280;
+  --paper:#F2D8D8; --paper-edge:#D9B2B0; --ink:#2B2320; --stamp:#B3352C;
+  /* กระดาษหนังสือ (front matter) — สต็อกเดียวกับ me.html */
+  --leaf:#F3EADB; --leaf-edge:#E0D2BA; --leaf-ink:#2A2118;
+  --leaf-60:rgba(42,33,24,.6); --leaf-38:rgba(42,33,24,.38);
   --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
   --mono:'JetBrains Mono','Noto Sans Thai Looped','Cascadia Code','Courier New',monospace;
+  --body:'Noto Sans Thai Looped','IBM Plex Sans Thai Looped','Segoe UI',sans-serif;
+  --book:'Taviraj','Noto Sans Thai Looped',serif;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+  radial-gradient(1100px 620px at 10% -12%,rgba(52,211,153,.11),transparent 62%),
+  radial-gradient(980px 620px at 90% -8%,rgba(34,211,238,.10),transparent 64%),
+  radial-gradient(1200px 700px at 50% 115%,rgba(52,211,153,.06),transparent 62%)}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:
+  linear-gradient(rgba(52,211,153,.02) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(34,211,238,.015) 1px,transparent 1px);background-size:36px 36px;
+  -webkit-mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%);
+  mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%)}
 ::selection{background:rgba(52,211,153,.35);color:#ecfdf5}
 :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+.mono{font-family:var(--mono)}
 a{color:var(--green)}
+
+/* ── topbar ── */
 .topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:12px;
   padding:13px 24px;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px)}
 .topnav{display:flex;gap:15px;font-family:var(--mono);font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
 .topnav::-webkit-scrollbar{display:none}
+#progressBar{position:absolute;left:0;right:0;bottom:-1px;height:2px;width:0;background:linear-gradient(90deg,var(--green),var(--cyan))}
 .topnav a{color:var(--dim);text-decoration:none}
 .topnav a:hover{color:var(--green)}
-.topnav a[aria-current="page"]{color:var(--cyan);border-bottom:1px solid var(--cyan)}
-.hero{max-width:960px;margin:0 auto;padding:64px 24px 24px}
+
+/* ── hero · ปกหนังสือ (front matter บนโต๊ะทำงาน) ── */
+.hero{max-width:760px;margin:0 auto;padding:64px 24px 20px}
+.boot{font-family:var(--mono);font-size:.8rem;line-height:1.7;color:var(--green);min-height:11.6em;
+  background:rgba(3,7,12,.65);border:1px solid rgba(52,211,153,.22);border-radius:10px;
+  padding:18px 22px;max-width:560px;margin-bottom:42px;white-space:pre-wrap}
+.bl{opacity:0;transition:opacity .18s ease}
+.bl.on{opacity:1}
+.bl.cursor::after{content:'█';margin-left:.4em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
 .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;color:var(--cyan);margin:0 0 14px}
-h1{font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.25;margin:0 0 16px}
-h1 em{font-style:normal;color:var(--cyan)}
-.lede{color:var(--dim);font-size:1rem;margin:0 0 12px;max-width:62ch}
-.steps{display:grid;gap:10px;margin:22px 0 8px;padding:0;list-style:none;counter-reset:step}
-.steps li{counter-increment:step;background:var(--panel);border:1px solid var(--line);border-radius:10px;
-  padding:12px 16px 12px 52px;position:relative;font-size:.95rem}
-.steps li::before{content:counter(step);position:absolute;left:16px;top:12px;width:24px;height:24px;border-radius:50%;
-  background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.4);color:var(--green);
-  font-family:var(--mono);font-size:.75rem;display:flex;align-items:center;justify-content:center}
-.frame-wrap{max-width:960px;margin:8px auto 0;padding:0 24px 24px}
-.frame{border:1px solid rgba(52,211,153,.35);border-radius:12px;overflow:hidden;background:#0b1220}
-.frame iframe{display:block;width:100%;height:min(78vh,720px);border:0;background:#0b1220}
-.fallback{max-width:960px;margin:0 auto;padding:0 24px 70px;color:var(--dim);font-size:.92rem}
-.fallback code{font-family:var(--mono);font-size:.82rem;background:rgba(52,211,153,.1);
-  padding:2px 8px;border-radius:6px;overflow-wrap:anywhere}
-@media (max-width:600px){
-  .hero{padding:48px 18px 18px}
-  .frame-wrap{padding:0 12px 18px}
-  .frame iframe{height:72vh}
-}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* per-page CSS */
+
+
 </style>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "ทดลองใช้จริง — Harvest Ledger",
-  "description": "ทดลองใช้แดชบอร์ดดึงคอนเทนต์อัตโนมัติพร้อมระบบเก็บเงินบาท ฟรี 3 ครั้งแรก",
-  "url": "https://sovereignoriginshop.dpdns.org/demo.html",
-  "author": { "@id": "https://sovereignoriginshop.dpdns.org/me.html#person" }
-}
-</script>
 </head>
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
+<body>
+
+<div class="wrap">
 <body>
 <header class="topbar">
   <nav class="topnav" aria-label="เมนูหลัก">
@@ -103,5 +151,33 @@ h1 em{font-style:normal;color:var(--cyan)}
   <p class="fallback">ถ้ากรอบด้านบนไม่แสดงผล เปิดโดยตรงที่ <code>https://harvest-ledger.pages.dev/</code> แล้วกลับมาอ่านต่อที่ <a href="projects.html">หน้าผลงาน</a> หรือ <a href="me.html">หน้าผู้เขียน</a></p>
 </main>
 <script src="nav.js" defer></script>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
 </body>
 </html>

@@ -1,0 +1,67 @@
+adding-top:70px}
+section{max-width:1080px;margin:0 auto;padding:64px 24px;scroll-margin-top:70px}
+.k-ch{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;color:var(--cyan);margin:0 0 10px}
+.k-ch b{color:var(--green)}
+h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
+.sub{color:var(--dim);font-size:.92rem;margin:0 0 34px;max-width:680px}
+
+/* ── pack cards ── */
+.packgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pack{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:26px 28px}
+.pack-kick{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;color:var(--cyan);margin:0 0 8px}
+.pack h3{font-size:1.18rem;font-weight:600;color:#ecfdf5;margin:0 0 6px}
+.price{font-family:var(--mono);font-size:1.9rem;font-weight:700;color:var(--green);margin:0 0 4px}
+.price small{display:block;font-size:.62rem;font-weight:400;color:var(--faint);letter-spacing:.08em;margin-top:4px}
+.pack .for{font-size:.84rem;color:var(--dim);margin:14px 0 16px;line-height:1.8}
+.pack .soon{font-size:.84rem;color:var(--dim);margin:0;line-height:1.8;max-width:34em}
+.pack ul{margin:0 0 18px;padding:0;list-style:none}
+.pack li{font-size:.84rem;color:var(--dim);padding:5px 0 5px 20px;position:relative;line-height:1.7}
+.pack li::before{content:'·';position:absolute;left:7px;color:var(--green);font-weight:700}
+.pack b{color:#d1fae5;font-weight:600}
+
+/* ── price rationale + not included ── */
+.why{border:1px solid rgba(34,211,238,.3);border-radius:14px;background:rgba(34,211,238,.05);padding:24px 28px;margin-top:22px}
+.why h3{margin:0 0 12px;font-size:1rem;color:#a5f3fc}
+.why ul{margin:0;padding:0;list-style:none}
+.why li{font-size:.85rem;color:var(--dim);line-height:1.85;padding:7px 0 7px 20px;position:relative}
+.why li::before{content:'·';position:absolute;left:7px;color:var(--cyan);font-weight:700}
+.why b{color:#ecfdf5}
+.honest{border:1px solid var(--line);border-radius:14px;background:rgba(251,191,36,.05);padding:24px 28px;margin-top:22px}
+.honest h3{margin:0 0 12px;font-size:1rem;color:#fcd34d}
+.honest ul{margin:0;padding:0;list-style:none}
+.honest li{font-size:.85rem;color:var(--dim);line-height:1.85;padding:6px 0 6px 20px;position:relative}
+.honest li::before{content:'·';position:absolute;left:7px;color:#fbbf24;font-weight:700}
+
+/* ── inquiry form ── */
+.contact{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:28px 30px}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field label{display:block;font-family:var(--mono);font-size:.66rem;color:var(--faint);margin:0 0 5px;letter-spacing:.06em}
+.field input,.field select,.field textarea{width:100%;font-family:var(--thai);font-size:.88rem;color:#e5e7eb;background:#0b1220;
+  border:1px solid rgba(34,211,153,.3);border-radius:8px;padding:10px 12px}
+.field textarea{min-height:110px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:var(--green)}
+.contact-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.contact-note{font-family:var(--mono);font-size:.64rem;color:var(--faint)}
+.formmsg{display:none;margin-top:12px;font-size:.84rem;border-radius:8px;padding:11px 14px}
+.formmsg.ok{display:block;color:#a7f3d0;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.35)}
+.formmsg.err{display:block;color:#fecaca;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.4)}
+.formmsg a{font-weight:600}
+
+footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px;
+  font-family:var(--mono);font-size:.7rem;color:var(--faint);line-height:2}
+
+/* ── responsive + motion floor ── */
+@media (max-width:900px){
+  .packgrid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .hero{padding:56px 20px 46px}
+  section{padding:52px 20px}
+}
+@media (max-width:480px){
+  .topnav{gap:10px;font-size:.64rem}
+  .pack{padding:20px 18px}
+  .price{font-size:1.6rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}

@@ -1,0 +1,42 @@
+name: Site gate
+
+# Fast, dependency-free gate that runs on every push and every pull request.
+# The full Playwright audit stays in audit-deploy.yml and still gates deploys;
+# this job exists so a broken link or a missing share card is caught in review
+# instead of after release.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # No `npm install` on purpose: every gate here is dependency-free, and installing
+      # playwright without its browser binary would make audit.js fail instead of
+      # skipping its browser half. audit.js without playwright still runs its static
+      # half — every internal link and anchor across all 14 pages, plus the Thai
+      # copy gate — and says SKIP on the browser checks.
+      - name: Dead links + anchors + copy gate
+        run: node scripts/audit.js
+
+      - name: Sitemap completeness + OG/meta coverage + IndexNow key
+        run: node scripts/check-site.mjs
+
+      # The shop-kit sold from /shop is pure ESM with zero dependencies, so its own
+      # suite runs here with the built-in runner — no install, no database, no
+      # network. If the tax or stock maths ever regresses, it fails the PR.
+      - name: Shop kit unit tests (Thai tax + inventory + CSV)
+        run: npm run test:templates

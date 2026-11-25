@@ -1,0 +1,18 @@
+{
+  "default": [
+    { "label": "ภาพรวม", "href": "index.html", "section": "หน้าเว็บ" },
+    { "label": "ผลงาน", "href": "projects.html", "section": "หน้าเว็บ" },
+    { "label": "ปศุสัตว์", "href": "livestock.html", "section": "หน้าเว็บ" },
+    { "label": "ประมง", "href": "fishery.html", "section": "หน้าเว็บ" },
+    { "label": "เกษตร & สมุนไพร", "href": "farm.html", "section": "หน้าเว็บ" },
+    { "label": "SovereignGuardMini", "href": "guardmini.html", "section": "หน้าเว็บ" },
+    { "label": "บ้าน IoT", "href": "iot.html", "section": "หน้าเว็บ" },
+    { "label": "AI สอนลูก", "href": "education.html", "section": "หน้าเว็บ" },
+    { "label": "คลังหนังสือ", "href": "books.html", "section": "หน้าเว็บ" },
+    { "label": "ชัยภูมิน้ำ", "href": "water.html", "section": "หน้าเว็บ" },
+    { "label": "ค้นหา", "href": "search.html", "section": "เครื่องมือ" },
+    { "label": "ผู้เขียน", "href": "me.html", "section": "เครื่องมือ" },
+    { "label": "EN", "href": "en.html", "section": "เครื่องมือ" }
+  ],
+  "noNav": ["me.html", "demo.html"]
+}

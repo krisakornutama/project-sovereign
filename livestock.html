@@ -6,16 +6,37 @@
 <title>ปศุสัตว์ — Project Sovereign</title>
 <meta name="description" content="โมดูลปศุสัตว์ใน Project Sovereign: ทะเบียนฝูง สุขภาพ+วัคซีน ผลผลิตรายวัน ต้นทุน-กำไรต่อรอบการเลี้ยง อากาศโรงเรือน กักโรค และกล้อง AI ตรวจกลุ่มสัตว์ — 11 โมดูลจริงในระบบ พร้อมเครื่องคำนวณกำไรต่อรอบ">
 <meta name="theme-color" content="#030712">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23030712'/%3E%3Ccircle cx='6.5' cy='6' r='3.2' fill='%2334d399'/%3E%3Ccircle cx='11' cy='10' r='2.6' fill='%2322d3ee'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Crect%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%223%22%20fill%3D%22%2523030712%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%223%22%20width%3D%228%22%20height%3D%2210%22%20rx%3D%221%22%20fill%3D%22%2523F2D8D8%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%223%22%20width%3D%221.2%22%20height%3D%2210%22%20fill%3D%22%2523B3352C%22%2F%3E%3C%2Fsvg%3E"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="canonical" href="https://sovereignoriginshop.dpdns.org/livestock.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Sovereign">
+<meta property="og:locale" content="th_TH">
+<meta property="og:title" content="ปศุสัตว์ — Project Sovereign">
+<meta property="og:description" content="โมดูลปศุสัตว์ใน Project Sovereign: ทะเบียนฝูง สุขภาพ+วัคซีน ผลผลิตรายวัน ต้นทุน-กำไรต่อรอบการเลี้ยง อากาศโรงเรือน กักโรค และกล้อง AI ตรวจกลุ่มสัตว์ — 11 โมดูลจริงในระบบ พร้อมเครื่องคำนวณกำไรต่อรอบ">
+<meta property="og:url" content="https://sovereignoriginshop.dpdns.org/livestock.html">
+<meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ปศุสัตว์ — Project Sovereign">
+<meta name="twitter:description" content="โมดูลปศุสัตว์ใน Project Sovereign: ทะเบียนฝูง สุขภาพ+วัคซีน ผลผลิตรายวัน ต้นทุน-กำไรต่อรอบการเลี้ยง อากาศโรงเรือน กักโรค และกล้อง AI ตรวจกลุ่มสัตว์ — 11 โมดูลจริงในระบบ พร้อมเครื่องคำนวณกำไรต่อรอบ">
+<meta name="twitter:image" content="https://sovereignoriginshop.dpdns.org/og.png">
 <style>
+/* shared.css */
 :root{
   --bg:#030712; --panel:rgba(17,24,39,.55); --line:rgba(52,211,153,.16);
   --green:#34d399; --cyan:#22d3ee; --txt:#e5e7eb; --dim:#9ca3af; --faint:#6b7280;
+  --paper:#F2D8D8; --paper-edge:#D9B2B0; --ink:#2B2320; --stamp:#B3352C;
+  /* กระดาษหนังสือ (front matter) — สต็อกเดียวกับ me.html */
+  --leaf:#F3EADB; --leaf-edge:#E0D2BA; --leaf-ink:#2A2118;
+  --leaf-60:rgba(42,33,24,.6); --leaf-38:rgba(42,33,24,.38);
   --thai:'IBM Plex Sans Thai Looped','Noto Sans Thai Looped','Segoe UI',sans-serif;
   --mono:'JetBrains Mono','Noto Sans Thai Looped','Cascadia Code','Courier New',monospace;
+  --body:'Noto Sans Thai Looped','IBM Plex Sans Thai Looped','Segoe UI',sans-serif;
+  --book:'Taviraj','Noto Sans Thai Looped',serif;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--thai);line-height:1.65;-webkit-font-smoothing:antialiased}
@@ -30,32 +51,31 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;bac
   mask-image:radial-gradient(1200px 700px at 50% 40%,#000 30%,transparent 100%)}
 ::selection{background:rgba(52,211,153,.35);color:#ecfdf5}
 :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:6px}
+.mono{font-family:var(--mono)}
 a{color:var(--green)}
 
+/* ── topbar ── */
 .topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:12px;
   padding:13px 24px;border-bottom:1px solid var(--line);background:rgba(3,7,18,.86);backdrop-filter:blur(8px)}
 .topnav{display:flex;gap:15px;font-family:var(--mono);font-size:.72rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
 .topnav::-webkit-scrollbar{display:none}
+#progressBar{position:absolute;left:0;right:0;bottom:-1px;height:2px;width:0;background:linear-gradient(90deg,var(--green),var(--cyan))}
 .topnav a{color:var(--dim);text-decoration:none}
 .topnav a:hover{color:var(--green)}
-.topnav a[aria-current="page"]{color:var(--green);border-bottom:1px solid var(--green)}
 
-.hero{max-width:1080px;margin:0 auto;padding:70px 24px 56px}
+/* ── hero · ปกหนังสือ (front matter บนโต๊ะทำงาน) ── */
+.hero{max-width:760px;margin:0 auto;padding:64px 24px 20px}
+.boot{font-family:var(--mono);font-size:.8rem;line-height:1.7;color:var(--green);min-height:11.6em;
+  background:rgba(3,7,12,.65);border:1px solid rgba(52,211,153,.22);border-radius:10px;
+  padding:18px 22px;max-width:560px;margin-bottom:42px;white-space:pre-wrap}
+.bl{opacity:0;transition:opacity .18s ease}
+.bl.on{opacity:1}
+.bl.cursor::after{content:'█';margin-left:.4em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
 .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;color:var(--cyan);margin:0 0 14px}
-h1{font-size:clamp(1.9rem,5vw,3.2rem);font-weight:700;line-height:1.2;margin:0 0 18px;max-width:780px}
-h1 em{font-style:normal;color:var(--green);text-shadow:0 0 24px rgba(52,211,153,.35)}
-.lede{color:var(--dim);font-size:1.02rem;max-width:680px;margin:0 0 26px}
-.meta-line{font-family:var(--mono);font-size:.72rem;color:var(--faint);margin:0 0 30px}
-.cta{display:flex;gap:12px;flex-wrap:wrap}
-.btn{display:inline-block;font-weight:600;font-size:.9rem;text-decoration:none;padding:11px 22px;border-radius:9px;transition:box-shadow .15s ease,background .15s ease,border-color .15s ease}
-.btn-primary{background:var(--green);color:#030712}
-.btn-primary:hover{box-shadow:0 0 26px rgba(52,211,153,.4)}
-.btn-ghost{border:1px solid rgba(52,211,153,.4);color:var(--green)}
-.btn-ghost:hover{border-color:var(--green);background:rgba(52,211,153,.08)}
 
-html{scroll-padding-top:70px}
-section{max-width:1080px;margin:0 auto;padding:64px 24px;scroll-margin-top:70px}
-.k-ch{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;color:var(--cyan);margin:0 0 10px}
+/* per-page CSS */
+-size:.7rem;letter-spacing:.18em;color:var(--cyan);margin:0 0 10px}
 .k-ch b{color:var(--green)}
 h2{font-size:1.6rem;font-weight:600;margin:0 0 8px}
 .sub{color:var(--dim);font-size:.92rem;margin:0 0 34px;max-width:680px}
@@ -115,16 +135,303 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
 </style>
-<link rel="stylesheet" href="nav.css">
-<link rel="canonical" href="https://sovereignoriginshop.dpdns.org/livestock.html">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ปศุสัตว์ — Project Sovereign">
-<meta property="og:description" content="โมดูลปศุสัตว์ใน Project Sovereign: ทะเบียนฝูง สุขภาพ+วัคซีน ผลผลิตรายวัน ต้นทุน-กำไรต่อรอบการเลี้ยง อากาศโรงเรือน กักโรค และกล้อง AI ตรวจกลุ่มสัตว์ — 11 โมดูลจริงในระบบ พร้อมเครื่องคำนวณกำไรต่อรอบ">
-<meta property="og:url" content="https://sovereignoriginshop.dpdns.org/livestock.html">
-<meta property="og:image" content="https://sovereignoriginshop.dpdns.org/og.png">
-<meta name="twitter:card" content="summary_large_image">
 </head>
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
+<body>
+<button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
+<aside class="rail" id="siteRail">
+  <a class="spine" href="index.html" aria-label="กลับหน้าภาพรวม (PROJECT SOVEREIGN)"><span class="spine-t">PROJECT SOVEREIGN</span></a>
+  <p class="seclab">หน้าเว็บ</p>
+  <a href="index.html">ภาพรวม</a>
+  <a href="projects.html">ผลงาน</a>
+  <a href="livestock.html" aria-current="page">ปศุสัตว์</a>
+  <a href="fishery.html">ประมง</a>
+  <a href="farm.html">เกษตร &amp; สมุนไพร</a>
+  <a href="guardmini.html">SovereignGuardMini</a>
+  <a href="iot.html">บ้าน IoT</a>
+  <a href="education.html">AI สอนลูก</a>
+  <a href="books.html">คลังหนังสือ</a>
+  <a href="water.html">ชัยภูมิน้ำ</a>
+  <p class="seclab">เครื่องมือ</p>
+  <a href="search.html">ค้นหา</a>
+  <a href="me.html">ผู้เขียน</a>
+  <a href="en.html">EN</a>
+</aside>
+<div class="wrap">
 <body class="shell">
 
 <button class="rail-toggle" type="button" aria-label="เปิดเมนูหมวดหน้าเว็บ">☰</button>
@@ -305,5 +612,33 @@ footer{border-top:1px solid var(--line);text-align:center;padding:30px 24px 40px
   paint();
 })();
 </script>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
+</body>
+</div>
 </body>
 </html>
